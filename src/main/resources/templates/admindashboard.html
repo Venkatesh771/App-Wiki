@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - App Wiki</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
+
+        body {
+            background: #f0f2f5;
+            font-family: "Open Sans", sans-serif;
+            min-height: 100vh;
+            font-size: 0.96rem;
+        }
+
+        .navbar {
+            background: #000 !important;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            min-height: 44px;
+            height: 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-family: "Quicksand", sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            margin-left: 1.1rem;
+            line-height: 1.1;
+        }
+
+        .navbar-nav {
+            column-gap: 0.75rem;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 0.88rem;
+            padding-top: 0.2rem;
+            padding-bottom: 0.2rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .user-menu-wrapper {
+            padding-right: 1.2rem;
+        }
+
+        .user-menu .dropdown-toggle {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .user-icon-round {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #008080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 3px;
+        }
+
+        .user-icon-round i {
+            color: #fff;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .navbar-nav .nav-link.text-white {
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .navbar-nav .nav-link.text-white::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar-nav .nav-link.text-white:hover::after {
+            width: 100%;
+        }
+
+        .dashboard-content {
+            margin-top: 2.5rem;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            margin-left: 1.1rem;
+            padding-bottom: 0;
+            gap: 1rem;
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #222;
+            font-family: "Open Sans", sans-serif;
+            margin-left: 0.6rem;
+        }
+
+        .dashboard-title i {
+            font-size: 1.1rem;
+            margin-right: 0.2rem;
+        }
+
+        .btn-add-user {
+            background: #008080;
+            color: #fff;
+            border: none;
+            padding: 0.55rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.25s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+        }
+
+        .btn-add-user:hover {
+            background: #006666;
+            box-shadow: 0 2px 8px rgba(0, 128, 128, 0.2);
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .btn-add-user i {
+            font-size: 0.85rem;
+        }
+
+        .btn-search-user {
+            background: #fff;
+            color: #008080;
+            border: 2px solid #008080;
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.25s ease, color 0.25s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-search-user:hover {
+            background: #008080;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 128, 128, 0.2);
+            text-decoration: none;
+        }
+
+        .btn-search-user i {
+            font-size: 1rem;
+        }
+
+        .users-table-wrapper {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        .users-table thead {
+            background: #fafafa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .users-table thead th {
+            padding: 0.6rem 1.1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #555;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .users-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.15s ease;
+        }
+
+        .users-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .users-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .users-table tbody td {
+            padding: 0.5rem 1.1rem;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .status-inactive {
+            background: #ffcccc;
+            color: #c62828;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .role-super-admin {
+            background: #ffe0b2;
+            color: #e65100;
+        }
+
+        .role-admin {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .role-user {
+            background: #b3e5fc;
+            color: #01579b;
+        }
+
+        .edit-btn {
+            background: none;
+            border: none;
+            color: #008080;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.4rem 0.4rem;
+            transition: color 0.2s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-btn:hover {
+            color: #005555;
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            color: #ddd;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 1rem 1.1rem;
+            gap: 0.5rem;
+            background: #fff;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-btn {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            color: #333;
+            padding: 0.5rem 0.75rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: background 0.2s ease, color 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .pagination-btn i {
+            font-size: 0.9rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #008080;
+            color: #fff;
+            border-color: #008080;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: #008080;
+            color: #fff;
+            border-color: #008080;
+        }
+
+        .pagination-info {
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0 0.5rem;
+        }
+
+        .search-box {
+            display: none;
+        }
+
+        .search-box.active {
+            display: block;
+        }
+
+        .search-box-content {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #fff;
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            width: fit-content;
+            height: 38px;
+        }
+
+        .search-box-input {
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            font-size: 0.9rem;
+            background: transparent;
+            transition: none;
+            outline: none;
+            min-width: 180px;
+            height: 100%;
+        }
+
+        .search-box-input::placeholder {
+            color: #999;
+        }
+
+        .search-box-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .search-icon {
+            color: #008080;
+            font-size: 0.9rem;
+            margin-left: 0.4rem;
+            cursor: pointer;
+        }        .btn-search {
+            display: none;
+        }
+
+        .btn-clear {
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }        .modal-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 450px;
+            padding: 1.5rem;
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.7rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #222;
+            font-family: "Open Sans", sans-serif;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #222;
+        }        .modal-form-group {
+            margin-bottom: 0.9rem;
+        }
+
+        .modal-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .modal-label .required {
+            color: #e74c3c;
+            margin-left: 0.2rem;
+        }        .modal-input,
+        .modal-select {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: "Open Sans", sans-serif;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: #fff;
+            color: #333;
+            height: 36px;
+        }
+
+        .modal-input:focus,
+        .modal-select:focus {
+            outline: none;
+            border-color: #008080;
+            box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+        }
+
+        .modal-input::placeholder {
+            color: #bbb;
+        }        .modal-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .modal-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #008080;
+        }
+
+        .modal-checkbox-label {
+            font-size: 0.8rem;
+            color: #333;
+            cursor: pointer;
+            margin: 0;
+        }.modal-footer {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 1.3rem;
+            justify-content: flex-end;
+        }.modal-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .modal-btn-primary {
+            background: #008080;
+            color: #fff;
+        }
+
+        .modal-btn-primary:hover {
+            background: #006666;
+        }
+
+        .modal-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .modal-error {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .modal-error.show {
+            display: block;
+        }
+
+        .form-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .form-success.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 0 1rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .dashboard-title {
+                font-size: 1.3rem;
+            }
+
+            .users-table thead th,
+            .users-table tbody td {
+                padding: 0.7rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .btn-add-user {
+                font-size: 0.85rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">App Wiki</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homeNavbar"
+                aria-controls="homeNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="homeNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center user-menu-wrapper">
+                    <li class="nav-item">
+                        <a class="nav-link text-white active" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item dropdown user-menu">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="user-icon-round">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li th:if="${session.user != null}">
+                                <span class="dropdown-item-text" style="font-size: 0.8rem; color: #999;">
+                                    <i class="fa-solid fa-badge"></i> <span th:text="${session.user.role}"></span>
+                                </span>
+                            </li>
+                            <li th:if="${session.user != null}"><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">
+                                <i class="fa-solid fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="dashboard-content">
+        <div class="section-header">
+            <h1 class="dashboard-title"><i class="fa-solid fa-user-group"></i> Users</h1>            <div class="header-buttons">
+                <a href="#" class="btn-add-user" onclick="openAddUserModal(event)">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Add User
+                </a>
+                <div class="search-box-content">
+                    <input type="text" class="search-box-input" id="searchInput" placeholder="Search"
+                        oninput="filterTable()">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="users-table-wrapper">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>CWID</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>                <tbody>
+                    <tr th:each="user, iterStat : ${users}">
+                        <td th:text="${iterStat.count}">1</td>
+                        <td th:text="${user.cwid}">U001</td>
+                        <td th:text="${user.username}">John Doe</td>
+                        <td th:text="${user.email}">john.doe@example.com</td>
+                        <td>
+                            <span class="role-badge" 
+                                th:classappend="${user.role == 'Super Admin'} ? 'role-super-admin' : (${user.role == 'Admin'} ? 'role-admin' : 'role-user')"
+                                th:text="${user.role}">Admin</span>
+                        </td>
+                        <td>
+                            <span class="status-badge"
+                                th:classappend="${user.active} ? 'status-active' : 'status-inactive'"
+                                th:text="${user.active} ? 'Active' : 'Inactive'">Active</span>
+                        </td>                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, this.getAttribute('data-cwid'), this.getAttribute('data-username'), this.getAttribute('data-email'), this.getAttribute('data-role'))"
+                                th:attr="data-cwid=${user.cwid},data-username=${user.username},data-email=${user.email},data-role=${user.role}">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr><!-- Sample Users - Remove when real data is available -->                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>1</td>
+                        <td>CW001</td>
+                        <td>James Wilson</td>
+                        <td>james.wilson@example.com</td>
+                        <td><span class="role-badge role-super-admin">Super Admin</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User" 
+                                onclick="openEditUserModal(event, 'CW001', 'James Wilson', 'james.wilson@example.com', 'Super Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>2</td>
+                        <td>CW002</td>
+                        <td>Sarah Anderson</td>
+                        <td>sarah.anderson@example.com</td>
+                        <td><span class="role-badge role-admin">Admin</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW002', 'Sarah Anderson', 'sarah.anderson@example.com', 'Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>3</td>
+                        <td>CW003</td>
+                        <td>Michael Chen</td>
+                        <td>michael.chen@example.com</td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW003', 'Michael Chen', 'michael.chen@example.com', 'User')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>4</td>
+                        <td>CW004</td>
+                        <td>Emma Johnson</td>
+                        <td>emma.johnson@example.com</td>
+                        <td><span class="role-badge role-admin">Admin</span></td>
+                        <td><span class="status-badge status-inactive">Inactive</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW004', 'Emma Johnson', 'emma.johnson@example.com', 'Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>5</td>
+                        <td>CW005</td>
+                        <td>David Martinez</td>
+                        <td>david.martinez@example.com</td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW005', 'David Martinez', 'david.martinez@example.com', 'User')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>6</td>
+                        <td>CW006</td>
+                        <td>Lisa Thompson</td>
+                        <td>lisa.thompson@example.com</td>
+                        <td><span class="role-badge role-super-admin">Super Admin</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW006', 'Lisa Thompson', 'lisa.thompson@example.com', 'Super Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>7</td>
+                        <td>CW007</td>
+                        <td>Robert Garcia</td>
+                        <td>robert.garcia@example.com</td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW007', 'Robert Garcia', 'robert.garcia@example.com', 'User')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>8</td>
+                        <td>CW008</td>
+                        <td>Jennifer Lee</td>
+                        <td>jennifer.lee@example.com</td>
+                        <td><span class="role-badge role-admin">Admin</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW008', 'Jennifer Lee', 'jennifer.lee@example.com', 'Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>9</td>
+                        <td>CW009</td>
+                        <td>Christopher Brown</td>
+                        <td>christopher.brown@example.com</td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="status-badge status-inactive">Inactive</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW009', 'Christopher Brown', 'christopher.brown@example.com', 'User')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>10</td>
+                        <td>CW010</td>
+                        <td>Amanda White</td>
+                        <td>amanda.white@example.com</td>
+                        <td><span class="role-badge role-admin">Admin</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW010', 'Amanda White', 'amanda.white@example.com', 'Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>11</td>
+                        <td>CW011</td>
+                        <td>Kevin Park</td>
+                        <td>kevin.park@example.com</td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW011', 'Kevin Park', 'kevin.park@example.com', 'User')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>12</td>
+                        <td>CW012</td>
+                        <td>Jessica Rodriguez</td>
+                        <td>jessica.rodriguez@example.com</td>
+                        <td><span class="role-badge role-super-admin">Super Admin</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW012', 'Jessica Rodriguez', 'jessica.rodriguez@example.com', 'Super Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>13</td>
+                        <td>CW013</td>
+                        <td>Daniel Taylor</td>
+                        <td>daniel.taylor@example.com</td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW013', 'Daniel Taylor', 'daniel.taylor@example.com', 'User')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>14</td>
+                        <td>CW014</td>
+                        <td>Michelle Davis</td>
+                        <td>michelle.davis@example.com</td>
+                        <td><span class="role-badge role-admin">Admin</span></td>
+                        <td><span class="status-badge status-inactive">Inactive</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW014', 'Michelle Davis', 'michelle.davis@example.com', 'Admin')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td>15</td>
+                        <td>CW015</td>
+                        <td>Matthew Jackson</td>
+                        <td>matthew.jackson@example.com</td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <button class="edit-btn" title="Edit User"
+                                onclick="openEditUserModal(event, 'CW015', 'Matthew Jackson', 'matthew.jackson@example.com', 'User')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr><!-- End Sample Users -->
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td colspan="7" class="empty-state" style="display: none;">
+                            <i class="fa-solid fa-inbox"></i>
+                            <p>No users found</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table> <!-- Pagination -->
+            <div class="pagination-container">
+                <button class="pagination-btn" id="prevBtn" onclick="previousPage()">
+                    <i class="fa-solid fa-backward-fast"></i>
+                    Previous
+                </button>
+                <span class="pagination-info">
+                    Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+                </span>
+                <button class="pagination-btn" id="nextBtn" onclick="nextPage()">
+                    Next
+                    <i class="fa-solid fa-forward-fast"></i>
+                </button>
+            </div>
+        </div>    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Add User</h2>
+                <button class="modal-close" onclick="closeUserModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>            <div class="form-success" id="formSuccess">
+                <i class="fa-solid fa-check-circle"></i> User saved successfully!
+            </div>
+
+            <form id="userForm" onsubmit="submitUserForm(event)">
+                <!-- Username Field -->
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        User Name
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="modal-input" id="username" placeholder="Enter user name" required>
+                    <div class="modal-error" id="usernameError"></div>
+                </div>
+
+                <!-- CWID Field -->
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        CWID
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="modal-input" id="cwid" placeholder="Enter CWID (e.g., ABCDE or CW001)" required>
+                    <div class="modal-error" id="cwidError"></div>
+                </div>
+
+                <!-- Email Field -->
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        Email
+                        <span class="required">*</span>
+                    </label>
+                    <input type="email" class="modal-input" id="email" placeholder="Enter email address" required>
+                    <div class="modal-error" id="emailError"></div>
+                </div>
+
+                <!-- Role Field -->
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        Role
+                        <span class="required">*</span>
+                    </label>
+                    <select class="modal-select" id="role" required>
+                        <option value="">Select a role</option>
+                        <option value="Super Admin">Super Admin</option>
+                        <option value="Admin">Admin</option>
+                        <option value="User">User</option>
+                    </select>
+                    <div class="modal-error" id="roleError"></div>
+                </div>
+
+                <!-- Active Status Checkbox -->
+                <div class="modal-checkbox-group">
+                    <input type="checkbox" id="active" class="modal-checkbox" checked>
+                    <label for="active" class="modal-checkbox-label">Active Status</label>
+                </div>                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closeUserModal()">
+                        Cancel
+                    </button>
+                    <button type="button" class="modal-btn modal-btn-secondary" id="deleteBtn" style="display: none; background: #ff6b6b; color: white;" onclick="deleteUser()">
+                        <i class="fa-solid fa-trash"></i> Delete User
+                    </button>
+                    <button type="submit" class="modal-btn modal-btn-primary">
+                        <i class="fa-solid fa-save"></i> Save User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div><script>
+        let currentEditingCwid = null;        // Open Add User Modal
+        function openAddUserModal(event) {
+            event.preventDefault();
+            currentEditingCwid = null;
+            document.getElementById('modalTitle').textContent = 'Add User';
+            document.getElementById('userForm').reset();
+            document.getElementById('active').checked = true;
+            document.getElementById('cwid').readOnly = false;
+            document.getElementById('cwid').disabled = false;
+            document.getElementById('deleteBtn').style.display = 'none';
+            clearFormErrors();
+            document.getElementById('formSuccess').classList.remove('show');
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        // Open Edit User Modal
+        function openEditUserModal(event, cwid, username, email, role) {
+            event.preventDefault();
+            currentEditingCwid = cwid;
+            document.getElementById('modalTitle').textContent = 'Edit User';
+            document.getElementById('username').value = username;
+            document.getElementById('cwid').value = cwid;
+            document.getElementById('email').value = email;
+            document.getElementById('role').value = role;
+            document.getElementById('cwid').readOnly = true; // CWID cannot be changed
+            document.getElementById('cwid').disabled = true;
+            document.getElementById('deleteBtn').style.display = 'block';
+            clearFormErrors();
+            document.getElementById('formSuccess').classList.remove('show');
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        // Close User Modal
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('active');
+            document.getElementById('userForm').reset();
+            currentEditingCwid = null;
+            clearFormErrors();
+        }
+
+        // Clear Form Errors
+        function clearFormErrors() {
+            document.querySelectorAll('.modal-error').forEach(error => {
+                error.classList.remove('show');
+                error.textContent = '';
+            });
+        }
+
+        // Validate Email
+        function isValidEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        // Submit User Form
+        function submitUserForm(event) {
+            event.preventDefault();
+            clearFormErrors();
+
+            const username = document.getElementById('username').value.trim();
+            const cwid = document.getElementById('cwid').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const role = document.getElementById('role').value;
+            const active = document.getElementById('active').checked;
+
+            let isValid = true;
+
+            // Validation
+            if (!username) {
+                showError('usernameError', 'User name is required');
+                isValid = false;
+            }            if (!cwid) {
+                showError('cwidError', 'CWID is required');
+                isValid = false;
+            } else if (!/^[A-Za-z0-9]{3,}$/.test(cwid)) {
+                showError('cwidError', 'CWID must be at least 3 alphanumeric characters');
+                isValid = false;
+            }
+
+            if (!email) {
+                showError('emailError', 'Email is required');
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                showError('emailError', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            if (!role) {
+                showError('roleError', 'Role is required');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Prepare user data
+            const userData = {
+                cwid: cwid,
+                username: username,
+                email: email,
+                role: role,
+                active: active,
+                password: 'password123' // Default password for new users
+            };
+
+            // Determine if adding or updating
+            const isAdding = currentEditingCwid === null;
+            const endpoint = isAdding ? '/api/users' : `/api/users/${currentEditingCwid}`;
+            const method = isAdding ? 'POST' : 'PUT';
+
+            // Disable submit button
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';            // Send to backend
+            console.log('Sending user data to:', endpoint);
+            console.log('User data:', userData);
+
+            fetch(endpoint, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    // Show success message
+                    const successMsg = document.getElementById('formSuccess');
+                    successMsg.innerHTML = '<i class="fa-solid fa-check-circle"></i> ' + data.message;
+                    successMsg.classList.add('show');
+                    setTimeout(() => {
+                        closeUserModal();
+                        // Reload page to refresh user list
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showError('usernameError', data.message || 'An error occurred');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save User';
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                showError('usernameError', 'Failed to save user. Please try again. Check console for details.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save User';
+            });
+        }        // Show Error Message
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId);
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }        // Delete User
+        function deleteUser() {
+            if (!currentEditingCwid) return;
+
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+
+            const deleteBtn = document.getElementById('deleteBtn');
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+
+            console.log('Deleting user with CWID:', currentEditingCwid);
+
+            fetch(`/api/users/${currentEditingCwid}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            })
+            .then(response => {
+                console.log('Delete response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Delete response data:', data);
+                if (data.success) {
+                    document.getElementById('formSuccess').classList.add('show');
+                    document.getElementById('formSuccess').innerHTML = '<i class="fa-solid fa-check-circle"></i> User deleted successfully!';
+                    setTimeout(() => {
+                        closeUserModal();
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showError('usernameError', data.message || 'Failed to delete user');
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete User';
+                }
+            })
+            .catch(error => {
+                console.error('Delete error:', error);
+                showError('usernameError', 'Failed to delete user. Please try again.');
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete User';
+            });
+        }// Close modal when clicking outside
+        document.getElementById('userModal').addEventListener('click', function (event) {
+            if (event.target === this) {
+                closeUserModal();
+            }
+        });
+    </script>
+
+    <script>
+        const ITEMS_PER_PAGE = 9;
+        let currentPage = 1;
+        let totalItems = 0;
+        let allRows = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all data rows (excluding sample rows container check)
+            const tbody = document.querySelector('.users-table tbody');
+            allRows = Array.from(tbody.querySelectorAll('tr')).filter(row => {
+                const firstTd = row.querySelector('td');
+                return firstTd && firstTd.textContent.trim() !== '' && !row.querySelector('.empty-state');
+            });
+
+            totalItems = allRows.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+            document.getElementById('totalPages').textContent = totalPages;
+
+            // Hide pagination if 9 or fewer items
+            if (totalItems <= ITEMS_PER_PAGE) {
+                document.querySelector('.pagination-container').style.display = 'none';
+            }
+
+            updatePageDisplay();
+        });
+
+        function updatePageDisplay() {
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIdx = startIdx + ITEMS_PER_PAGE;
+
+            // Hide all rows
+            allRows.forEach(row => row.style.display = 'none');
+
+            // Show only current page rows
+            allRows.slice(startIdx, endIdx).forEach(row => row.style.display = '');
+
+            // Update pagination info
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('totalPages').textContent = totalPages;
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function previousPage() {
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            if (currentPage > 1) {
+                currentPage--;
+                updatePageDisplay();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        } function nextPage() {
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePageDisplay();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function filterTable() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.querySelector('.users-table tbody');
+            const rows = tbody.querySelectorAll('tr');
+
+            if (searchValue.trim() === '') {
+                rows.forEach(row => row.style.display = '');
+                updatePageDisplay();
+                return;
+            }
+
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const firstTd = row.querySelector('td');
+                if (firstTd && !row.querySelector('.empty-state')) {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchValue)) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+
+            if (visibleCount === 0) {
+                rows.forEach(row => {
+                    if (row.querySelector('.empty-state')) {
+                        row.style.display = '';
+                    }
+                });
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

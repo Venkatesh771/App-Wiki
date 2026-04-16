@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>App Server Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
+
+        body {
+            background: #f0f2f5;
+            font-family: "Open Sans", sans-serif;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .navbar {
+            background: #000 !important;
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-family: "Quicksand", sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            margin-left: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 0.85rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .navbar-nav {
+            column-gap: 0.75rem;
+        }
+
+        /* Page-specific layout */        .sidebar-left {
+            display: none;
+        }
+
+        .main-content {
+            margin-left: 0;
+            padding: 30px;
+            padding-bottom: 100px;
+        }
+
+        .form-container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin: 20px auto;
+            width: 100%;
+        }
+
+        .section-box {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-label {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 3px 18px;
+            border-radius: 50px;
+            display: inline-block;
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .row-check {
+            cursor: pointer;
+            accent-color: #1b98e0;
+            height: 12px !important;
+            width: 12px !important;
+        }
+
+        .table-custom {
+            display: none;
+        }
+
+        .row-container-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .field-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        /* SELECT field - stays in first row by itself */
+        .field-item.select-field {
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            min-height: 36px;
+        }
+
+        .field-item.select-field label {
+            height: 36px;
+            display: flex;
+            align-items: center;
+            font-size: 14px !important;
+        }
+
+        /* New container for all fields except select */
+        .fields-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+
+        .field-item.deployed-server-field {
+            grid-column: 1;
+        }
+
+        .field-item.server-name-field {
+            grid-column: 2;
+        }
+
+        .field-item.server-os-field {
+            grid-column: 3;
+        }
+
+        .field-item.domain-field {
+            grid-column: 1;
+        }
+
+        .field-item.cluster-field {
+            grid-column: 2;
+        }
+
+        .field-item.service-name-field {
+            grid-column: 3;
+        }
+
+        .field-item.ip-address-field {
+            grid-column: 1;
+        }
+
+        .field-item label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin: 0;
+        }
+
+        .field-item.select-field label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            order: 1;
+            font-size: 0.75rem;
+        }
+
+        .field-item.select-field .row-select-checkbox {
+            order: 2;
+            margin: 0;
+        }
+
+        .field-item input:not([type="checkbox"]),
+        .field-item select,
+        .field-item textarea {
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 8px 12px;
+            width: 100%;
+            min-height: 36px;
+            height: 36px;
+            box-sizing: border-box;
+            box-shadow: none !important;
+            background-color: #e9ecef;
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+
+        .field-item textarea {
+            height: auto;
+            min-height: 36px;
+            resize: vertical;
+        }
+
+        .field-item input:focus,
+        .field-item select:focus,
+        .field-item textarea:focus {
+            border-color: #b0b0b0 !important;
+            outline: none !important;
+            box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25) !important;
+            background-color: #fff;
+        }
+
+        .row-select-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 36px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .row-select-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn-add {
+            background-color: #355E3B;
+            color: white;
+            border: 1px solid #355E3B;
+            border-radius: 10px;
+            font-size: 0.68rem;
+            padding: 6px 15px;
+            font-weight: 500;
+            margin-right: 10px;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        .btn-delete {
+            background-color: #CD5C5C;
+            color: white;
+            border: 1px solid #CD5C5C;
+            border-radius: 10px;
+            font-size: 0.68rem;
+            padding: 6px 15px;
+            font-weight: 500;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        .btn-save-final {
+            background: #1b98e0;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid #1b98e0;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+        }        .btn-save-final:hover {
+            background: #1585c5;
+            border-color: #1585c5;
+        }
+
+        .btn-save-app-server {
+            background: #1b98e0;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid #1b98e0;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+        }
+
+        .btn-save-app-server:hover {
+            background: #1585c5;
+            border-color: #1585c5;
+            color: white;
+        }
+
+        .save-container {
+            text-align: right;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e8eaef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .fw-bold.text-success {
+            color: #000 !important;
+        }
+
+        .btn-save-final i.fa-backward {
+            font-size: 0.9rem;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            border: 1px solid #6c757d;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            text-decoration: none !important;
+        }
+
+        .btn-back:hover {
+            background: #5a6268;
+            border-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Responsive button styling */
+        @media (max-width: 1200px) {
+            .fields-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fields-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .section-box {
+                padding: 20px 15px;
+            }
+
+            .field-item input,
+            .field-item select,
+            .field-item textarea {
+                height: 32px;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .field-item label {
+                font-size: 0.75rem;
+            }
+
+            .save-container {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 30px;
+                padding-top: 20px;
+            }
+
+            .btn-save-final,
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+                padding: 8px 14px;
+                font-size: 0.7rem;
+            }
+
+            .btn-save-final i,
+            .btn-back i {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .row-container-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .field-item input,
+            .field-item select,
+            .field-item textarea {
+                height: 30px;
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+
+            .field-item label {
+                font-size: 0.7rem;
+            }
+
+            .form-container {
+                padding: 20px 15px;
+            }
+
+            .section-box {
+                padding: 15px 12px;
+            }
+
+            .save-container {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 20px;
+                padding-top: 15px;
+                border-top: 1px solid #e8eaef;
+            }
+
+            .btn-save-final,
+            .btn-back {
+                width: 100%;
+                padding: 8px 12px;
+                font-size: 0.65rem;
+                border-radius: 5px;
+            }
+
+            .btn-save-final span,
+            .btn-back span {
+                display: inline;
+            }
+        }
+
+        /* Focus states for accessibility */
+        .btn-save-final:focus,
+        .btn-back:focus {
+            outline: 2px solid #1b98e0;
+            outline-offset: 2px;
+        }
+
+        /* Loading state for save button */
+        .btn-save-final.loading {
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .btn-save-final.loading i {
+            animation: spin-icon 1s linear infinite;
+        }
+
+        @keyframes spin-icon {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Success state for save button */
+        .btn-save-final.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-color: #28a745;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        /* Error state for save button */
+        .btn-save-final.error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-color: #dc3545;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }        /* Toast Notifications */
+        .toast-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            animation: slideIn 0.3s ease forwards, slideOut 0.3s ease forwards 4.7s;
+            max-width: 300px;
+            word-wrap: break-word;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .toast-notification.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .toast-notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .toast-notification.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .toast-notification.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Add Option Button Styles */
+        .btn-add-option {
+            background: #d1d5db;
+            color: #333;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            transition: background 0.2s ease, border-color 0.2s ease;
+            flex-shrink: 0;
+            min-width: 36px;
+            height: 36px;
+        }
+
+        .btn-add-option:hover {
+            background: #b8bcc4;
+            border-color: #b8bcc4;
+        }
+
+        .btn-add-option:active {
+            transform: scale(0.95);
+        }
+
+        /* Dropdown with Add Option Button */
+        .field-input.has-dropdown {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .field-input.has-dropdown .form-select {
+            flex: 1;
+        }        .field-input .form-control {
+            flex: 1;
+        }
+
+        /* Input Modal Styles */
+        .input-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-modal-overlay.active {
+            display: flex;
+        }
+
+        .input-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            max-width: 320px;
+            width: 90%;
+            overflow: hidden;
+        }
+
+        .input-modal-header {
+            padding: 20px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-modal-header h4 {
+            margin: 0;
+            color: #000;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .input-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .input-modal-close:hover {
+            color: #333;
+        }
+
+        .input-modal-body {
+            padding: 20px;
+        }
+
+        .input-modal-body .form-control {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            height: 36px;
+        }
+
+        .input-modal-body .form-control:focus {
+            background-color: #fff;
+            border-color: #1b98e0;
+            box-shadow: 0 0 0 3px rgba(27, 152, 224, 0.1);
+            outline: none;
+        }
+
+        .input-modal-footer {
+            padding: 0 20px 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .input-modal-footer button {
+            padding: 8px 20px;
+            height: 36px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .input-modal-footer .btn-primary {
+            background: #1b98e0;
+            color: white;
+        }
+
+        .input-modal-footer .btn-primary:hover {
+            background: #1585c5;
+        }        .input-modal-footer .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .input-modal-footer .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Data Saving Indicator Styles */
+        .data-saving-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 5000;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .data-saving-indicator.active {
+            display: flex;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .data-saving-indicator .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f0f0f0;
+            border-top-color: #1b98e0;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>    <!-- Input Modal for Adding Dropdown Options -->
+    <div class="input-modal-overlay" id="inputModal">
+        <div class="input-modal-content">
+            <div class="input-modal-header">
+                <h4 id="inputModalTitle">Add New Option</h4>
+                <button class="input-modal-close" onclick="window.DynamicDropdown.cancelInput()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="input-modal-body">
+                <input type="text" class="form-control" id="inputModalInput" placeholder="Enter new value..."
+                    autocomplete="off">
+            </div>
+            <div class="input-modal-footer">
+                <button class="btn-secondary" onclick="window.DynamicDropdown.cancelInput()">Cancel</button>
+                <button class="btn-primary" onclick="window.DynamicDropdown.confirmInput()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">App Wiki</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/mainfile}">Main Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/applicationserverdetails}">App Server Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/clouddetails}">Cloud Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/databaseserverdetails}">DB Server Details</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>    <div class="main-content">
+        <div class="form-container">
+            <div class="section-box" id="dev-section">
+                <div class="section-label">Dev Ci</div>
+                <div class="row-container-grid" data-section="dev-section">
+                    <div class="field-item select-field">
+                        <label>Select</label>
+                        <div class="row-select-checkbox">
+                            <input type="checkbox" class="row-check">
+                        </div>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-item deployed-server-field">
+                            <label>Deployed Server</label>
+                            <div class="field-input has-dropdown">
+                                <select class="deployed-server form-select">
+                                    <option value="">Select</option>
+                                    <option>Tomcat</option>
+                                    <option>Weblogic</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option"
+                                    onclick="window.DynamicDropdown.openInput(this)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="field-item server-name-field">
+                            <label>Server Name</label>
+                            <input type="text" class="server-input" placeholder="Server Name">
+                        </div>
+                        <div class="field-item server-os-field">
+                            <label>Server OS & Version</label>
+                            <input type="text" placeholder="Server OS & Version">
+                        </div>
+                        <div class="field-item domain-field">
+                            <label>Domain</label>
+                            <input type="text" placeholder="Domain">
+                        </div>
+                        <div class="field-item cluster-field">
+                            <label>Cluster</label>
+                            <input type="text" placeholder="Cluster">
+                        </div>
+                        <div class="field-item service-name-field">
+                            <label>Service Name</label>
+                            <input type="text" placeholder="Service Name">
+                        </div>
+                        <div class="field-item ip-address-field">
+                            <label>IP Address</label>
+                            <input type="text" placeholder="IP Address">
+                        </div>
+                    </div>
+                </div>                <button type="button" class="btn-add" onclick="addRow('dev-section')">Add Row</button>
+                <button type="button" class="btn-delete" onclick="deleteRow('dev-section')">Delete Row</button>
+            </div>
+
+            <div class="section-box" id="test-section">
+                <div class="section-label">Test Ci</div>
+                <div class="row-container-grid" data-section="test-section">
+                    <div class="field-item select-field">
+                        <label>Select</label>
+                        <div class="row-select-checkbox">
+                            <input type="checkbox" class="row-check">
+                        </div>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-item deployed-server-field">
+                            <label>Deployed Server</label>
+                            <div class="field-input has-dropdown">
+                                <select class="deployed-server form-select">
+                                    <option value="">Select</option>
+                                    <option>Tomcat</option>
+                                    <option>Weblogic</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option"
+                                    onclick="window.DynamicDropdown.openInput(this)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="field-item server-name-field">
+                            <label>Server Name</label>
+                            <input type="text" class="server-input" placeholder="Server Name">
+                        </div>
+                        <div class="field-item server-os-field">
+                            <label>Server OS & Version</label>
+                            <input type="text" placeholder="Server OS & Version">
+                        </div>
+                        <div class="field-item domain-field">
+                            <label>Domain</label>
+                            <input type="text" placeholder="Domain">
+                        </div>
+                        <div class="field-item cluster-field">
+                            <label>Cluster</label>
+                            <input type="text" placeholder="Cluster">
+                        </div>
+                        <div class="field-item service-name-field">
+                            <label>Service Name</label>
+                            <input type="text" placeholder="Service Name">
+                        </div>
+                        <div class="field-item ip-address-field">
+                            <label>IP Address</label>
+                            <input type="text" placeholder="IP Address">
+                        </div>
+                    </div>
+                </div>                <button type="button" class="btn-add" onclick="addRow('test-section')">Add Row</button>
+                <button type="button" class="btn-delete" onclick="deleteRow('test-section')">Delete Row</button>
+            </div>
+
+            <div class="section-box" id="qa-section">
+                <div class="section-label">Qa Ci</div>
+                <div class="row-container-grid" data-section="qa-section">
+                    <div class="field-item select-field">
+                        <label>Select</label>
+                        <div class="row-select-checkbox">
+                            <input type="checkbox" class="row-check">
+                        </div>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-item deployed-server-field">
+                            <label>Deployed Server</label>
+                            <div class="field-input has-dropdown">
+                                <select class="deployed-server form-select">
+                                    <option value="">Select</option>
+                                    <option>Tomcat</option>
+                                    <option>Weblogic</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option"
+                                    onclick="window.DynamicDropdown.openInput(this)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="field-item server-name-field">
+                            <label>Server Name</label>
+                            <input type="text" class="server-input" placeholder="Server Name">
+                        </div>
+                        <div class="field-item server-os-field">
+                            <label>Server OS & Version</label>
+                            <input type="text" placeholder="Server OS & Version">
+                        </div>
+                        <div class="field-item domain-field">
+                            <label>Domain</label>
+                            <input type="text" placeholder="Domain">
+                        </div>
+                        <div class="field-item cluster-field">
+                            <label>Cluster</label>
+                            <input type="text" placeholder="Cluster">
+                        </div>
+                        <div class="field-item service-name-field">
+                            <label>Service Name</label>
+                            <input type="text" placeholder="Service Name">
+                        </div>
+                        <div class="field-item ip-address-field">
+                            <label>IP Address</label>
+                            <input type="text" placeholder="IP Address">
+                        </div>
+                    </div>
+                </div>                <button type="button" class="btn-add" onclick="addRow('qa-section')">Add Row</button>
+                <button type="button" class="btn-delete" onclick="deleteRow('qa-section')">Delete Row</button>
+            </div>
+
+            <div class="section-box" id="prod-section">
+                <div class="section-label">Prod Ci</div>
+                <div class="row-container-grid" data-section="prod-section">
+                    <div class="field-item select-field">
+                        <label>Select</label>
+                        <div class="row-select-checkbox">
+                            <input type="checkbox" class="row-check">
+                        </div>
+                    </div>
+                    <div class="fields-grid">
+                        <div class="field-item deployed-server-field">
+                            <label>Deployed Server</label>
+                            <div class="field-input has-dropdown">
+                                <select class="deployed-server form-select">
+                                    <option value="">Select</option>
+                                    <option>Tomcat</option>
+                                    <option>Weblogic</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option"
+                                    onclick="window.DynamicDropdown.openInput(this)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="field-item server-name-field">
+                            <label>Server Name</label>
+                            <input type="text" class="server-input" placeholder="Server Name">
+                        </div>
+                        <div class="field-item server-os-field">
+                            <label>Server OS & Version</label>
+                            <input type="text" placeholder="Server OS & Version">
+                        </div>
+                        <div class="field-item domain-field">
+                            <label>Domain</label>
+                            <input type="text" placeholder="Domain">
+                        </div>
+                        <div class="field-item cluster-field">
+                            <label>Cluster</label>
+                            <input type="text" placeholder="Cluster">
+                        </div>
+                        <div class="field-item service-name-field">
+                            <label>Service Name</label>
+                            <input type="text" placeholder="Service Name">
+                        </div>
+                        <div class="field-item ip-address-field">
+                            <label>IP Address</label>
+                            <input type="text" placeholder="IP Address">
+                        </div>
+                    </div>
+                </div>                <button type="button" class="btn-add" onclick="addRow('prod-section')">Add Row</button>
+                <button type="button" class="btn-delete" onclick="deleteRow('prod-section')">Delete Row</button>
+            </div>            <div class="save-container">
+                <a th:href="@{/mainfile}" class="btn-back" title="Go back to Main Details (Keyboard: Esc)">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Back</span>
+                </a>
+                <button type="button" class="btn-save-app-server"
+                    title="Save and continue to Cloud Details (Keyboard: Ctrl+S)">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Save & Continue</span>
+                </button>
+            </div>
+        </div>    </div>    <!-- Validation Manager with Simple iPhone Popups v3.0 -->
+    <script src="/static/validation-manager-clean.js?v=3.0.0"></script>
+    <!-- Storage Manager V3 -->
+    <script src="/static/storage-manager-v3.js"></script>
+    <!-- Dynamic Dropdown Manager -->
+    <script src="/static/dynamic-dropdown.js"></script>
+
+    <script>
+        // Add/Delete row functionality for grid layout
+        function addRow(id) {
+            createRow(id);
+        }
+
+        function createRow(id) {
+            let container = document.querySelector(`#${id} .row-container-grid`);
+            if (!container) return;
+
+            // Get the first complete row structure (select-field + fields-grid)
+            let selectField = container.querySelector('.field-item.select-field');
+            let fieldsGrid = container.querySelector('.fields-grid');
+
+            if (!selectField || !fieldsGrid) return;
+
+            // Clone the SELECT field
+            let newSelectField = selectField.cloneNode(true);
+
+            // Clone the fields grid with all its children
+            let newFieldsGrid = fieldsGrid.cloneNode(true);
+
+            // Clear all input values in new select field
+            const selectInputs = newSelectField.querySelectorAll('input, select, textarea');
+            selectInputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Clear all input values in new fields grid
+            const gridInputs = newFieldsGrid.querySelectorAll('input, select, textarea');
+            gridInputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Add both new elements to container
+            container.appendChild(newSelectField);
+            container.appendChild(newFieldsGrid);
+        }
+
+        function deleteRow(id) {
+            let container = document.querySelector(`#${id} .row-container-grid`);
+            if (!container) return;
+
+            // Find checked items (every 8th items form a row)
+            let allItems = Array.from(container.querySelectorAll('.field-item'));
+            let rowCount = allItems.length / 8;
+            let checkedRows = [];
+
+            for (let i = 0; i < rowCount; i++) {
+                let checkbox = allItems[i * 8 + 0].querySelector('input[type="checkbox"]');
+                if (checkbox && checkbox.checked) {
+                    checkedRows.push(i);
+                }
+            }
+
+            // Delete from last to first to avoid index issues
+            for (let i = checkedRows.length - 1; i >= 0; i--) {
+                let rowIndex = checkedRows[i];
+                for (let j = 0; j < 8; j++) {
+                    let itemIndex = (rowIndex * 8) + j;
+                    if (allItems[itemIndex]) {
+                        allItems[itemIndex].remove();
+                    }
+                }
+            }
+
+            // Re-index server names
+            let currentRows = Math.ceil(container.querySelectorAll('.field-item').length / 8);
+            allItems = Array.from(container.querySelectorAll('.field-item'));
+            for (let i = 0; i < currentRows; i++) {
+                let serverInput = allItems[i * 8 + 2]?.querySelector('.server-input');
+                if (serverInput) {
+                    serverInput.placeholder = 'Server ' + (i + 1);
+                }
+            }
+        }
+
+        /**
+         * Application Server Storage & Backend Integration
+         */
+        class AppServerStorageManager {
+            constructor() {
+                this.STORAGE_KEY = 'appServerDetailsForm';
+                this.SECTIONS = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
+            }
+
+            /**
+             * Collect all server data from form
+             */
+            collectFormData() {
+                const data = {};
+
+                this.SECTIONS.forEach(sectionId => {
+                    const container = document.querySelector(`#${sectionId} .row-container-grid`);
+                    if (container) {
+                        data[sectionId] = [];
+                        const items = Array.from(container.querySelectorAll('.field-item'));
+                        const rowCount = Math.floor(items.length / 8);
+
+                        for (let i = 0; i < rowCount; i++) {
+                            // New field order: checkbox(0), deployed-server(1), server-name(2), os-version(3), domain(4), cluster(5), service-name(6), ip-address(7)
+                            const serverNameInput = items[i * 8 + 2].querySelector('input');
+                            const serverName = serverNameInput?.value?.trim() || '';
+
+                            if (!serverName) continue; // Skip empty rows
+
+                            const rowData = {};
+                            const environment = sectionId.split('-')[0].toUpperCase();
+                            rowData['environment'] = environment;
+                            rowData['serverName'] = serverName;
+                            rowData['serverOsVersion'] = items[i * 8 + 3]?.querySelector('input')?.value?.trim() || '';
+                            rowData['deployedServer'] = items[i * 8 + 1]?.querySelector('select')?.value?.trim() || '';
+                            rowData['domain'] = items[i * 8 + 4]?.querySelector('input')?.value?.trim() || '';
+                            rowData['cluster'] = items[i * 8 + 5]?.querySelector('input')?.value?.trim() || '';
+                            rowData['serviceName'] = items[i * 8 + 6]?.querySelector('input')?.value?.trim() || '';
+                            rowData['ipAddress'] = items[i * 8 + 7]?.querySelector('input')?.value?.trim() || '';
+
+                            data[sectionId].push(rowData);
+                        }
+                    }
+                });
+
+                return data;
+            }
+
+            /**
+             * Save to browser storage
+             */
+            saveToLocalStorage() {
+                try {
+                    const data = this.collectFormData();
+                    const storageData = {
+                        data,
+                        savedAt: new Date().toISOString(),
+                        version: 1                };                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(storageData));
+                    console.log('App Server details saved to LocalStorage');
+                    return true;
+                } catch (e) {
+                    console.error('Error saving to LocalStorage:', e);
+                    this.showNotification('Failed to save to browser storage', 'error');
+                    return false;
+                }
+            }
+
+            /**
+             * Restore from browser storage
+             */
+            restoreFromLocalStorage() {
+                try {
+                    const raw = localStorage.getItem(this.STORAGE_KEY);
+                    if (!raw) {
+                        console.log('ℹ No saved data in LocalStorage');
+                        return;
+                    }
+
+                    const storageData = JSON.parse(raw);
+                    const { data, savedAt } = storageData;
+
+                    if (!data) return;
+
+                    this.SECTIONS.forEach(sectionId => {
+                        if (data[sectionId] && data[sectionId].length > 0) {
+                            const container = document.querySelector(`#${sectionId} .row-container-grid`);
+                            if (container) {
+                                // Clear existing rows except template
+                                const items = Array.from(container.querySelectorAll('.field-item'));
+                                for (let i = 8; i < items.length; i++) {
+                                    items[i].remove();
+                                }
+
+                                // Restore data
+                                data[sectionId].forEach((rowData) => {
+                                    let templateItems = Array.from(container.querySelectorAll('.field-item')).slice(0, 8);
+                                    let newRowItems = templateItems.map(item => item.cloneNode(true));
+
+                                    // New field order: checkbox(0), deployed-server(1), server-name(2), os-version(3), domain(4), cluster(5), service-name(6), ip-address(7)
+                                    newRowItems[1].querySelector('select').value = rowData.deployedServer || '';
+                                    newRowItems[2].querySelector('input').value = rowData.serverName || '';
+                                    newRowItems[3].querySelector('input').value = rowData.serverOsVersion || '';
+                                    newRowItems[4].querySelector('input').value = rowData.domain || '';
+                                    newRowItems[5].querySelector('input').value = rowData.cluster || '';
+                                    newRowItems[6].querySelector('input').value = rowData.serviceName || '';
+                                    newRowItems[7].querySelector('input').value = rowData.ipAddress || '';
+
+                                    newRowItems.forEach(item => container.appendChild(item));
+                                });
+                            }
+                        }
+                    });
+
+                    console.log(`✓ App Server details restored from LocalStorage (saved: ${new Date(savedAt).toLocaleString()})`);
+                } catch (e) {
+                    console.error('✗ Error restoring from LocalStorage:', e);
+                }
+            }
+
+            /**
+             * Send data to backend
+             */            async sendToBackend() {
+                const data = this.collectFormData();
+
+                try {
+                    const requests = [];
+                    let totalRecords = 0;
+
+                    // Send each environment's data
+                    this.SECTIONS.forEach(sectionId => {
+                        if (data[sectionId] && data[sectionId].length > 0) {
+                            data[sectionId].forEach(rowData => {
+                                totalRecords++;
+                                requests.push(
+                                    fetch('/api/application-server-details', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(rowData)
+                                    })
+                                );
+                            });
+                        }
+                    });
+
+                    if (requests.length === 0) {
+                        this.showNotification('Please add at least one server entry', 'warning');
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.textContent = 'Save & Continue';
+                        }
+                        return false;
+                    }
+
+                    console.log(`Sending ${requests.length} records to backend...`);
+                    const responses = await Promise.all(requests);
+                    const allSuccess = responses.every(r => r.ok);
+
+                    if (allSuccess) {
+                        localStorage.setItem(this.STORAGE_KEY + '_lastSync', new Date().toISOString());
+                        this.showNotification(`✓ ${totalRecords} server(s) saved successfully!`, 'success');
+                        console.log('✓ All app server data sent to backend successfully');
+
+                        setTimeout(() => {
+                            window.location.href = '/clouddetails';
+                        }, 2000);
+                        return true;
+                    } else {
+                        const failedCount = responses.filter(r => !r.ok).length;
+                        this.showNotification(`✗ Failed: ${failedCount} record(s) failed`, 'error');
+                        console.error('✗ Some requests failed:', responses.map(r => r.status));
+                        return false;
+                    }                } catch (error) {
+                    console.error('✗ Error sending to backend:', error);
+                    this.showNotification('✗ Error: ' + error.message, 'error');
+                    return false;
+                }
+            }
+
+            /**
+             * Show notification (Toast)
+             */
+            showNotification(message, type = 'info') {
+                const notificationDiv = document.createElement('div');
+                notificationDiv.className = `toast-notification ${type}`;
+                notificationDiv.textContent = message;
+
+                document.body.appendChild(notificationDiv);
+
+                setTimeout(() => {
+                    notificationDiv.remove();
+                }, 5000);
+            }
+
+            /**
+             * Initialize
+             */
+            init() {
+                // Restore data immediately on init
+                this.restoreFromLocalStorage();
+
+                document.addEventListener('change', (e) => {
+                    if (e.target.closest('table')) {
+                        this.saveToLocalStorage();
+                    }
+                });
+
+                document.addEventListener('input', (e) => {
+                    if (e.target.closest('table')) {
+                        this.saveToLocalStorage();
+                    }
+                });                window.addEventListener('beforeunload', () => {
+                    this.saveToLocalStorage();
+                });
+
+                console.log('✓ App Server Storage Manager initialized');
+            }
+        }        /**
+         * Collect form data from App Server Details page
+         * Handles grid-based layout with multiple rows per section
+         */
+        function collectAppServerFormData() {
+            const data = {};
+            const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
+            
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const rows = [];
+                    const container = section.querySelector('.row-container-grid');
+                    
+                    if (container) {
+                        // Get all field grids (each represents a row of data)
+                        const fieldGrids = container.querySelectorAll('.fields-grid');
+                        
+                        fieldGrids.forEach(fieldsGrid => {
+                            // Collect data from all inputs in this grid
+                            const rowData = {};
+                            fieldsGrid.querySelectorAll('input, select, textarea').forEach((field, idx) => {
+                                if (field.type === 'checkbox') {
+                                    rowData['col_' + idx] = field.checked;
+                                } else {
+                                    rowData['col_' + idx] = field.value || '';
+                                }
+                            });
+                            
+                            // Only include row if it has data
+                            if (Object.values(rowData).some(v => v && v !== false)) {
+                                rows.push(rowData);
+                            }
+                        });
+                    }
+                    
+                    data[sectionId] = rows;
+                }
+            });
+            
+            console.log('Collected App Server Form Data:', data);
+            return data;
+        }        // Initialize with centralized storage manager
+        console.log('App Server Details page loading');
+
+        function initializePage() {
+            console.log('=== INITIALIZING APP SERVER PAGE ===');
+            console.log('StorageManager exists:', !!window.StorageManager);
+            console.log('ValidationManager exists:', !!window.ValidationManager);
+            
+            if (window.StorageManager) {
+                console.log('Calling initAppServerPage()');
+                window.StorageManager.initAppServerPage();
+            } else {
+                console.error('❌ StorageManager NOT FOUND - retrying in 500ms');
+                setTimeout(initializePage, 500);
+                return;
+            }
+            
+            initializeButtonEnhancements();
+            initializeKeyboardShortcuts();
+            console.log('✅ App Server Page Initialized');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }/**
+         * Enhanced Button Interactions
+         */
+        function initializeButtonEnhancements() {
+            const saveBtn = document.querySelector('.btn-save-app-server');
+            const backBtn = document.querySelector('.btn-back');
+
+            // Back button hover effect
+            if (backBtn) {
+                backBtn.addEventListener('mouseenter', function () {
+                    this.style.textDecoration = 'none';
+                });
+
+                backBtn.addEventListener('mouseleave', function () {
+                    this.style.textDecoration = 'none';
+                });
+            }
+        }
+
+        /**
+         * Keyboard Shortcuts
+         */
+        function initializeKeyboardShortcuts() {
+            document.addEventListener('keydown', function (e) {
+                // Ctrl+S or Cmd+S to save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    const saveBtn = document.querySelector('.btn-save-app-server');
+                    if (saveBtn && !saveBtn.disabled) {
+                        saveBtn.click();
+                    }
+                }
+
+                // Escape to go back
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    const backBtn = document.querySelector('.btn-back');
+                    if (backBtn) {
+                        backBtn.click();
+                    }
+                }
+            });
+        }
+
+        // Remove ripple CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-save-app-server {
+                transition: none;
+            }
+
+            .btn-back {
+                transition: none;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>

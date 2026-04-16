@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Home - App Wiki</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+            integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
+        body {
+            background: #f0f2f5;
+            font-family: "Open Sans", sans-serif;
+            min-height: 100vh;
+            font-size: 0.96rem;
+        }
+
+        .table,
+        .table th,
+        .table td,
+        .rounded-table th,
+        .rounded-table td {
+            font-size: 0.95rem;
+        }
+
+        .navbar {
+            background: #000 !important;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            min-height: 44px;
+            height: 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-family: "Quicksand", sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            margin-left: 1.1rem;
+            line-height: 1.1;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-nav {
+            column-gap: 0.75rem;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 0.88rem;
+            padding-top: 0.2rem;
+            padding-bottom: 0.2rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .user-menu-wrapper {
+            padding-right: 1.2rem;
+        }
+
+        .user-menu .dropdown-toggle {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .user-icon-round {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #008080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 3px;
+        }
+
+        .user-icon-round i {
+            color: #fff;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero {
+            padding: 60px 20px;
+        }
+
+        .hero-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #222;
+        }
+
+        .hero-subtitle {
+            color: #666;
+            max-width: 600px;
+            font-size: 0.95rem;
+        }
+
+        .action-icons-container {
+            position: absolute;
+            top: 13px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-icon-btn,
+        .action-icon-btn:active,
+        .action-icon-btn:focus,
+        .action-icon-btn:visited {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .action-icon-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-btn {
+            background: #6c757d !important;
+            color: #fff !important;
+        }
+
+        .edit-btn,
+        .edit-btn:active,
+        .edit-btn:focus,
+        .edit-btn:visited {
+            background: #6c757d !important;
+            color: #fff !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .edit-btn:hover {
+            background: #5a6268 !important;
+            color: #fff !important;
+        }
+
+        .delete-btn {
+            background: #dc3545 !important;
+            color: #fff !important;
+        }
+
+        .delete-btn,
+        .delete-btn:active,
+        .delete-btn:focus,
+        .delete-btn:visited {
+            background: #dc3545 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .delete-btn:hover {
+            background: #c82333 !important;
+            color: #fff !important;
+        }
+
+        .table-wrapper-with-offset {
+            margin-top: 15px;
+        }
+
+        /* Only add top margin when action icons are visible */
+        .action-icons-container~.table-wrapper-with-offset {
+            margin-top: 32px;
+        }
+
+        .add-app-btn {
+            font-family: "Quicksand", sans-serif;
+            background: #008080;
+            color: #fff;
+            border-radius: 12px;
+            padding: 0.55rem 1.1rem;
+            min-width: auto;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.25s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .add-app-btn-plus {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #008080;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .add-app-btn,
+        .add-app-btn:active,
+        .add-app-btn:focus,
+        .add-app-btn:visited {
+            background: #008080 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+            outline: none !important;
+            text-decoration: none;
+        }
+
+        .add-app-btn:hover {
+            background: #006666 !important;
+            box-shadow: 0 2px 8px rgba(0, 128, 128, 0.2);
+            color: #fff !important;
+            text-decoration: none;
+        }
+
+        .search-pill {
+            background: #fff;
+            border-radius: 12px;
+            padding: 0.6rem 0.7rem;
+            min-width: auto;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            height: 38px;
+        }
+
+        .search-pill,
+        .search-pill:active,
+        .search-pill:focus,
+        .search-pill:visited {
+            background: #fff !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+            outline: none !important;
+        }
+
+        .search-pill:hover {
+            background: #fafafa !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        .table-card {
+            background: #fff;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            max-width: 100%;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f0f0f0;
+        }
+
+        .table-card:first-of-type {
+            margin-top: 32px;
+        }
+
+        .inner-table-bg {
+            background: #fff;
+        }
+
+        .section-pill {
+            background: #e8f4f8;
+            border-radius: 20px;
+            padding: 0.45rem 0.9rem;
+            color: #008080;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid #d0e8ec;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .section-pill,
+        .section-pill:active,
+        .section-pill:focus,
+        .section-pill:visited {
+            background: #e8f4f8 !important;
+            color: #008080 !important;
+            box-shadow: none !important;
+            outline: none !important;
+            font-weight: 600;
+            border: 1px solid #d0e8ec !important;
+        }
+
+        .section-pill:hover {
+            background: #d0e8ec !important;
+            color: #006666 !important;
+            border-color: #b8dce4 !important;
+        }
+
+        .search-input {
+            box-shadow: none;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.9rem;
+            color: #333;
+            min-width: 130px;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-input:focus {
+            box-shadow: none;
+            border: none;
+            outline: none;
+            background: transparent;
+        }
+
+        .search-icon {
+            margin-right: 6px;
+            color: #008080;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .search-icon:hover {
+            color: #006666;
+        }
+
+        .rounded-table th {
+            font-weight: 700;
+            background: #f3f3f3;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .rounded-table td {
+            background: #fafafa;
+        }
+
+        .rounded-table th,
+        .rounded-table td {
+            width: 160px;
+            max-width: 160px;
+            word-break: normal;
+            white-space: nowrap;
+            text-align: left;
+            color: #333;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rounded-table tbody tr {
+            transition: background-color 0.15s ease;
+            background-color: #fafbfc;
+            cursor: pointer;
+        }
+
+        .rounded-table tbody tr:hover {
+            background-color: #f0f2f5;
+        }
+
+        .rounded-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rounded-table th.beat-id,
+        .rounded-table td.beat-id {
+            padding-left: 25px;
+            width: 200px;
+            max-width: 200px;
+        }
+
+        .rounded-table th.app-name,
+        .rounded-table td.app-name {
+            width: 320px;
+            max-width: 320px;
+        }
+
+        .rounded-table th.squad,
+        .rounded-table td.squad {
+            padding-left: 32px;
+        }
+
+        .rounded-table th.offshore,
+        .rounded-table td.offshore {
+            width: 220px;
+            max-width: 220px;
+        }
+
+        .rounded-table th.onshore,
+        .rounded-table td.onshore {
+            width: 220px;
+            max-width: 220px;
+        }
+
+        .rounded-table th.system-owner,
+        .rounded-table td.system-owner {
+            width: 220px;
+            max-width: 220px;
+        }
+
+        .rounded-table th.business-owner,
+        .rounded-table td.business-owner {
+            width: 220px;
+            max-width: 220px;
+        }
+
+        .basic-identity-table {
+            background: #fafafa;
+            border-radius: 8px;
+            margin-top: 22px !important;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            font-size: 0.9rem;
+            padding-top: 20px !important;
+            padding-left: 24px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .basic-identity-table .col-md-4 {
+            padding-left: 16px;
+        }
+
+        .basic-identity-table th,
+        .basic-identity-table td {
+            padding: 8px 12px;
+            border: none;
+            font-weight: 400;
+        }
+
+        .basic-identity-table th {
+            color: #666;
+            width: 180px;
+            font-weight: 600;
+            background: #f9f9f9;
+            font-size: 0.85rem;
+        }        .basic-identity-table tr:not(:last-child) td {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .section-title-header {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #008080;
+            margin-bottom: 1.5rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-bottom: 2px solid #e8f4f8;
+            padding-bottom: 0.75rem;
+        }
+
+        .container {
+            max-width: 1250px;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .navbar-nav .nav-link.text-white {
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .navbar-nav .nav-link.text-white::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar-nav .nav-link.text-white:hover::after {
+            width: 100%;
+        }
+
+        .view-btn {
+            background: #008080 !important;
+            color: #fff !important;
+            border-radius: 20px;
+            padding: 0.45rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: none !important;
+            outline: none !important;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.25s ease, box-shadow 0.2s ease;
+        }
+
+        .view-btn:active,
+        .view-btn:focus,
+        .view-btn:visited {
+            background: #008080 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .view-btn:hover {
+            background: #006666 !important;
+            color: #fff !important;
+            box-shadow: 0 2px 8px rgba(0, 128, 128, 0.2);
+        }
+
+        .dashboard-content {
+            margin-top: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .applications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .applications-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #222;
+            margin: 0;
+            margin-left: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .dropdown-item {
+            background: transparent !important;
+            color: #333 !important;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-item:hover,
+        .dropdown-item:active,
+        .dropdown-item:focus {
+            background: transparent !important;
+            color: #008080 !important;
+        }
+
+        .dropdown-item-text {
+            color: #999 !important;
+        }
+    </style>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/home">App Wiki</a>
+                <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#homeNavbar"
+                    aria-controls="homeNavbar" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="homeNavbar">
+                    <ul
+                        class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center user-menu-wrapper">
+                        <!-- Users Link - Only for Admin and Super Admin -->
+                        <li class="nav-item"
+                            th:if="${session.user != null && (session.user.role == 'Super Admin' || session.user.role == 'Admin')}">
+                            <a class="nav-link text-white"
+                                href="/admindashboard">Users</a>
+                        </li>
+                        <li class="nav-item dropdown user-menu">
+                            <a class="nav-link dropdown-toggle" href="#"
+                                id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="user-icon-round">
+                                    <i class="fa-solid fa-user"></i>
+                                </span>
+                                <span
+                                    th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                    User</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end"
+                                aria-labelledby="userDropdown">
+                                <li th:if="${session.user != null}">
+                                    <span class="dropdown-item-text"
+                                        style="font-size: 0.8rem; color: #999;">
+                                        <i class="fa-solid fa-badge"></i> <span
+                                            th:text="${session.user.role}"></span>
+                                    </span>
+                                </li>
+                                <li th:if="${session.user != null}">
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/logout">
+                                        <i class="fa-solid fa-sign-out-alt"></i>
+                                        Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-5">
+            <div class="applications-header">
+                <h5 class="applications-title"><i
+                        class="fa-solid fa-list me-2"></i>Applications</h5>
+                <div class="header-actions">
+                    <!-- Add Application Button - Only for Admin and Super Admin -->
+                    <button
+                        class="btn btn-sm d-flex align-items-center justify-content-between add-app-btn"
+                        th:if="${session.user != null && (session.user.role == 'Super Admin' || session.user.role == 'Admin')}"
+                        onclick="window.location.href='/mainfile'">
+                        <span class="me-2">Add Application</span>
+                        <span
+                            class="d-inline-flex align-items-center justify-content-center add-app-btn-plus">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                    </button>
+                    <div class="d-flex align-items-center search-pill">
+                        <input type="text"
+                            class="form-control form-control-sm border-0 bg-transparent search-input"
+                            placeholder="Search">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 position-relative table-card">
+                <!-- Action Icons - Only for Super Admin and Admin users -->
+                <div class="action-icons-container"
+                    th:if="${session.user != null && session.user.role == 'Super Admin'}">
+                    <button class="btn btn-sm action-icon-btn edit-btn"
+                        title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm action-icon-btn delete-btn"
+                        title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <div class="action-icons-container"
+                    th:if="${session.user != null && session.user.role == 'Admin'}">
+                    <button class="btn btn-sm action-icon-btn edit-btn"
+                        title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+                <div class="table-responsive mb-3 table-wrapper-with-offset">
+                    <table class="table mb-0 inner-table-bg rounded-table">
+                        <thead>
+                            <tr>
+                                <th class="beat-id">BEAT ID</th>
+                                <th class="app-name">Application Name</th>
+                                <th class="squad">SQUAD</th>
+                                <th class="offshore">Offshore Primary</th>
+                                <th class="onshore">Onshore Primary</th>
+                                <th class="system-owner">System owner</th>
+                                <th class="business-owner">Business Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="beat-id">BEAT01034140</td>
+                                <td class="app-name">PICADOR</td>
+                                <td class="squad">PF</td>
+                                <td class="offshore">Ajeet</td>
+                                <td class="onshore">Joe</td>
+                                <td class="system-owner">John</td>
+                                <td class="business-owner">Jane</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button
+                        class="btn btn-sm action-icon-btn view-btn expand-all-btn"
+                        title="View">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#basicIdentity1" aria-expanded="false"
+                        aria-controls="basicIdentity1">
+                        Basic Identity <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#description1" aria-expanded="false"
+                        aria-controls="description1">
+                        Description <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#authentication1" aria-expanded="false"
+                        aria-controls="authentication1">
+                        Authentication &amp; Vendor <i
+                            class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#technical1" aria-expanded="false"
+                        aria-controls="technical1">
+                        Technical Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#resource1" aria-expanded="false"
+                        aria-controls="resource1">
+                        Resource Contacts <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#apphosted1" aria-expanded="false"
+                        aria-controls="apphosted1">
+                        App hosted Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#cloud1" aria-expanded="false"
+                        aria-controls="cloud1">
+                        Cloud Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#dbserver1" aria-expanded="false"
+                        aria-controls="dbserver1">
+                        DB Server Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                </div>                <div class="collapse stack-section" id="basicIdentity1"
+                    data-section="basic-identity">
+                    <div class="section-title-header">Basic Identity</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Beat
+                                ID</div>
+                            <div class="text-dark">BEAT01034140</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Application
+                                Name</div>
+                            <div class="text-dark">PICADOR</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">GxP</div>
+                            <div class="text-dark">Yes</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Squad</div>
+                            <div class="text-dark">PF</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Business
+                                Owner</div>
+                            <div class="text-dark">John</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Sub
+                                Domain</div>
+                            <div class="text-dark">Global</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">App
+                                Region</div>
+                            <div class="text-dark">Emea</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Service
+                                Variant</div>
+                            <div class="text-dark">Gold+</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Type
+                                Category</div>
+                            <div class="text-dark">Type 1</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">System
+                                Owner</div>
+                            <div class="text-dark">Jane</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="description1"
+                    data-section="description">
+                    <div class="section-title-header">Description</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Application
+                                Description</div>
+                            <div class="text-dark">This is a sample description
+                                for PICADOR.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Business
+                                Impact Description</div>
+                            <div class="text-dark">Critical for business
+                                operations.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Financial
+                                Impact ($/€)</div>
+                            <div class="text-dark">$100,000</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">User
+                                Access Review</div>
+                            <div class="text-dark">Quarterly</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="authentication1"
+                    data-section="authentication-vendor">
+                    <div class="section-title-header">Authentication & Vendor</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Authentication Type</div>
+                            <div class="text-dark">Internal Ocelot</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Auth Details/Routing</div>
+                            <div class="text-dark">Internal routing configured</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Authorization Type</div>
+                            <div class="text-dark">User Roles</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor App</div>
+                            <div class="text-dark">No</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">App Decommissioned</div>
+                            <div class="text-dark">No</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Ticketing URL</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Support Exist</div>
+                            <div class="text-dark">No</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Contact Details</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">App Hosted In</div>
+                            <div class="text-dark">On Prem</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="technical1"
+                    data-section="technical-details">
+                    <div class="section-title-header">Technical Details</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">App URLs - Dev/Test</div>
+                            <div class="text-dark">https://dev.app.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">GitHub Repos</div>
+                            <div class="text-dark">https://github.com/company/repo</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">LB/VIP Details</div>
+                            <div class="text-dark">192.168.1.10</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">External/Internal</div>
+                            <div class="text-dark">Internal</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Upstream System</div>
+                            <div class="text-dark">System A</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Akana / Mulesoft</div>
+                            <div class="text-dark">Akana Gateway</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Kafka Topic</div>
+                            <div class="text-dark">app-events</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Azure Client IDs</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="resource1"
+                    data-section="resource-contacts">
+                    <div class="section-title-header">Resource Contacts</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Offshore Primary</div>
+                            <div class="text-dark">Ajeet</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Offshore Secondary</div>
+                            <div class="text-dark">Raj</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Offshore Tertiary</div>
+                            <div class="text-dark">Priya</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Onshore Primary</div>
+                            <div class="text-dark">Joe</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Onshore Secondary</div>
+                            <div class="text-dark">Mike</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Onshore Tertiary</div>
+                            <div class="text-dark">Sarah</div>
+                        </div>
+                    </div>                </div>                <div class="collapse stack-section" id="apphosted1"
+                    data-section="app-hosted-details">
+                    <div class="section-title-header">App Hosted Details</div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev CI</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Deployed Server</div>
+                            <div class="text-dark">Tomcat</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Server Name</div>
+                            <div class="text-dark">picador-dev-01</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Server OS & Version</div>
+                            <div class="text-dark">Linux RHEL 7.9</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Domain</div>
+                            <div class="text-dark">dev.internal.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Cluster</div>
+                            <div class="text-dark">app-cluster-dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">picador</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                class="fw-semibold text-secondary small">IP Address</div>
+                            <div class="text-dark">192.168.1.10</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod CI</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Deployed Server</div>
+                            <div class="text-dark">Tomcat</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Server Name</div>
+                            <div class="text-dark">picador-prod-01</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Server OS & Version</div>
+                            <div class="text-dark">Linux RHEL 7.9</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Domain</div>
+                            <div class="text-dark">prod.internal.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Cluster</div>
+                            <div class="text-dark">app-cluster-01</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">picador</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP Address</div>
+                            <div class="text-dark">192.168.1.100</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="cloud1"
+                    data-section="cloud-details">
+                    <div class="section-title-header">Cloud Details</div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Non Prod</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">111111111</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Type</div>
+                            <div class="text-dark">EC2</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">PICADOR</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Lambda Names</div>
+                            <div class="text-dark">picador-dev-lambda</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">S3 Bucket</div>
+                            <div class="text-dark">picador-data-dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">SQS Names</div>
+                            <div class="text-dark">picador-queue-dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">IAM User</div>
+                            <div class="text-dark">picador-dev-user</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Comments</div>
+                            <div class="text-dark">Dev environment</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">123456789</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Type</div>
+                            <div class="text-dark">EC2</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">PICADOR</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Lambda Names</div>
+                            <div class="text-dark">picador-processor</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">S3 Bucket</div>
+                            <div class="text-dark">picador-data-prod</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">SQS Names</div>
+                            <div class="text-dark">picador-queue</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">IAM User</div>
+                            <div class="text-dark">picador-app-user</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Comments</div>
+                            <div class="text-dark">Production deployment</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="dbserver1"
+                    data-section="db-server-details">
+                    <div class="section-title-header">DB Server Details</div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">MySQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">5.7.32</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">On Prem</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">picador_dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">dev-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">mysql-dev.internal.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">picador</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">3306</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">Dev-12345</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.0.50</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Test</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">MySQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">5.7.32</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">AWS</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">picador_test</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">test-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">mysql-test.aws.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">picador</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">3306</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">AWS-123456</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.0.75</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">QA</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">MySQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">5.7.32</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">AWS</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">picador_qa</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">qa-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">mysql-qa.aws.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">picador</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">3306</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">AWS-789012</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.1.25</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">MySQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">5.7.32</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">RDS</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">picador_prod</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">prod-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">mysql01.internal.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">picador</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">3306</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">AWS-123456</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.1.50</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 position-relative table-card">
+                <div class="action-icons-container"
+                    th:if="${session.user != null && session.user.role == 'Super Admin'}">
+                    <button class="btn btn-sm action-icon-btn edit-btn"
+                        title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm action-icon-btn delete-btn"
+                        title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <!-- Edit Only - for Admin users -->
+                <div class="action-icons-container"
+                    th:if="${session.user != null && session.user.role == 'Admin'}">
+                    <button class="btn btn-sm action-icon-btn edit-btn"
+                        title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+                <div class="table-responsive mb-3 table-wrapper-with-offset">
+                    <table class="table mb-0 inner-table-bg rounded-table">
+                        <thead>
+                            <tr>
+                                <th class="beat-id">BEAT ID</th>
+                                <th class="app-name">Application Name</th>
+                                <th class="squad">SQUAD</th>
+                                <th class="offshore">Offshore Primary</th>
+                                <th class="onshore">Onshore Primary</th>
+                                <th class="system-owner">System owner</th>
+                                <th class="business-owner">Business Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="beat-id">BEAT03215387</td>
+                                <td class="app-name">Line Coding Assignment</td>
+                                <td class="squad">PF</td>
+                                <td class="offshore">Sai</td>
+                                <td class="onshore">Joe</td>
+                                <td class="system-owner">John</td>
+                                <td class="business-owner">Jane</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button class="btn btn-sm action-icon-btn view-btn"
+                        title="View">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#basicIdentity2" aria-expanded="false"
+                        aria-controls="basicIdentity2">
+                        Basic Identity <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#description2" aria-expanded="false"
+                        aria-controls="description2">
+                        Description <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#authentication2" aria-expanded="false"
+                        aria-controls="authentication2">
+                        Authentication &amp; Vendor <i
+                            class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#technical2" aria-expanded="false"
+                        aria-controls="technical2">
+                        Technical Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#resource2" aria-expanded="false"
+                        aria-controls="resource2">
+                        Resource Contacts <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#apphosted2" aria-expanded="false"
+                        aria-controls="apphosted2">
+                        App hosted Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#cloud2" aria-expanded="false"
+                        aria-controls="cloud2">
+                        Cloud Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#dbserver2" aria-expanded="false"
+                        aria-controls="dbserver2">
+                        DB Server Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                </div>                <div class="collapse stack-section" id="basicIdentity2"
+                    data-section="basic-identity">
+                    <div class="section-title-header">Basic Identity</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Beat
+                                ID</div>
+                            <div class="text-dark">BEAT03215387</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Application
+                                Name</div>
+                            <div class="text-dark">Line Coding Assignment</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">GxP</div>
+                            <div class="text-dark">No</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Squad</div>
+                            <div class="text-dark">PF</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Business
+                                Owner</div>
+                            <div class="text-dark">Jane Doe</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Sub
+                                Domain</div>
+                            <div class="text-dark">Local</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">App
+                                Region</div>
+                            <div class="text-dark">US</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Service
+                                Variant</div>
+                            <div class="text-dark">Bronze</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Type
+                                Category</div>
+                            <div class="text-dark">Type 2</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">System
+                                Owner</div>
+                            <div class="text-dark">John Smith</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="description2"
+                    data-section="description">
+                    <div class="section-title-header">Description</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Application
+                                Description</div>
+                            <div class="text-dark">This is a sample description
+                                for Line Coding Assignment.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Business
+                                Impact Description</div>
+                            <div class="text-dark">Important for technical
+                                training.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Financial
+                                Impact ($/€)</div>
+                            <div class="text-dark">$50,000</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">User
+                                Access Review</div>
+                            <div class="text-dark">Yearly</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="authentication2"
+                    data-section="authentication-vendor">
+                    <div class="section-title-header">Authentication & Vendor</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Authentication Type</div>
+                            <div class="text-dark">LDAP</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Auth Details/Routing</div>
+                            <div class="text-dark">LDAP routing</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Authorization Type</div>
+                            <div class="text-dark">AD Groups</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor App</div>
+                            <div class="text-dark">Yes</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Name</div>
+                            <div class="text-dark">LDAP Provider</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">App Decommissioned</div>
+                            <div class="text-dark">No</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Ticketing URL</div>
+                            <div class="text-dark">https://ldap-support.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Support Exist</div>
+                            <div class="text-dark">Yes</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Contact Details</div>
+                            <div class="text-dark">support@ldap-provider.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">App Hosted In</div>
+                            <div class="text-dark">Cloud</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="technical2"
+                    data-section="technical-details">
+                    <div class="section-title-header">Technical Details</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">App URLs - Dev/Test</div>
+                            <div class="text-dark">https://dev-lca.app.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">GitHub Repos</div>
+                            <div class="text-dark">https://github.com/company/lca</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">LB/VIP Details</div>
+                            <div class="text-dark">192.168.2.20</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">External/Internal</div>
+                            <div class="text-dark">External</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Upstream System</div>
+                            <div class="text-dark">System B, System C</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Akana / Mulesoft</div>
+                            <div class="text-dark">Mulesoft ESB</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Kafka Topic</div>
+                            <div class="text-dark">lca-events, lca-logs</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Azure Client IDs</div>
+                            <div class="text-dark">azure-client-123</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="resource2"
+                    data-section="resource-contacts">
+                    <div class="section-title-header">Resource Contacts</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Offshore Primary</div>
+                            <div class="text-dark">Sai</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Offshore Secondary</div>
+                            <div class="text-dark">Kumar</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Offshore Tertiary</div>
+                            <div class="text-dark">Anita</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Onshore Primary</div>
+                            <div class="text-dark">Joe</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Onshore Secondary</div>
+                            <div class="text-dark">Tom</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Onshore Tertiary</div>
+                            <div class="text-dark">Lisa</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="apphosted2"
+                    data-section="app-hosted-details">
+                    <div class="section-title-header">App Hosted Details</div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev CI</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Deployed Server</div>
+                            <div class="text-dark">Weblogic</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Server Name</div>
+                            <div class="text-dark">lca-dev-01</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Server OS & Version</div>
+                            <div class="text-dark">Windows Server 2019</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Domain</div>
+                            <div class="text-dark">dev.cloud.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Cluster</div>
+                            <div class="text-dark">weblogic-cluster-dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">lca-service</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP Address</div>
+                            <div class="text-dark">10.20.1.50</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod CI</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Deployed Server</div>
+                            <div class="text-dark">Weblogic</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Server Name</div>
+                            <div class="text-dark">lca-prod-01</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Server OS & Version</div>
+                            <div class="text-dark">Windows Server 2019</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Domain</div>
+                            <div class="text-dark">prod.cloud.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Cluster</div>
+                            <div class="text-dark">weblogic-cluster-01</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">lca-service</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP Address</div>
+                            <div class="text-dark">10.20.1.100</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="cloud2"
+                    data-section="cloud-details">
+                    <div class="section-title-header">Cloud Details</div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Non Prod</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">222222222</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Type</div>
+                            <div class="text-dark">ECS</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">LCA</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Lambda Names</div>
+                            <div class="text-dark">lca-dev-lambda</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">S3 Bucket</div>
+                            <div class="text-dark">lca-storage-dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">SQS Names</div>
+                            <div class="text-dark">lca-queue-dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">IAM User</div>
+                            <div class="text-dark">lca-dev-user</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Comments</div>
+                            <div class="text-dark">Dev environment</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">987654321</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Type</div>
+                            <div class="text-dark">ECS</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">LCA</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Lambda Names</div>
+                            <div class="text-dark">lca-validator, lca-processor</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">S3 Bucket</div>
+                            <div class="text-dark">lca-storage-prod</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">SQS Names</div>
+                            <div class="text-dark">lca-queue-1, lca-queue-2</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">IAM User</div>
+                            <div class="text-dark">lca-app-user, lca-lambda-user</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Comments</div>
+                            <div class="text-dark">Cloud migration completed</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="dbserver2"
+                    data-section="db-server-details">
+                    <div class="section-title-header">DB Server Details</div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">PostgreSQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">12.8</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">On Prem</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">lca_dev</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">dev-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">postgres-dev.internal.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">lca</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">5432</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">Dev-67890</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.2.50</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Test</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">PostgreSQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">12.8</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">Azure</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">lca_test</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">test-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">postgres-test.azure.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">lca</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">5432</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">Azure-345678</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.2.75</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">QA</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">PostgreSQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">12.8</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">Azure</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">lca_qa</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">qa-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">postgres-qa.azure.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">lca</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">5432</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">Azure-654321</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.3.25</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">PostgreSQL</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">12.8</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">Azure</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">lca_prod</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">azure-db-account</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">postgres01.azure.com</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">lca</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">5432</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">Azure-987654</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">10.0.2.100</div>
+                        </div>
+                    </div>
+                </div>
+            <div class="p-4 position-relative table-card">
+                <div class="action-icons-container"
+                    th:if="${session.user != null && session.user.role == 'Super Admin'}">
+                    <button class="btn btn-sm action-icon-btn edit-btn"
+                        title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm action-icon-btn delete-btn"
+                        title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <!-- Edit Only - for Admin users -->
+                <div class="action-icons-container"
+                    th:if="${session.user != null && session.user.role == 'Admin'}">
+                    <button class="btn btn-sm action-icon-btn edit-btn"
+                        title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+                <div class="table-responsive mb-3 table-wrapper-with-offset">
+                    <table class="table mb-0 inner-table-bg rounded-table">
+                        <thead>
+                            <tr>
+                                <th class="beat-id">BEAT ID</th>
+                                <th class="app-name">Application Name</th>
+                                <th class="squad">SQUAD</th>
+                                <th class="offshore">Offshore Primary</th>
+                                <th class="onshore">Onshore Primary</th>
+                                <th class="system-owner">System owner</th>
+                                <th class="business-owner">Business Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="beat-id">BEAT04059986</td>
+                                <td class="app-name">Manage Field Trials</td>
+                                <td class="squad">PF</td>
+                                <td class="offshore"></td>
+                                <td class="onshore"></td>
+                                <td class="system-owner"></td>
+                                <td class="business-owner"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button class="btn btn-sm action-icon-btn view-btn"
+                        title="View">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#basicIdentity3" aria-expanded="false"
+                        aria-controls="basicIdentity3">
+                        Basic Identity <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#description3" aria-expanded="false"
+                        aria-controls="description3">
+                        Description <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#authentication3" aria-expanded="false"
+                        aria-controls="authentication3">
+                        Authentication &amp; Vendor <i
+                            class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#technical3" aria-expanded="false"
+                        aria-controls="technical3">
+                        Technical Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#resource3" aria-expanded="false"
+                        aria-controls="resource3">
+                        Resource Contacts <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#apphosted3" aria-expanded="false"
+                        aria-controls="apphosted3">
+                        App hosted Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#cloud3" aria-expanded="false"
+                        aria-controls="cloud3">
+                        Cloud Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                    <button class="btn btn-sm text-white section-pill"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#dbserver3" aria-expanded="false"
+                        aria-controls="dbserver3">
+                        DB Server Details <i class="fa-solid fa-plus ms-1"></i>
+                    </button>
+                </div>                <div class="collapse stack-section" id="basicIdentity3"
+                    data-section="basic-identity">
+                    <div class="section-title-header">Basic Identity</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Beat
+                                ID</div>
+                            <div class="text-dark">BEAT04059986</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Application
+                                Name</div>
+                            <div class="text-dark">Manage Field Trials</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">GxP</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Squad</div>
+                            <div class="text-dark">PF</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Business
+                                Owner</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Sub
+                                Domain</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">App
+                                Region</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Service
+                                Variant</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">Type
+                                Category</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="fw-semibold text-secondary small">System
+                                Owner</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="description3"
+                    data-section="description">
+                    <div class="section-title-header">Description</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Application
+                                Description</div>
+                            <div class="text-dark">Field trial management application.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Business
+                                Impact Description</div>
+                            <div class="text-dark">Trial execution tracking.</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Financial
+                                Impact ($/€)</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">User
+                                Access Review</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="authentication3"
+                    data-section="authentication-vendor">
+                    <div class="section-title-header">Authentication & Vendor</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Authentication Type</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Auth Details/Routing</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Authorization Type</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor App</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">App Decommissioned</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Ticketing URL</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Support Exist</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Vendor Contact Details</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">App Hosted In</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="technical3"
+                    data-section="technical-details">
+                    <div class="section-title-header">Technical Details</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">App URLs - Dev/Test</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">GitHub Repos</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">LB/VIP Details</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">External/Internal</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Upstream System</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Akana / Mulesoft</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Kafka Topic</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Azure Client IDs</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="resource3"
+                    data-section="resource-contacts">
+                    <div class="section-title-header">Resource Contacts</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Offshore Primary</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Offshore Secondary</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Offshore Tertiary</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Onshore Primary</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Onshore Secondary</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Onshore Tertiary</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="apphosted3"
+                    data-section="app-hosted-details">
+                    <div class="section-title-header">App Hosted Details</div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev CI</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Deployed Server</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Server Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Server OS & Version</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Domain</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Cluster</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP Address</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod CI</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Deployed Server</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Server Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Server OS & Version</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Domain</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Cluster</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP Address</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="cloud3"
+                    data-section="cloud-details">
+                    <div class="section-title-header">Cloud Details</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Type</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Lambda Names</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">S3 Bucket</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">SQS Names</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">IAM User</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Comments</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>                <div class="collapse stack-section" id="dbserver3"
+                    data-section="db-server-details">
+                    <div class="section-title-header">DB Server Details</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div
+                                class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark">-</div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+        document.querySelectorAll('.table-card').forEach(function (card) {
+            card.querySelectorAll('.section-pill[data-bs-toggle="collapse"]').forEach(function (btn) {
+                var targetId = btn.getAttribute('data-bs-target');
+                if (targetId && targetId.startsWith('#')) {
+                    var collapseElem = card.querySelector(targetId);
+                    var icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.style.transition = 'transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s';
+                    }
+                    if (collapseElem) {
+                        collapseElem.addEventListener('show.bs.collapse', function () {
+                            if (icon) {
+                                icon.classList.remove('fa-plus');
+                                icon.classList.add('fa-minus');
+                                icon.style.transform = 'rotate(180deg) scale(1.2)';
+                                icon.style.opacity = '0.7';
+                                setTimeout(function () {
+                                    icon.style.opacity = '1';
+                                }, 150);
+                            }
+                            var allSections = Array.from(card.querySelectorAll('.collapse.stack-section'));
+                            var pillsRow = btn.closest('.d-flex.flex-wrap');
+                            if (pillsRow && pillsRow.nextElementSibling) {
+                                pillsRow.parentNode.insertBefore(collapseElem, pillsRow.nextElementSibling);
+                            }
+                        });
+                        collapseElem.addEventListener('hide.bs.collapse', function () {
+                            if (icon) {
+                                icon.classList.remove('fa-minus');
+                                icon.classList.add('fa-plus');
+                                icon.style.transform = 'rotate(0deg) scale(1)';
+                                icon.style.opacity = '0.7';
+                                setTimeout(function () {
+                                    icon.style.opacity = '1';
+                                }, 150);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.table-card').forEach(function (card) {
+            var expandBtn = card.querySelector('.expand-all-btn');
+            if (!expandBtn) return;
+            var icon = expandBtn.querySelector('i');
+            var collapses = Array.from(card.querySelectorAll('.collapse.stack-section'));
+            expandBtn.addEventListener('click', function () {
+                var anyClosed = collapses.some(function (sec) {
+                    return !sec.classList.contains('show');
+                });
+                if (anyClosed) {
+                    // Expand in reverse DOM order (bottom to top)
+                    collapses.slice().reverse().forEach(function (sec) {
+                        var bsCollapse = bootstrap.Collapse.getOrCreateInstance(sec);
+                        bsCollapse.show();
+                    });
+                } else {
+                    // Collapse in DOM order (top to bottom)
+                    collapses.forEach(function (sec) {
+                        var bsCollapse = bootstrap.Collapse.getOrCreateInstance(sec);
+                        bsCollapse.hide();
+                    });
+                }
+                if (anyClosed) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
+    </body>
+
+</html>

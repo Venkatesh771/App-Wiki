@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>App Wiki</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
+
+        body {
+            background: #f0f2f5;
+            font-family: "Open Sans", sans-serif;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .navbar {
+            background: #000 !important;
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-family: "Quicksand", sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            margin-left: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 0.85rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .navbar-nav {
+            column-gap: 0.75rem;
+        }
+
+        .form-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin: 30px auto;
+            width: 95%;
+        }
+
+        .section-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            background: #fafafa;
+            position: relative;
+            padding-top: 35px;
+        }
+
+        .section-header {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            color: #333;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            position: absolute;
+            top: -18px;
+            left: 18px;
+        }
+
+        .section-header-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0;
+            margin-left: 0;
+        }
+
+        .form-group-custom {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .field-label {
+            width: 40%;
+            font-weight: 500;
+            color: #444;
+            font-size: 0.85rem;
+            text-align: right;
+            padding-right: 15px;
+            line-height: 1.2;
+        }
+
+        .field-input {
+            width: 60%;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #e9ecef;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #fff;
+            border-color: #b0b0b0 !important;
+            box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25);
+            outline: none !important;
+        }
+
+        .btn-save {
+            background: #1b98e0;
+            color: rgb(255, 255, 255);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid #1b98e0;
+            display: inline-flex;
+            align-items: center;
+            text-transform: uppercase;
+            gap: 6px;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+        }
+
+        .btn-save:hover {
+            background: #1585c5;
+            border-color: #1585c5;
+            color: white;
+        }
+
+        textarea.form-control {
+            min-height: 60px;
+        }
+
+        .form-group-custom.app-description-row {
+            align-items: center !important;
+        }
+
+        /* Data Saving Indicator */
+        .data-saving-indicator {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #6c757d;
+            z-index: 9998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .data-saving-indicator.active {
+            opacity: 1;
+        }
+
+        .data-saving-indicator .spinner {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #dee2e6;
+            border-top-color: #1b98e0;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            animation: slideIn 0.3s ease forwards, slideOut 0.3s ease forwards 4.7s;
+            max-width: 300px;
+            word-wrap: break-word;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .toast-notification.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .toast-notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .toast-notification.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Dynamic Option Input Styles */
+        .field-input {
+            position: relative;
+        }
+
+        .field-input.has-dropdown {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .field-input.has-dropdown .form-select {
+            flex: 1;
+        }
+
+        .field-input .form-control {
+            flex: 1;
+        }
+
+        .form-group-custom .field-input {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .btn-add-option {
+            background: #d1d5db;
+            color: #333;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-add-option:hover {
+            background: #b8bcc4;
+            border-color: #b8bcc4;
+        }
+
+        .btn-add-option:active {
+            transform: scale(0.95);
+        }
+
+        /* Invalid Field Styling */
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #FF3B30 !important;
+            background-color: #fff5f5 !important;
+        }
+
+        .form-control.is-invalid:focus,
+        .form-select.is-invalid:focus {
+            border-color: #FF3B30 !important;
+            box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important;
+        }
+
+        /* Input Popup Modal */
+        .input-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-modal-overlay.active {
+            display: flex;
+        }
+
+        .input-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            max-width: 320px;
+            width: 90%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .input-modal-header {
+            padding: 20px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-modal-header h4 {
+            margin: 0;
+            color: #000;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .input-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .input-modal-close:hover {
+            color: #333;
+        }
+
+        .input-modal-body {
+            padding: 20px;
+        }
+
+        .input-modal-body .form-control {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 36px;
+        }
+
+        .input-modal-body .form-control:focus {
+            background-color: #fff;
+            border-color: #1b98e0;
+            box-shadow: 0 0 0 3px rgba(27, 152, 224, 0.1);
+            outline: none;
+        }
+
+        .input-modal-footer {
+            padding: 12px 0 0 0;
+            display: flex;
+            gap: 0;
+            justify-content: stretch;
+            align-items: stretch;
+            border-top: 1px solid #e5e5ea;
+        }
+
+        .input-modal-footer button {
+            flex: 1;
+            padding: 12px 16px;
+            height: 44px;
+            border-radius: 0;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .input-modal-footer button:not(:last-child) {
+            border-right: 1px solid #e5e5ea;
+        }
+
+        .input-modal-footer .btn-primary {
+            background: #fff;
+            color: #1b98e0;
+        }
+
+        .input-modal-footer .btn-primary:active {
+            background: #f2f2f7;
+        }
+
+        .input-modal-footer .btn-primary:hover {
+            background: #f9f9f9;
+        }
+
+        .input-modal-footer .btn-secondary {
+            background: #fff;
+            color: #555;
+        }
+
+        .input-modal-footer .btn-secondary:active {
+            background: #f2f2f7;
+        }
+
+        .input-modal-footer .btn-secondary:hover {
+            background: #f9f9f9;
+        }
+
+        .input-modal-footer .btn-delete-confirm {
+            background: #fff;
+            color: #ff3b30;
+        }
+
+        .input-modal-footer .btn-delete-confirm:active {
+            background: #f2f2f7;
+        }
+
+        .input-modal-footer .btn-delete-confirm:hover {
+            background: #f9f9f9;
+        }
+
+        /* Read-only mode for non-Super Admin users */
+        body.read-only-mode .form-control,
+        body.read-only-mode .form-select,
+        body.read-only-mode textarea.form-control {
+            background-color: #f5f5f5 !important;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        body.read-only-mode .btn-delete-field {
+            display: none !important;
+        }
+
+        /* Validation - Invalid field styling */
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #FF3B30 !important;
+            background-color: #ffe8e8 !important;
+            box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important;
+        }
+
+        .form-control.is-invalid:focus,
+        .form-select.is-invalid:focus {
+            border-color: #FF3B30 !important;
+            box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.2) !important;
+        }
+
+        /* Remove toasts and indicators - keep everything in modals */
+        .toast-notification {
+            display: none !important;
+        }
+
+        .data-saving-indicator {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <!-- Data Saving Indicator -->
+    <div class="data-saving-indicator" id="savingIndicator">
+        <div class="spinner"></div>
+        <span>Saving...</span>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">App Wiki</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/mainfile}">Main Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/applicationserverdetails}">App Server Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/clouddetails}">Cloud Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/databaseserverdetails}">DB Server Details</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="form-container">
+            <form>
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Basic Identity</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Beat ID</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="beatId"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Appliction Name</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="applicationName"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">GxP</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="gxp">
+                                        <option>Select</option>
+                                        <option>Yes</option>
+                                        <option>No</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Squad</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="squad">
+                                        <option>Select</option>
+                                        <option>PF</option>
+                                        <option>CX</option>
+                                        <option>AEGS</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- New field: Business owner -->
+                            <div class="form-group-custom"><label class="field-label">Business Owner</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="businessOwner"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Sub Domain</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="subDomain">
+                                        <option>Select</option>
+                                        <option>Global</option>
+                                        <option>Local</option>
+                                        <option>Latam</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group-custom"><label class="field-label">App Region</label>
+                                    <div class="field-input has-dropdown"><select class="form-select" data-field="appRegion">
+                                            <option>Select</option>
+                                            <option>Emea</option>
+                                            <option>Apac</option>
+                                            <option>US</option>
+                                            <option>Canada</option>
+                                        </select>
+                                        <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Service Variant</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="serviceVariant">
+                                        <option>Select</option>
+                                        <option>Gold+</option>
+                                        <option>Gold</option>
+                                        <option>Bronze</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Type Category</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="typeCategory">
+                                        <option>Select</option>
+                                        <option>Type 1</option>
+                                        <option>Type 2</option>
+                                        <option>Type 3</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- New field: System owner -->
+                            <div class="form-group-custom"><label class="field-label">System Owner</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="systemOwner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Description & Impact</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group-custom app-description-row">
+                                <label class="field-label" style="width: 19.5%;">Application Decription</label>
+                                <div class="field-input" style="width: 80.5%;">
+                                    <textarea class="form-control" data-field="applicationDescription"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Business impact
+                                    description</label>
+                                <div class="field-input"><textarea class="form-control" data-field="businessImpactDescription"></textarea></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Financial Impact ($/€)</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="financialImpact"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">User Access Review</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="userAccessReview">
+                                        <option>Select</option>
+                                        <option>Monthly</option>
+                                        <option>Quarterly</option>
+                                        <option>Half Yearly</option>
+                                        <option>Yearly</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Authentication & Vendor</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Authentication Type</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="authenticationType">
+                                        <option>Select</option>
+                                        <option>Internal Ocelot</option>
+                                        <option>External Ocelot</option>
+                                        <option>LDAP</option>
+                                        <option>BAM</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Auth Details/Routing</label>
+                                <div class="field-input"><textarea class="form-control" data-field="authDetailsRouting"></textarea></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Authorization Type</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="authorizationType">
+                                        <option>Select</option>
+                                        <option>User Roles</option>
+                                        <option>Entitlements</option>
+                                        <option>AD Groups</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Vendor App</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="vendorApp">
+                                        <option>Select</option>
+                                        <option>Yes</option>
+                                        <option>No</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Vendor Name</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="vendorName"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">App Decommissioned</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="appDecommissioned">
+                                        <option>Select</option>
+                                        <option>Yes</option>
+                                        <option>No</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Vendor Ticketing URL</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="vendorTicketingUrl"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Vendor Support Exist</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="vendorSupportExist">
+                                        <option>Select</option>
+                                        <option>Yes</option>
+                                        <option>No</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Vendor contact details</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="vendorContactDetails"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">App Hosted In</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="appHostedIn">
+                                        <option>Select</option>
+                                        <option>Cloud</option>
+                                        <option>AWS</option>
+                                        <option>Azure</option>
+                                        <option>On Prem</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Technical Details</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">App urls - Dev/test</label>
+                                <div class="field-input"><textarea class="form-control" data-field="appUrlsDevTest"></textarea></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Github Repos</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="githubRepos"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">LB /Vip Details</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="lbVipDetails"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">External/Internal</label>
+                                <div class="field-input has-dropdown"><select class="form-select" data-field="externalInternal">
+                                        <option>Select</option>
+                                        <option>External</option>
+                                        <option>Internal</option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Upstream System</label>
+                                <div class="field-input"><textarea class="form-control" data-field="upstreamSystem"></textarea></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Akana / Mulesoft</label>
+                                <div class="field-input"><textarea class="form-control" data-field="akanaMulesoft"></textarea></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Kafka Topic</label>
+                                <div class="field-input"><textarea class="form-control" data-field="kafkaTopic"></textarea></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Azure Client Id's</label>
+                                <div class="field-input"><textarea class="form-control" data-field="azureClientIds"></textarea></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Fields Section -->
+                <!-- Removed: "Add Field" functionality has been removed -->
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Resource Contacts</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Offshore Primary</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="offshorePrimary"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Offshore Secondary</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="offshoreSecondary"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Offshore Tertiary</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="offshoreTertiary"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom"><label class="field-label">Onshore Primary</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="onshorePrimary"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Onshore Secondary</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="onshoreSecondary"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Onshore Tertiary</label>
+                                <div class="field-input"><input type="text" class="form-control" data-field="onshoreTertiary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" class="btn-save text-decoration-none" title="Save and continue to App Server Details (Keyboard: Ctrl+S)">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save & Continue</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Validation Manager - Simple iPhone Popup v3.0 -->
+    <script src="/static/validation-manager-clean.js?v=3.0.0"></script>
+    
+    <!-- Dynamic Dropdown Manager - Add options to dropdowns -->
+    <script src="/static/dynamic-dropdown.js"></script>
+    
+    <!-- Storage Manager V4 with Validation -->
+    <script src="/static/storage-manager-v4.js"></script>
+    
+    <!-- Page-Specific Initialization -->
+    <script>
+        console.log('Main File page loading');
+        
+        // Get user role from Thymeleaf
+        const userRole = '[[${userRole}]]';
+        const isSuperAdmin = userRole === 'Super Admin';
+        
+        // Store in window for access by other scripts
+        window.userRole = userRole;
+        window.isSuperAdmin = isSuperAdmin;
+        
+        console.log('User Role:', userRole);
+        console.log('Is Super Admin:', isSuperAdmin);
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM loaded - Initializing Main File Page');
+                window.StorageManager.initMainFilePage();
+            });
+        } else {
+            console.log('DOM already loaded');
+            window.StorageManager.initMainFilePage();
+        }
+    </script>
+
+</body>
+
+</html>

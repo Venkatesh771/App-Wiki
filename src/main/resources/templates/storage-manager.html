@@ -1,0 +1,316 @@
+<!-- Shared Storage Manager Utility Script -->
+<!-- Include this script in all form templates for consistent browser storage -->
+
+<script>
+    /**
+     * Universal Form Storage Manager
+     * Handles LocalStorage persistence and backend sync for any form
+     * 
+     * Usage:
+     * const manager = new UniversalFormStorageManager('storageKeyName', {
+     *     section1: { field1: '[data-field="field1"]', field2: '[data-field="field2"]' },
+     *     section2: { field3: '[data-field="field3"]' }
+     * }, {
+     *     section1: '/api/section1',
+     *     section2: '/api/section2'
+     * });
+     * manager.init();
+     */
+
+    class UniversalFormStorageManager {
+        constructor(storageKey, fieldSelectors, apiEndpoints) {
+            this.STORAGE_KEY = storageKey;
+            this.LAST_SYNC_KEY = storageKey + '_lastSync';
+            this.fieldSelectors = fieldSelectors;
+            this.apiEndpoints = apiEndpoints;
+            this.AUTO_SAVE_INTERVAL = 10000; // 10 seconds
+        }
+
+        /**
+         * Get field value from DOM
+         */
+        getFieldValue(selector) {
+            const element = document.querySelector(selector);
+            if (!element) return '';
+            
+            if (element.type === 'checkbox') {
+                return element.checked ? 'yes' : 'no';
+            } else if (element.type === 'radio') {
+                return element.checked ? element.value : '';
+            }
+            return element.value || '';
+        }
+
+        /**
+         * Set field value in DOM
+         */
+        setFieldValue(selector, value) {
+            const element = document.querySelector(selector);
+            if (!element) return;
+
+            if (element.type === 'checkbox') {
+                element.checked = value === 'yes' || value === true;
+            } else if (element.type === 'radio') {
+                const radioGroup = document.querySelectorAll(`input[name="${element.name}"]`);
+                radioGroup.forEach(radio => {
+                    radio.checked = radio.value === value;
+                });
+            } else {
+                element.value = value || '';
+            }
+        }
+
+        /**
+         * Collect all form data from DOM
+         */
+        collectFormData() {
+            const data = {};
+
+            for (const [section, fields] of Object.entries(this.fieldSelectors)) {
+                data[section] = {};
+                for (const [fieldName, selector] of Object.entries(fields)) {
+                    data[section][fieldName] = this.getFieldValue(selector);
+                }
+            }
+
+            return data;
+        }
+
+        /**
+         * Save form data to LocalStorage with timestamp
+         */
+        saveToLocalStorage() {
+            try {
+                const data = this.collectFormData();
+                const storageData = {
+                    data,
+                    savedAt: new Date().toISOString(),
+                    version: 1
+                };
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(storageData));
+                this.showNotification('Auto-saved to browser storage', 'info');
+                console.log(`✓ ${this.STORAGE_KEY} saved to LocalStorage`);
+                return true;
+            } catch (e) {
+                console.error(`✗ Error saving to LocalStorage:`, e);
+                this.showNotification('Failed to save to browser storage', 'error');
+                return false;
+            }
+        }
+
+        /**
+         * Restore form data from LocalStorage
+         */
+        restoreFromLocalStorage() {
+            try {
+                const raw = localStorage.getItem(this.STORAGE_KEY);
+                if (!raw) {
+                    console.log(`ℹ No saved data in LocalStorage for ${this.STORAGE_KEY}`);
+                    return;
+                }
+
+                const storageData = JSON.parse(raw);
+                const { data, savedAt } = storageData;
+
+                if (!data) return;
+
+                // Restore all sections
+                for (const [section, fields] of Object.entries(this.fieldSelectors)) {
+                    if (data[section]) {
+                        for (const [fieldName, selector] of Object.entries(fields)) {
+                            this.setFieldValue(selector, data[section][fieldName]);
+                        }
+                    }
+                }
+
+                console.log(`✓ ${this.STORAGE_KEY} restored from LocalStorage (saved: ${new Date(savedAt).toLocaleString()})`);
+                this.showNotification('Data restored from browser storage', 'success');
+            } catch (e) {
+                console.error(`✗ Error restoring from LocalStorage:`, e);
+            }
+        }
+
+        /**
+         * Send form data to backend
+         */
+        async sendToBackend(submitButtonSelector = '.btn-save') {
+            const data = this.collectFormData();
+            const submitButton = document.querySelector(submitButtonSelector);
+
+            try {
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Saving...';
+                }
+
+                const requests = [];
+
+                // Send data to each API endpoint
+                for (const [section, sectionData] of Object.entries(data)) {
+                    if (this.apiEndpoints[section]) {
+                        const endpoint = this.apiEndpoints[section];
+                        requests.push(
+                            fetch(endpoint, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(sectionData)
+                            })
+                        );
+                    }
+                }
+
+                const responses = await Promise.all(requests);
+                const allSuccess = responses.every(r => r.ok);
+
+                if (allSuccess) {
+                    // Update last sync time
+                    localStorage.setItem(this.LAST_SYNC_KEY, new Date().toISOString());
+
+                    this.showNotification('Data saved successfully to database!', 'success');
+                    console.log(`✓ All data from ${this.STORAGE_KEY} sent to backend successfully`);
+                    return true;
+                } else {
+                    const failedResponses = responses.filter(r => !r.ok);
+                    this.showNotification(`Failed to save: ${failedResponses.length} request(s) failed`, 'error');
+                    console.error(`✗ Some requests failed for ${this.STORAGE_KEY}`);
+                    return false;
+                }
+            } catch (error) {
+                console.error(`✗ Error sending ${this.STORAGE_KEY} to backend:`, error);
+                this.showNotification('Error communicating with server', 'error');
+                return false;
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Save & Continue';
+                }
+            }
+        }
+
+        /**
+         * Show notification to user
+         */
+        showNotification(message, type = 'info') {
+            const alertClass = {
+                'success': 'alert-success',
+                'error': 'alert-danger',
+                'info': 'alert-info'
+            }[type] || 'alert-info';
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x`;
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.marginTop = '20px';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            // Auto-dismiss after 4 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 4000);
+        }
+
+        /**
+         * Get stored data from LocalStorage
+         */
+        getStoredData() {
+            const raw = localStorage.getItem(this.STORAGE_KEY);
+            if (!raw) return null;
+            try {
+                return JSON.parse(raw);
+            } catch (e) {
+                console.error(`✗ Error parsing stored data for ${this.STORAGE_KEY}:`, e);
+                return null;
+            }
+        }
+
+        /**
+         * Clear stored data from LocalStorage
+         */
+        clearStorage() {
+            try {
+                localStorage.removeItem(this.STORAGE_KEY);
+                localStorage.removeItem(this.LAST_SYNC_KEY);
+                console.log(`✓ ${this.STORAGE_KEY} cleared from LocalStorage`);
+                this.showNotification('Storage cleared', 'info');
+                return true;
+            } catch (e) {
+                console.error(`✗ Error clearing storage for ${this.STORAGE_KEY}:`, e);
+                return false;
+            }
+        }
+
+        /**
+         * Get last sync timestamp
+         */
+        getLastSyncTime() {
+            const timestamp = localStorage.getItem(this.LAST_SYNC_KEY);
+            return timestamp ? new Date(timestamp) : null;
+        }
+
+        /**
+         * Initialize the manager
+         */
+        init() {
+            // Restore data on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                this.restoreFromLocalStorage();
+            });
+
+            // Auto-save on field changes
+            document.addEventListener('input', (e) => {
+                if (e.target.closest('form')) {
+                    this.saveToLocalStorage();
+                }
+            });
+
+            // Also listen for change events (for select/checkbox/radio)
+            document.addEventListener('change', (e) => {
+                if (e.target.closest('form')) {
+                    this.saveToLocalStorage();
+                }
+            });
+
+            // Save before leaving page
+            window.addEventListener('beforeunload', () => {
+                this.saveToLocalStorage();
+            });
+
+            console.log(`✓ Universal Form Storage Manager initialized for ${this.STORAGE_KEY}`);
+        }
+
+        /**
+         * Export data as JSON (for debugging/backup)
+         */
+        exportData() {
+            const data = this.getStoredData();
+            if (!data) {
+                console.log(`ℹ No data to export for ${this.STORAGE_KEY}`);
+                return null;
+            }
+            const json = JSON.stringify(data, null, 2);
+            console.log(`✓ Data exported for ${this.STORAGE_KEY}:`, json);
+            return json;
+        }
+
+        /**
+         * Import data from JSON (for restore/migration)
+         */
+        importData(jsonData) {
+            try {
+                const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                console.log(`✓ Data imported for ${this.STORAGE_KEY}`);
+                this.restoreFromLocalStorage();
+                return true;
+            } catch (e) {
+                console.error(`✗ Error importing data for ${this.STORAGE_KEY}:`, e);
+                return false;
+            }
+        }
+    }
+</script>
