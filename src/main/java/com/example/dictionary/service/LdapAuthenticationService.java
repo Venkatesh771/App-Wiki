@@ -80,9 +80,7 @@ public class LdapAuthenticationService {
         cons.setReturningAttributes(attrIDs);
         logger.debug("Search controls configured: {}", cons);
         return cons;
-    }
-
-    /**
+    }    /**
      * Build LdapUser object from LDAP context
      * @param userName Username to search for
      * @param ctx LDAP context
@@ -92,29 +90,44 @@ public class LdapAuthenticationService {
         logger.info("Building user object for: {}", userName);
         LdapUser user = new LdapUser();
         try {
-            NamingEnumeration<SearchResult> answer = ctx.search(searchBase, "sAMAccountName=" + userName,
+            // Use root DN (DC=bayer,DC=cnb) for search to avoid NO_OBJECT error
+            // searchBase may not contain the user objects
+            String searchDN = "DC=bayer,DC=cnb";
+            logger.debug("Searching for user {} in DN: {}", userName, searchDN);
+            
+            NamingEnumeration<SearchResult> answer = ctx.search(searchDN, "sAMAccountName=" + userName,
                     getUserSearchControls());
             logger.debug("LDAP search result: {}", answer);
-            
-            if (answer.hasMore()) {
+              if (answer.hasMore()) {
                 Attributes attrs = answer.next().getAttributes();
                 logger.debug("User attributes retrieved: {}", attrs);
                 
-                user.setFirstname(attrs.get("givenName") != null ? 
-                    attrs.get("givenName").toString().replace("givenName:", "").trim() : "");
-                user.setLastname(attrs.get("sn") != null ? 
-                    attrs.get("sn").toString().replace("sn:", "").trim() : "");
-                user.setUsername(userName);
-                user.setEmail(attrs.get("mail") != null ? 
-                    attrs.get("mail").toString().replace("mail:", "").trim() : "");
-                
-                logger.info("User object successfully built: {}", user);
+                try {
+                    user.setFirstname(attrs.get("givenName") != null ? 
+                        attrs.get("givenName").toString().replace("givenName:", "").trim() : "");
+                    user.setLastname(attrs.get("sn") != null ? 
+                        attrs.get("sn").toString().replace("sn:", "").trim() : "");
+                    user.setUsername(userName);
+                    user.setEmail(attrs.get("mail") != null ? 
+                        attrs.get("mail").toString().replace("mail:", "").trim() : "");
+                    
+                    logger.info("User object successfully built: {}", user);
+                } catch (NullPointerException e) {
+                    logger.warn("Some user attributes not available in LDAP, continuing with available data");
+                    user.setUsername(userName);
+                    logger.info("User object built with partial data: {}", user);
+                }
             } else {
-                logger.info("User info not found in LDAP for: {}", userName);
+                logger.warn("User info not found in LDAP search for: {}", userName);
                 return null;
             }
+        } catch (NameNotFoundException e) {
+            logger.error("LDAP search base or user not found: {}", e.getMessage());
+            logger.debug("Exception details: ", e);
+            return null;
         } catch (Exception e) {
             logger.error("Error building user object: {}", e.getMessage());
+            logger.debug("Exception details: ", e);
             return null;
         }
         return user;
