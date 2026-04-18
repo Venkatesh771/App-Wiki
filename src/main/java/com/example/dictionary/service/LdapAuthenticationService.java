@@ -102,21 +102,30 @@ public class LdapAuthenticationService {
             
             NamingEnumeration<SearchResult> answer = ctx.search(searchDN, "sAMAccountName=" + userName,
                     getUserSearchControls());
-            logger.debug("LDAP search result: {}", answer);
-              if (answer.hasMore()) {
+            logger.debug("LDAP search result: {}", answer);              if (answer.hasMore()) {
                 Attributes attrs = answer.next().getAttributes();
                 logger.debug("User attributes retrieved: {}", attrs);
                 
                 try {
-                    user.setFirstname(attrs.get("givenName") != null ? 
-                        attrs.get("givenName").toString().replace("givenName:", "").trim() : "");
-                    user.setLastname(attrs.get("sn") != null ? 
-                        attrs.get("sn").toString().replace("sn:", "").trim() : "");
-                    user.setUsername(userName);
+                    String firstName = attrs.get("givenName") != null ? 
+                        attrs.get("givenName").toString().replace("givenName:", "").trim() : "";
+                    String lastName = attrs.get("sn") != null ? 
+                        attrs.get("sn").toString().replace("sn:", "").trim() : "";
+                    
+                    user.setFirstname(firstName);
+                    user.setLastname(lastName);
+                    
+                    // Set username as "FirstName LastName" instead of CWID
+                    String fullName = (firstName + " " + lastName).trim();
+                    if (fullName.isEmpty()) {
+                        fullName = userName; // Fallback to CWID if no name found
+                    }
+                    user.setUsername(fullName);
+                    
                     user.setEmail(attrs.get("mail") != null ? 
                         attrs.get("mail").toString().replace("mail:", "").trim() : "");
                     
-                    logger.info("User object successfully built: {}", user);
+                    logger.info("User object successfully built - Username: {} - {}", fullName, user);
                 } catch (NullPointerException e) {
                     logger.warn("Some user attributes not available in LDAP, continuing with available data");
                     user.setUsername(userName);
@@ -192,28 +201,40 @@ public class LdapAuthenticationService {
             NamingEnumeration<SearchResult> answer = ctx.search(searchDN, 
                 "sAMAccountName=" + cwid, 
                 getUserSearchControls());
-            
-            if (answer.hasMore()) {
+              if (answer.hasMore()) {
                 Attributes attrs = answer.next().getAttributes();
                 logger.debug("LDAP attributes found for CWID: {}", cwid);
                 
                 user = new LdapUser();
-                user.setUsername(cwid);
                 
                 try {
+                    String firstName = "";
+                    String lastName = "";
+                    
                     if (attrs.get("givenName") != null) {
-                        user.setFirstname(attrs.get("givenName").toString().replace("givenName:", "").trim());
+                        firstName = attrs.get("givenName").toString().replace("givenName:", "").trim();
+                        user.setFirstname(firstName);
                     }
                     if (attrs.get("sn") != null) {
-                        user.setLastname(attrs.get("sn").toString().replace("sn:", "").trim());
+                        lastName = attrs.get("sn").toString().replace("sn:", "").trim();
+                        user.setLastname(lastName);
                     }
+                    
+                    // Set username as "FirstName LastName" instead of CWID
+                    String fullName = (firstName + " " + lastName).trim();
+                    if (fullName.isEmpty()) {
+                        fullName = cwid; // Fallback to CWID if no name found
+                    }
+                    user.setUsername(fullName);
+                    
                     if (attrs.get("mail") != null) {
                         user.setEmail(attrs.get("mail").toString().replace("mail:", "").trim());
                     }
                     
-                    logger.info("User details successfully retrieved for CWID: {} - {}", cwid, user);
+                    logger.info("User details successfully retrieved for CWID: {} - Username: {} - {}", cwid, fullName, user);
                 } catch (NullPointerException e) {
                     logger.warn("Some attributes missing for CWID {}, continuing with available data", cwid);
+                    user.setUsername(cwid); // Fallback to CWID if error
                     logger.info("Partial user details retrieved for CWID: {}", cwid);
                 }
             } else {
