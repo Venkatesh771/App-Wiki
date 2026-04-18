@@ -22,8 +22,7 @@ import java.util.Hashtable;
 public class LdapAuthenticationService {
     
     private static final Logger logger = LoggerFactory.getLogger(LdapAuthenticationService.class);
-    
-    @Value("${spring.ldap.urls:ldap://bayer.cnb:3268}")
+      @Value("${spring.ldap.urls:ldap://bayer.cnb:3268}")
     private String ldapServer;
     
     @Value("${spring.ldap.domain:ad-bayer-cnb\\\\}")
@@ -37,6 +36,12 @@ public class LdapAuthenticationService {
     
     @Value("${spring.ldap.filter:}")
     private String searchFilter;
+    
+    @Value("${spring.ldap.embedded.credential.username:}")
+    private String botUsername;
+    
+    @Value("${spring.ldap.embedded.credential.password:}")
+    private String botPassword;
     
     /**
      * Authenticate user with LDAP credentials
@@ -232,19 +237,28 @@ public class LdapAuthenticationService {
         
         return user;
     }
-    
-    /**
-     * Create an LDAP context for user lookup without authentication
+      /**
+     * Create an LDAP context for user lookup using bot credentials
      * @return LdapContext for searching
      * @throws NamingException if connection fails
      */
     private LdapContext createLookupContext() throws NamingException {
-        logger.debug("Creating LDAP context for user lookup");
+        logger.debug("Creating LDAP context for user lookup using bot credentials");
         
         Hashtable<String, String> env = new Hashtable<>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapServer);
-        env.put(Context.SECURITY_AUTHENTICATION, "none");
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        
+        // Use bot credentials for lookup
+        if (botUsername != null && !botUsername.isEmpty() && botPassword != null && !botPassword.isEmpty()) {
+            env.put(Context.SECURITY_PRINCIPAL, domainName + botUsername);
+            env.put(Context.SECURITY_CREDENTIALS, botPassword);
+            logger.debug("Using bot credentials for LDAP lookup");
+        } else {
+            logger.warn("Bot credentials not configured, attempting anonymous bind");
+            env.put(Context.SECURITY_AUTHENTICATION, "none");
+        }
         
         // Connection settings
         env.put("com.sun.jndi.ldap.connect.pool", "false");
@@ -252,6 +266,7 @@ public class LdapAuthenticationService {
         env.put("com.sun.jndi.ldap.read.timeout", "5000");
         env.put("java.naming.ldap.version", "3");
         
+        logger.debug("Establishing LDAP connection for lookup");
         return new InitialLdapContext(env, null);
     }
 
