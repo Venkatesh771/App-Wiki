@@ -186,9 +186,7 @@ public class AuthenticationService {
             return true;
         }
         return false;
-    }
-
-    /**
+    }    /**
      * Delete user by CWID
      * @param cwid CWID of user to delete
      * @return true if user was deleted, false if user not found
@@ -201,4 +199,24 @@ public class AuthenticationService {
         }
         return false;
     }
+    
+    /**
+     * Get LDAP user details by CWID (for admin user management)
+     * This method retrieves user information from LDAP without requiring authentication
+     * @param cwid User's CWID
+     * @return LdapUser object if found, null otherwise
+     */
+    public LdapUser getLdapUserDetails(String cwid) {
+        logger.info("Fetching LDAP user details for CWID: " + cwid);
+        LdapUser ldapUser = ldapAuthenticationService.getUserDetailsByCwid(cwid);
+        
+        if (ldapUser != null) {
+            logger.info("LDAP user details found for CWID: " + cwid + " - Username: " + ldapUser.getUsername());
+        } else {
+            logger.warning("LDAP user details not found for CWID: " + cwid);
+        }
+        
+        return ldapUser;
+    }
 }
+

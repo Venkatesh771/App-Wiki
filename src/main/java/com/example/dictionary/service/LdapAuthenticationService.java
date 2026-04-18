@@ -161,7 +161,100 @@ public class LdapAuthenticationService {
         logger.info("LDAP context successfully established");
         return initialLdapContext;
     }
+      /**
+     * Get LDAP user details by CWID for admin user management
+     * Uses anonymous bind or bot credentials to lookup user information without authentication
+     * @param cwid User's CWID
+     * @return LdapUser with details if found, null otherwise
+     */
+    public LdapUser getUserDetailsByCwid(String cwid) {
+        logger.info("Retrieving user details from LDAP for CWID: {}", cwid);
+        LdapUser user = null;
+        
+        if (cwid == null || cwid.isEmpty()) {
+            logger.warn("Empty CWID provided for user lookup");
+            return null;
+        }
+        
+        try {
+            // Create a connection for searching without authentication
+            LdapContext ctx = createLookupContext();
+            
+            // Search for the user
+            String searchDN = "DC=bayer,DC=cnb";
+            logger.debug("Searching LDAP for CWID: {} in DN: {}", cwid, searchDN);
+            
+            NamingEnumeration<SearchResult> answer = ctx.search(searchDN, 
+                "sAMAccountName=" + cwid, 
+                getUserSearchControls());
+            
+            if (answer.hasMore()) {
+                Attributes attrs = answer.next().getAttributes();
+                logger.debug("LDAP attributes found for CWID: {}", cwid);
+                
+                user = new LdapUser();
+                user.setUsername(cwid);
+                
+                try {
+                    if (attrs.get("givenName") != null) {
+                        user.setFirstname(attrs.get("givenName").toString().replace("givenName:", "").trim());
+                    }
+                    if (attrs.get("sn") != null) {
+                        user.setLastname(attrs.get("sn").toString().replace("sn:", "").trim());
+                    }
+                    if (attrs.get("mail") != null) {
+                        user.setEmail(attrs.get("mail").toString().replace("mail:", "").trim());
+                    }
+                    
+                    logger.info("User details successfully retrieved for CWID: {} - {}", cwid, user);
+                } catch (NullPointerException e) {
+                    logger.warn("Some attributes missing for CWID {}, continuing with available data", cwid);
+                    logger.info("Partial user details retrieved for CWID: {}", cwid);
+                }
+            } else {
+                logger.warn("No LDAP user found with CWID: {}", cwid);
+                return null;
+            }
+            
+            if (ctx != null) {
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    logger.debug("Error closing LDAP context: {}", e.getMessage());
+                }
+            }
+            
+        } catch (Exception e) {
+            logger.error("Error retrieving user details for CWID {}: {}", cwid, e.getMessage());
+            logger.debug("Exception details: ", e);
+            return null;
+        }
+        
+        return user;
+    }
     
+    /**
+     * Create an LDAP context for user lookup without authentication
+     * @return LdapContext for searching
+     * @throws NamingException if connection fails
+     */
+    private LdapContext createLookupContext() throws NamingException {
+        logger.debug("Creating LDAP context for user lookup");
+        
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, ldapServer);
+        env.put(Context.SECURITY_AUTHENTICATION, "none");
+        
+        // Connection settings
+        env.put("com.sun.jndi.ldap.connect.pool", "false");
+        env.put("com.sun.jndi.ldap.connect.timeout", "5000");
+        env.put("com.sun.jndi.ldap.read.timeout", "5000");
+        env.put("java.naming.ldap.version", "3");
+        
+        return new InitialLdapContext(env, null);
+    }
+
     /**
      * Log server information for debugging
      */

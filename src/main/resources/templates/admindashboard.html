@@ -590,9 +590,7 @@
 
         .modal-error.show {
             display: block;
-        }
-
-        .form-success {
+        }        .form-success {
             background: #d4edda;
             color: #155724;
             padding: 0.8rem 1rem;
@@ -603,6 +601,121 @@
 
         .form-success.show {
             display: block;
+        }
+
+        /* iPhone Style Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            backdrop-filter: blur(2px);
+        }
+
+        .popup-overlay.active {
+            display: flex;
+        }
+
+        .popup-container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 300px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            animation: popupSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .popup-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: popupIconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popupIconBounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        .popup-icon.success {
+            color: #34c759;
+        }
+
+        .popup-icon.error {
+            color: #ff3b30;
+        }
+
+        .popup-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 0.5rem;
+            font-family: "Open Sans", sans-serif;
+        }
+
+        .popup-message {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+            font-family: "Open Sans", sans-serif;
+        }
+
+        .popup-button {
+            background: #008080;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: "Open Sans", sans-serif;
+            width: 100%;
+        }
+
+        .popup-button:active {
+            transform: scale(0.95);
+            background: #006666;
+        }
+
+        .popup-button:hover {
+            background: #006666;
+        }
+
+        .popup-button.error-btn {
+            background: #ff3b30;
+        }
+
+        .popup-button.error-btn:active {
+            background: #cc2d24;
+        }
+
+        .popup-button.error-btn:hover {
+            background: #cc2d24;
         }
 
         @media (max-width: 768px) {
@@ -962,19 +1075,7 @@
                 </button>
             </div>            <div class="form-success" id="formSuccess">
                 <i class="fa-solid fa-check-circle"></i> User saved successfully!
-            </div>
-
-            <form id="userForm" onsubmit="submitUserForm(event)">
-                <!-- Username Field -->
-                <div class="modal-form-group">
-                    <label class="modal-label">
-                        User Name
-                        <span class="required">*</span>
-                    </label>
-                    <input type="text" class="modal-input" id="username" placeholder="Enter user name" required>
-                    <div class="modal-error" id="usernameError"></div>
-                </div>
-
+            </div>            <form id="userForm" onsubmit="submitUserForm(event)">
                 <!-- CWID Field -->
                 <div class="modal-form-group">
                     <label class="modal-label">
@@ -985,13 +1086,25 @@
                     <div class="modal-error" id="cwidError"></div>
                 </div>
 
-                <!-- Email Field -->
+                <!-- Username Field (Read-only, auto-populated from LDAP) -->
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        User Name
+                        <span class="required">*</span>
+                        <span style="font-size: 0.7rem; color: #999; margin-left: 0.5rem;">(Auto-populated from LDAP)</span>
+                    </label>
+                    <input type="text" class="modal-input" id="username" placeholder="Username will be fetched from LDAP" readonly>
+                    <div class="modal-error" id="usernameError"></div>
+                </div>
+
+                <!-- Email Field (Read-only, auto-populated from LDAP) -->
                 <div class="modal-form-group">
                     <label class="modal-label">
                         Email
                         <span class="required">*</span>
+                        <span style="font-size: 0.7rem; color: #999; margin-left: 0.5rem;">(Auto-populated from LDAP)</span>
                     </label>
-                    <input type="email" class="modal-input" id="email" placeholder="Enter email address" required>
+                    <input type="email" class="modal-input" id="email" placeholder="Email will be fetched from LDAP" readonly>
                     <div class="modal-error" id="emailError"></div>
                 </div>
 
@@ -1014,7 +1127,7 @@
                 <div class="modal-checkbox-group">
                     <input type="checkbox" id="active" class="modal-checkbox" checked>
                     <label for="active" class="modal-checkbox-label">Active Status</label>
-                </div>                <!-- Footer -->
+                </div><!-- Footer -->
                 <div class="modal-footer">
                     <button type="button" class="modal-btn modal-btn-secondary" onclick="closeUserModal()">
                         Cancel
@@ -1026,10 +1139,61 @@
                         <i class="fa-solid fa-save"></i> Save User
                     </button>
                 </div>
-            </form>
+            </form>        </div>
+    </div>
+
+    <!-- iPhone Style Popup -->
+    <div class="popup-overlay" id="successPopup">
+        <div class="popup-container">
+            <div class="popup-icon success">
+                <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <div class="popup-title">Success!</div>
+            <div class="popup-message" id="successMessage">Username was added successfully!</div>
+            <button class="popup-button" onclick="closeSuccessPopup()">OK</button>
         </div>
-    </div><script>
-        let currentEditingCwid = null;        // Open Add User Modal
+    </div>
+
+    <!-- Error Popup -->
+    <div class="popup-overlay" id="errorPopup">
+        <div class="popup-container">
+            <div class="popup-icon error">
+                <i class="fa-solid fa-xmark-circle"></i>
+            </div>
+            <div class="popup-title">Error!</div>
+            <div class="popup-message" id="errorMessage">An error occurred. Please try again.</div>
+            <button class="popup-button error-btn" onclick="closeErrorPopup()">OK</button>
+        </div>
+    </div>
+
+<script>
+        let currentEditingCwid = null;
+
+        // Popup Functions
+        function showSuccessPopup(message = 'Username was added successfully!') {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successPopup').classList.add('active');
+        }
+
+        function closeSuccessPopup() {
+            document.getElementById('successPopup').classList.remove('active');
+            closeUserModal();
+            // Reload page to refresh user list
+            setTimeout(() => {
+                location.reload();
+            }, 300);
+        }
+
+        function showErrorPopup(message = 'An error occurred. Please try again.') {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorPopup').classList.add('active');
+        }
+
+        function closeErrorPopup() {
+            document.getElementById('errorPopup').classList.remove('active');
+        }
+
+        // Open Add User Modal
         function openAddUserModal(event) {
             event.preventDefault();
             currentEditingCwid = null;
@@ -1081,9 +1245,7 @@
         function isValidEmail(email) {
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return regex.test(email);
-        }
-
-        // Submit User Form
+        }        // Submit User Form
         function submitUserForm(event) {
             event.preventDefault();
             clearFormErrors();
@@ -1096,11 +1258,8 @@
 
             let isValid = true;
 
-            // Validation
-            if (!username) {
-                showError('usernameError', 'User name is required');
-                isValid = false;
-            }            if (!cwid) {
+            // Validate CWID
+            if (!cwid) {
                 showError('cwidError', 'CWID is required');
                 isValid = false;
             } else if (!/^[A-Za-z0-9]{3,}$/.test(cwid)) {
@@ -1108,14 +1267,37 @@
                 isValid = false;
             }
 
-            if (!email) {
-                showError('emailError', 'Email is required');
-                isValid = false;
-            } else if (!isValidEmail(email)) {
-                showError('emailError', 'Please enter a valid email address');
-                isValid = false;
+            // Check if adding new user (when currentEditingCwid is null)
+            const isAdding = currentEditingCwid === null;
+            
+            if (isAdding) {
+                // For new users, validate that username and email are populated (should be auto-populated)
+                if (!username) {
+                    showError('usernameError', 'Username should be auto-populated from LDAP. Please validate CWID first.');
+                    isValid = false;
+                }
+                
+                if (!email) {
+                    showError('emailError', 'Email should be auto-populated from LDAP. Please validate CWID first.');
+                    isValid = false;
+                }
+            } else {
+                // For editing existing users, allow username and email updates
+                if (!username) {
+                    showError('usernameError', 'User name is required');
+                    isValid = false;
+                }
+                
+                if (!email) {
+                    showError('emailError', 'Email is required');
+                    isValid = false;
+                } else if (!isValidEmail(email)) {
+                    showError('emailError', 'Please enter a valid email address');
+                    isValid = false;
+                }
             }
 
+            // Validate role
             if (!role) {
                 showError('roleError', 'Role is required');
                 isValid = false;
@@ -1129,19 +1311,18 @@
                 username: username,
                 email: email,
                 role: role,
-                active: active,
-                password: 'password123' // Default password for new users
+                active: active
             };
 
-            // Determine if adding or updating
-            const isAdding = currentEditingCwid === null;
+            // Determine endpoint and method
             const endpoint = isAdding ? '/api/users' : `/api/users/${currentEditingCwid}`;
             const method = isAdding ? 'POST' : 'PUT';
 
             // Disable submit button
             const submitBtn = event.target.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';            // Send to backend
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
             console.log('Sending user data to:', endpoint);
             console.log('User data:', userData);
 
@@ -1156,32 +1337,107 @@
             .then(response => {
                 console.log('Response status:', response.status);
                 return response.json();
-            })
-            .then(data => {
+            })            .then(data => {
                 console.log('Response data:', data);
                 if (data.success) {
-                    // Show success message
-                    const successMsg = document.getElementById('formSuccess');
-                    successMsg.innerHTML = '<i class="fa-solid fa-check-circle"></i> ' + data.message;
-                    successMsg.classList.add('show');
-                    setTimeout(() => {
-                        closeUserModal();
-                        // Reload page to refresh user list
-                        location.reload();
-                    }, 1500);
+                    // Show success popup instead of form message
+                    const message = isAdding ? 'User added successfully!' : 'User updated successfully!';
+                    showSuccessPopup(message);
                 } else {
-                    showError('usernameError', data.message || 'An error occurred');
+                    // Show error popup
+                    showErrorPopup(data.message || 'An error occurred. Please try again.');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save User';
                 }
             })
             .catch(error => {
                 console.error('Fetch error:', error);
-                showError('usernameError', 'Failed to save user. Please try again. Check console for details.');
+                // Show error popup
+                showErrorPopup('Failed to save user. Please try again.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save User';
             });
-        }        // Show Error Message
+        }
+
+        // Validate CWID and fetch user details from LDAP
+        function validateAndFetchCwid() {
+            clearFormErrors();
+            
+            const cwid = document.getElementById('cwid').value.trim();
+            const isAdding = currentEditingCwid === null;
+            
+            // Only auto-fetch for new users
+            if (!isAdding) {
+                return; // Don't auto-fetch when editing
+            }
+            
+            if (!cwid) {
+                clearLdapFields();
+                return;
+            }
+            
+            if (!/^[A-Za-z0-9]{3,}$/.test(cwid)) {
+                showError('cwidError', 'CWID must be at least 3 alphanumeric characters');
+                clearLdapFields();
+                return;
+            }
+            
+            // Clear any previous errors
+            document.getElementById('cwidError').classList.remove('show');
+            
+            // Show loading state
+            document.getElementById('username').value = 'Fetching...';
+            document.getElementById('email').value = 'Fetching...';
+            
+            // Fetch CWID validation and user details from LDAP
+            fetch(`/api/users/validate-cwid/${cwid}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('CWID validation response:', data);
+                
+                if (data.success) {
+                    // Populate form with LDAP data
+                    document.getElementById('username').value = data.data.username || '';
+                    document.getElementById('email').value = data.data.email || '';
+                    document.getElementById('cwidError').classList.remove('show');
+                } else {
+                    showError('cwidError', data.message || 'Failed to validate CWID');
+                    clearLdapFields();
+                }
+            })
+            .catch(error => {
+                console.error('CWID validation error:', error);
+                showError('cwidError', 'Error validating CWID. Please try again.');
+                clearLdapFields();
+            });
+        }
+        
+        // Clear LDAP auto-populated fields
+        function clearLdapFields() {
+            document.getElementById('username').value = '';
+            document.getElementById('email').value = '';
+        }
+        
+        // Add event listener for CWID field
+        document.addEventListener('DOMContentLoaded', function() {
+            const cwidField = document.getElementById('cwid');
+            if (cwidField) {
+                // Use debouncing to avoid too many API calls while typing
+                let cwidTimeout;
+                cwidField.addEventListener('input', function() {
+                    clearTimeout(cwidTimeout);
+                    cwidTimeout = setTimeout(() => {
+                        validateAndFetchCwid();
+                    }, 500);
+                });
+            }
+        });// Show Error Message
         function showError(fieldId, message) {
             const errorElement = document.getElementById(fieldId);
             errorElement.textContent = message;

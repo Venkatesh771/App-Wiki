@@ -1362,15 +1362,35 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            </button>            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item"><a class="nav-link" th:href="@{/mainfile}">Main Details</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/applicationserverdetails}">App Server
                             Details</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/clouddetails}">Cloud Details</a></li>
                     <li class="nav-item"><a class="nav-link active" th:href="@{/databaseserverdetails}">DB Server
                             Details</a></li>
+                    <!-- User Profile Dropdown -->
+                    <li class="nav-item dropdown" style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false" style="color: #fff; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                            <span style="width: 28px; height: 28px; border-radius: 50%; background: #008080; display: flex; align-items: center; justify-content: center; margin-right: 3px;">
+                                <i class="fa-solid fa-user" style="color: #fff; font-size: 0.85rem;"></i>
+                            </span>
+                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li th:if="${session.user != null}">
+                                <span class="dropdown-item-text" style="font-size: 0.8rem; color: #999;">
+                                    <i class="fa-solid fa-badge"></i> <span th:text="${session.user.role}"></span>
+                                </span>
+                            </li>
+                            <li th:if="${session.user != null}"><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">
+                                <i class="fa-solid fa-sign-out-alt"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
