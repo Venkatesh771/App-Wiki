@@ -34,6 +34,34 @@
             font-size: 1.1rem;
             margin-left: 1.1rem;
             line-height: 1.1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-logo {
+            height: 33px;
+            width: auto;
+            max-width: 45px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+        }
+
+        .navbar-brand:hover .navbar-logo {
+            transform: scale(1.05);
+        }
+
+        .navbar-brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            line-height: 1.2;
         }
 
         .navbar-nav {
@@ -418,7 +446,9 @@
             font-size: 0.9rem;
             margin-left: 0.4rem;
             cursor: pointer;
-        }        .btn-search {
+        }
+
+        .btn-search {
             display: none;
         }
 
@@ -442,7 +472,9 @@
 
         .modal-overlay.active {
             display: flex;
-        }        .modal-container {
+        }
+
+        .modal-container {
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -458,11 +490,14 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
-        }        .modal-header {
+        }
+
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -491,7 +526,9 @@
 
         .modal-close:hover {
             color: #222;
-        }        .modal-form-group {
+        }
+
+        .modal-form-group {
             margin-bottom: 0.9rem;
         }
 
@@ -506,7 +543,9 @@
         .modal-label .required {
             color: #e74c3c;
             margin-left: 0.2rem;
-        }        .modal-input,
+        }
+
+        .modal-input,
         .modal-select {
             width: 100%;
             padding: 0.5rem 0.7rem;
@@ -529,7 +568,9 @@
 
         .modal-input::placeholder {
             color: #bbb;
-        }        .modal-checkbox-group {
+        }
+
+        .modal-checkbox-group {
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -548,12 +589,16 @@
             color: #333;
             cursor: pointer;
             margin: 0;
-        }.modal-footer {
+        }
+
+        .modal-footer {
             display: flex;
             gap: 0.6rem;
             margin-top: 1.3rem;
             justify-content: flex-end;
-        }.modal-btn {
+        }
+
+        .modal-btn {
             padding: 0.5rem 1rem;
             border: none;
             border-radius: 8px;
@@ -590,7 +635,9 @@
 
         .modal-error.show {
             display: block;
-        }        .form-success {
+        }
+
+        .form-success {
             background: #d4edda;
             color: #155724;
             padding: 0.8rem 1rem;
@@ -638,6 +685,7 @@
                 opacity: 0;
                 transform: scale(0.7);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -651,9 +699,12 @@
         }
 
         @keyframes popupIconBounce {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.15);
             }
@@ -747,9 +798,13 @@
     </style>
 </head>
 
-<body>    <nav class="navbar navbar-expand-lg navbar-dark">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/home">App Wiki</a>
+            <a class="navbar-brand" href="/home">
+                <img src="/assets/logo.png" alt="App Wiki Logo" class="navbar-logo">
+                <span class="navbar-brand-text">App Wiki</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homeNavbar"
                 aria-controls="homeNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -765,7 +820,8 @@
                             <span class="user-icon-round">
                                 <i class="fa-solid fa-user"></i>
                             </span>
-                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample User</span>
+                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                User</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li th:if="${session.user != null}">
@@ -773,10 +829,12 @@
                                     <i class="fa-solid fa-badge"></i> <span th:text="${session.user.role}"></span>
                                 </span>
                             </li>
-                            <li th:if="${session.user != null}"><hr class="dropdown-divider"></li>
+                            <li th:if="${session.user != null}">
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="/logout">
-                                <i class="fa-solid fa-sign-out-alt"></i> Logout
-                            </a></li>
+                                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                                </a></li>
                         </ul>
                     </li>
                 </ul>
@@ -785,7 +843,8 @@
     </nav>
     <div class="dashboard-content">
         <div class="section-header">
-            <h1 class="dashboard-title"><i class="fa-solid fa-user-group"></i> Users</h1>            <div class="header-buttons">
+            <h1 class="dashboard-title"><i class="fa-solid fa-user-group"></i> Users</h1>
+            <div class="header-buttons">
                 <a href="#" class="btn-add-user" onclick="openAddUserModal(event)">
                     <i class="fa-solid fa-user-plus"></i>
                     Add User
@@ -810,14 +869,15 @@
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
-                </thead>                <tbody>
+                </thead>
+                <tbody>
                     <tr th:each="user, iterStat : ${users}">
                         <td th:text="${iterStat.count}">1</td>
                         <td th:text="${user.cwid}">U001</td>
                         <td th:text="${user.username}">John Doe</td>
                         <td th:text="${user.email}">john.doe@example.com</td>
                         <td>
-                            <span class="role-badge" 
+                            <span class="role-badge"
                                 th:classappend="${user.role == 'Super Admin'} ? 'role-super-admin' : (${user.role == 'Admin'} ? 'role-admin' : 'role-user')"
                                 th:text="${user.role}">Admin</span>
                         </td>
@@ -825,14 +885,16 @@
                             <span class="status-badge"
                                 th:classappend="${user.active} ? 'status-active' : 'status-inactive'"
                                 th:text="${user.active} ? 'Active' : 'Inactive'">Active</span>
-                        </td>                        <td>
+                        </td>
+                        <td>
                             <button class="edit-btn" title="Edit User"
                                 onclick="openEditUserModal(event, this.getAttribute('data-cwid'), this.getAttribute('data-username'), this.getAttribute('data-email'), this.getAttribute('data-role'))"
                                 th:attr="data-cwid=${user.cwid},data-username=${user.username},data-email=${user.email},data-role=${user.role}">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                         </td>
-                    </tr><!-- Sample Users - Remove when real data is available -->                    <tr th:if="${#lists.isEmpty(users)}">
+                    </tr><!-- Sample Users - Remove when real data is available -->
+                    <tr th:if="${#lists.isEmpty(users)}">
                         <td>1</td>
                         <td>CW001</td>
                         <td>James Wilson</td>
@@ -840,7 +902,7 @@
                         <td><span class="role-badge role-super-admin">Super Admin</span></td>
                         <td><span class="status-badge status-active">Active</span></td>
                         <td>
-                            <button class="edit-btn" title="Edit User" 
+                            <button class="edit-btn" title="Edit User"
                                 onclick="openEditUserModal(event, 'CW001', 'James Wilson', 'james.wilson@example.com', 'Super Admin')">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
@@ -1063,7 +1125,8 @@
                     <i class="fa-solid fa-forward-fast"></i>
                 </button>
             </div>
-        </div>    </div>
+        </div>
+    </div>
 
     <!-- Add/Edit User Modal -->
     <div class="modal-overlay" id="userModal">
@@ -1073,16 +1136,19 @@
                 <button class="modal-close" onclick="closeUserModal()">
                     <i class="fa-solid fa-times"></i>
                 </button>
-            </div>            <div class="form-success" id="formSuccess">
+            </div>
+            <div class="form-success" id="formSuccess">
                 <i class="fa-solid fa-check-circle"></i> User saved successfully!
-            </div>            <form id="userForm" onsubmit="submitUserForm(event)">
+            </div>
+            <form id="userForm" onsubmit="submitUserForm(event)">
                 <!-- CWID Field -->
                 <div class="modal-form-group">
                     <label class="modal-label">
                         CWID
                         <span class="required">*</span>
                     </label>
-                    <input type="text" class="modal-input" id="cwid" placeholder="Enter CWID (e.g., ABCDE or CW001)" required>
+                    <input type="text" class="modal-input" id="cwid" placeholder="Enter CWID (e.g., ABCDE or CW001)"
+                        required>
                     <div class="modal-error" id="cwidError"></div>
                 </div>
 
@@ -1091,9 +1157,11 @@
                     <label class="modal-label">
                         User Name
                         <span class="required">*</span>
-                        <span style="font-size: 0.7rem; color: #999; margin-left: 0.5rem;">(Auto-populated from LDAP)</span>
+                        <span style="font-size: 0.7rem; color: #999; margin-left: 0.5rem;">(Auto-populated from
+                            LDAP)</span>
                     </label>
-                    <input type="text" class="modal-input" id="username" placeholder="Username will be fetched from LDAP" readonly>
+                    <input type="text" class="modal-input" id="username"
+                        placeholder="Username will be fetched from LDAP" readonly>
                     <div class="modal-error" id="usernameError"></div>
                 </div>
 
@@ -1102,9 +1170,11 @@
                     <label class="modal-label">
                         Email
                         <span class="required">*</span>
-                        <span style="font-size: 0.7rem; color: #999; margin-left: 0.5rem;">(Auto-populated from LDAP)</span>
+                        <span style="font-size: 0.7rem; color: #999; margin-left: 0.5rem;">(Auto-populated from
+                            LDAP)</span>
                     </label>
-                    <input type="email" class="modal-input" id="email" placeholder="Email will be fetched from LDAP" readonly>
+                    <input type="email" class="modal-input" id="email" placeholder="Email will be fetched from LDAP"
+                        readonly>
                     <div class="modal-error" id="emailError"></div>
                 </div>
 
@@ -1132,14 +1202,16 @@
                     <button type="button" class="modal-btn modal-btn-secondary" onclick="closeUserModal()">
                         Cancel
                     </button>
-                    <button type="button" class="modal-btn modal-btn-secondary" id="deleteBtn" style="display: none; background: #ff6b6b; color: white;" onclick="deleteUser()">
+                    <button type="button" class="modal-btn modal-btn-secondary" id="deleteBtn"
+                        style="display: none; background: #ff6b6b; color: white;" onclick="deleteUser()">
                         <i class="fa-solid fa-trash"></i> Delete User
                     </button>
                     <button type="submit" class="modal-btn modal-btn-primary">
                         <i class="fa-solid fa-save"></i> Save User
                     </button>
                 </div>
-            </form>        </div>
+            </form>
+        </div>
     </div>
 
     <!-- iPhone Style Popup -->
@@ -1166,7 +1238,7 @@
         </div>
     </div>
 
-<script>
+    <script>
         let currentEditingCwid = null;
 
         // Popup Functions
@@ -1269,14 +1341,14 @@
 
             // Check if adding new user (when currentEditingCwid is null)
             const isAdding = currentEditingCwid === null;
-            
+
             if (isAdding) {
                 // For new users, validate that username and email are populated (should be auto-populated)
                 if (!username) {
                     showError('usernameError', 'Username should be auto-populated from LDAP. Please validate CWID first.');
                     isValid = false;
                 }
-                
+
                 if (!email) {
                     showError('emailError', 'Email should be auto-populated from LDAP. Please validate CWID first.');
                     isValid = false;
@@ -1287,7 +1359,7 @@
                     showError('usernameError', 'User name is required');
                     isValid = false;
                 }
-                
+
                 if (!email) {
                     showError('emailError', 'Email is required');
                     isValid = false;
@@ -1334,61 +1406,61 @@
                 credentials: 'include',
                 body: JSON.stringify(userData)
             })
-            .then(response => {
-                console.log('Response status:', response.status);
-                return response.json();
-            })            .then(data => {
-                console.log('Response data:', data);
-                if (data.success) {
-                    // Show success popup instead of form message
-                    const message = isAdding ? 'User added successfully!' : 'User updated successfully!';
-                    showSuccessPopup(message);
-                } else {
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                }).then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        // Show success popup instead of form message
+                        const message = isAdding ? 'User added successfully!' : 'User updated successfully!';
+                        showSuccessPopup(message);
+                    } else {
+                        // Show error popup
+                        showErrorPopup(data.message || 'An error occurred. Please try again.');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save User';
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
                     // Show error popup
-                    showErrorPopup(data.message || 'An error occurred. Please try again.');
+                    showErrorPopup('Failed to save user. Please try again.');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save User';
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                // Show error popup
-                showErrorPopup('Failed to save user. Please try again.');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save User';
-            });
+                });
         }
 
         // Validate CWID and fetch user details from LDAP
         function validateAndFetchCwid() {
             clearFormErrors();
-            
+
             const cwid = document.getElementById('cwid').value.trim();
             const isAdding = currentEditingCwid === null;
-            
+
             // Only auto-fetch for new users
             if (!isAdding) {
                 return; // Don't auto-fetch when editing
             }
-            
+
             if (!cwid) {
                 clearLdapFields();
                 return;
             }
-            
+
             if (!/^[A-Za-z0-9]{3,}$/.test(cwid)) {
                 showError('cwidError', 'CWID must be at least 3 alphanumeric characters');
                 clearLdapFields();
                 return;
             }
-            
+
             // Clear any previous errors
             document.getElementById('cwidError').classList.remove('show');
-            
+
             // Show loading state
             document.getElementById('username').value = 'Fetching...';
             document.getElementById('email').value = 'Fetching...';
-            
+
             // Fetch CWID validation and user details from LDAP
             fetch(`/api/users/validate-cwid/${cwid}`, {
                 method: 'GET',
@@ -1397,40 +1469,40 @@
                 },
                 credentials: 'include'
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('CWID validation response:', data);
-                
-                if (data.success) {
-                    // Populate form with LDAP data
-                    document.getElementById('username').value = data.data.username || '';
-                    document.getElementById('email').value = data.data.email || '';
-                    document.getElementById('cwidError').classList.remove('show');
-                } else {
-                    showError('cwidError', data.message || 'Failed to validate CWID');
+                .then(response => response.json())
+                .then(data => {
+                    console.log('CWID validation response:', data);
+
+                    if (data.success) {
+                        // Populate form with LDAP data
+                        document.getElementById('username').value = data.data.username || '';
+                        document.getElementById('email').value = data.data.email || '';
+                        document.getElementById('cwidError').classList.remove('show');
+                    } else {
+                        showError('cwidError', data.message || 'Failed to validate CWID');
+                        clearLdapFields();
+                    }
+                })
+                .catch(error => {
+                    console.error('CWID validation error:', error);
+                    showError('cwidError', 'Error validating CWID. Please try again.');
                     clearLdapFields();
-                }
-            })
-            .catch(error => {
-                console.error('CWID validation error:', error);
-                showError('cwidError', 'Error validating CWID. Please try again.');
-                clearLdapFields();
-            });
+                });
         }
-        
+
         // Clear LDAP auto-populated fields
         function clearLdapFields() {
             document.getElementById('username').value = '';
             document.getElementById('email').value = '';
         }
-        
+
         // Add event listener for CWID field
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const cwidField = document.getElementById('cwid');
             if (cwidField) {
                 // Use debouncing to avoid too many API calls while typing
                 let cwidTimeout;
-                cwidField.addEventListener('input', function() {
+                cwidField.addEventListener('input', function () {
                     clearTimeout(cwidTimeout);
                     cwidTimeout = setTimeout(() => {
                         validateAndFetchCwid();
@@ -1463,31 +1535,31 @@
                 },
                 credentials: 'include'
             })
-            .then(response => {
-                console.log('Delete response status:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Delete response data:', data);
-                if (data.success) {
-                    document.getElementById('formSuccess').classList.add('show');
-                    document.getElementById('formSuccess').innerHTML = '<i class="fa-solid fa-check-circle"></i> User deleted successfully!';
-                    setTimeout(() => {
-                        closeUserModal();
-                        location.reload();
-                    }, 1500);
-                } else {
-                    showError('usernameError', data.message || 'Failed to delete user');
+                .then(response => {
+                    console.log('Delete response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Delete response data:', data);
+                    if (data.success) {
+                        document.getElementById('formSuccess').classList.add('show');
+                        document.getElementById('formSuccess').innerHTML = '<i class="fa-solid fa-check-circle"></i> User deleted successfully!';
+                        setTimeout(() => {
+                            closeUserModal();
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showError('usernameError', data.message || 'Failed to delete user');
+                        deleteBtn.disabled = false;
+                        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete User';
+                    }
+                })
+                .catch(error => {
+                    console.error('Delete error:', error);
+                    showError('usernameError', 'Failed to delete user. Please try again.');
                     deleteBtn.disabled = false;
                     deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete User';
-                }
-            })
-            .catch(error => {
-                console.error('Delete error:', error);
-                showError('usernameError', 'Failed to delete user. Please try again.');
-                deleteBtn.disabled = false;
-                deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete User';
-            });
+                });
         }// Close modal when clicking outside
         document.getElementById('userModal').addEventListener('click', function (event) {
             if (event.target === this) {

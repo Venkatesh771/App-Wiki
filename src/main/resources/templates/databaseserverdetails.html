@@ -25,13 +25,39 @@
             position: sticky;
             top: 0;
             z-index: 1030;
-        }
-
-        .navbar-brand {
+        }        .navbar-brand {
             font-family: "Quicksand", sans-serif;
             font-weight: 400;
             font-size: 1.1rem;
             margin-left: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-logo {
+            height: 33px;
+            width: auto;
+            max-width: 45px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+        }
+
+        .navbar-brand:hover .navbar-logo {
+            transform: scale(1.05);
+        }
+
+        .navbar-brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            line-height: 1.2;
         }
 
         .navbar-nav .nav-link {
@@ -1354,11 +1380,12 @@
     <div class="data-saving-indicator" id="savingIndicator">
         <div class="spinner"></div>
         <span>Saving...</span>
-    </div>
-
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    </div>    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/home">App Wiki</a>
+            <a class="navbar-brand" href="/home">
+                <img src="/assets/logo.png" alt="App Wiki Logo" class="navbar-logo">
+                <span class="navbar-brand-text">App Wiki</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
