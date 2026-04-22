@@ -22,10 +22,37 @@ public class ResourceContactsService {
     }
 
     public ResourceContacts save(ResourceContacts entity) {
+        // Clean up empty and placeholder values
+        cleanupEntity(entity);
         return repository.save(entity);
     }
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    /**
+     * Convert empty strings and placeholder values to null
+     * This ensures dropdowns that weren't selected don't store "Select" text
+     */
+    private void cleanupEntity(ResourceContacts entity) {
+        if (entity.getOffshorePrimary() != null && (entity.getOffshorePrimary().trim().isEmpty() || entity.getOffshorePrimary().trim().equals("Select"))) {
+            entity.setOffshorePrimary(null);
+        }
+        if (entity.getOffshoreSecondary() != null && (entity.getOffshoreSecondary().trim().isEmpty() || entity.getOffshoreSecondary().trim().equals("Select"))) {
+            entity.setOffshoreSecondary(null);
+        }
+        if (entity.getOffshoreTertiary() != null && (entity.getOffshoreTertiary().trim().isEmpty() || entity.getOffshoreTertiary().trim().equals("Select"))) {
+            entity.setOffshoreTertiary(null);
+        }
+        if (entity.getOnshorePrimary() != null && (entity.getOnshorePrimary().trim().isEmpty() || entity.getOnshorePrimary().trim().equals("Select"))) {
+            entity.setOnshorePrimary(null);
+        }
+        if (entity.getOnshoreSecondary() != null && (entity.getOnshoreSecondary().trim().isEmpty() || entity.getOnshoreSecondary().trim().equals("Select"))) {
+            entity.setOnshoreSecondary(null);
+        }
+        if (entity.getOnshoreTertiary() != null && (entity.getOnshoreTertiary().trim().isEmpty() || entity.getOnshoreTertiary().trim().equals("Select"))) {
+            entity.setOnshoreTertiary(null);
+        }
     }
 }

@@ -1,12 +1,17 @@
 package com.example.dictionary.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class DatabaseServerDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "basic_identity_id", nullable = true)
+    @JsonBackReference
+    private BasicIdentity basicIdentity;
+
     private String environment; // DEV, TEST, QA, PROD
     private String databaseType;
     private String databaseVersion;
@@ -40,7 +45,9 @@ public class DatabaseServerDetail {
     public String getPort() { return port; }
     public void setPort(String port) { this.port = port; }
     public String getAccountId() { return accountId; }
-    public void setAccountId(String accountId) { this.accountId = accountId; }
-    public String getIp() { return ip; }
+    public void setAccountId(String accountId) { this.accountId = accountId; }    public String getIp() { return ip; }
     public void setIp(String ip) { this.ip = ip; }
+
+    public BasicIdentity getBasicIdentity() { return basicIdentity; }
+    public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }
 }

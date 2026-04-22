@@ -1,19 +1,17 @@
 /**
- * App Dictionary - Storage Manager V4 - WITH VALIDATION
+ * App Dictionary - Storage Manager V4 - NAMED FIELD RESTORATION
  * 
  * This version includes:
- * - Integrated validation with modal popups
- * - Loading animations during save
- * - Mandatory field validation (BEAT ID, Application Name)
- * - Clean data handling (null for empty fields)
- * - iPhone-style modal dialogs
+ * - Named field collection and restoration (deployedServer, serverName, etc.)
+ * - Proper restoration logic that clears old rows before restoring
+ * - Auto-save prevention during restoration (isRestoring flag)
+ * - Backend submission with basicIdentityId and beatId
  */
 
 class AppDictionaryStorageManager {
     constructor() {
-        console.log('Creating Storage Manager with Validation...');
+        console.log('Creating Storage Manager...');
         this.isRestoring = false;
-        this.isSubmitting = false;
         this.STORAGE_KEYS = {
             mainDetails: 'app_mainDetails_form',
             appServer: 'app_appServer_form',
@@ -31,11 +29,13 @@ class AppDictionaryStorageManager {
             dbServer: '/api/database-server-details'
         };
         console.log('Storage Manager Ready');
-    }    // ===== PAGE 1: MAIN FILE =====
+    }
+
+    // ===== PAGE 1: MAIN FILE =====
     initMainFilePage() {
         console.log('Initializing Main File Page');
         this.restoreMainFileData();
-        // Auto-save removed - only save on explicit "Save & Continue" button click
+        this.attachAutoSaveListeners('main');
         this.attachSaveAndContinueButton('main', '/applicationserverdetails');
     }
 
@@ -63,7 +63,7 @@ class AppDictionaryStorageManager {
                     if (field.type === 'checkbox') {
                         field.checked = savedData[fieldName];
                     } else {
-                        field.value = savedData[fieldName] || '';
+                        field.value = savedData[fieldName];
                     }
                 }
             });
@@ -77,96 +77,197 @@ class AppDictionaryStorageManager {
         this.restoreAppServerData();
         this.attachAutoSaveListeners('appServer');
         this.attachSaveAndContinueButton('appServer', '/clouddetails');
-    } collectAppServerData() {
-        const data = [];
-        const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
-        const fieldNames = ['environment', 'serverName', 'serverOsVersion', 'deployedServer', 'domain', 'cluster', 'serviceName', 'ipAddress'];
+    }
 
-        sections.forEach(sectionId => {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                const tbody = section.querySelector('.row-container');
-                if (tbody) {
-                    tbody.querySelectorAll('tr').forEach(row => {
-                        const rowData = {};
-                        const fields = row.querySelectorAll('input, select, textarea');
+    // Field name mapping for AppServer fields
+    appServerFieldMap = {
+        'deployed-server-field': 'deployedServer',
+        'server-name-field': 'serverName',
+        'server-os-field': 'serverOs',
+        'domain-field': 'domain',
+        'cluster-field': 'cluster',
+        'service-name-field': 'serviceName',
+        'ip-address-field': 'ipAddress'
+    };
 
-                        // Map environment from section ID
-                        if (sectionId === 'dev-section') rowData['environment'] = 'DEV';
-                        else if (sectionId === 'test-section') rowData['environment'] = 'TEST';
-                        else if (sectionId === 'qa-section') rowData['environment'] = 'QA';
-                        else if (sectionId === 'prod-section') rowData['environment'] = 'PROD';
+    // Field name mapping for CloudDetails fields
+    cloudDetailsFieldMap = {
+        'account-id-field': 'accountId',
+        'host-type-field': 'hostType',
+        'service-name-field': 'serviceName',
+        'lambda-field': 'lambdaNames',
+        's3-bucket-field': 's3Bucket',
+        'sqs-field': 'sqsNames',
+        'iam-user-field': 'iamUser',
+        'comments-field': 'comments'
+    };
 
-                        // Map fields
-                        fields.forEach((field, idx) => {
-                            if (idx < fieldNames.length - 1) { // Skip environment since we set it above
-                                const fieldName = fieldNames[idx + 1]; // Offset by 1 because first is environment
-                                if (field.type === 'checkbox') {
-                                    rowData[fieldName] = field.checked;
-                                } else {
-                                    const value = field.value ? field.value.trim() : '';
-                                    rowData[fieldName] = value || null;
-                                }
-                            }
-                        });
+    // Field name mapping for DatabaseServer fields
+    dbServerFieldMap = {
+        'db-type-field': 'databaseType',
+        'db-version-field': 'databaseVersion',
+        'db-hosting-field': 'databaseHostingType',
+        'db-name-field': 'databaseName',
+        'account-name-field': 'accountName',
+        'host-name-field': 'hostName',
+        'service-name-field': 'serviceName',
+        'port-field': 'port',
+        'account-id-field': 'accountId',
+        'ip-field': 'ip'
+    };
 
-                        // Only add if has data
-                        const hasData = Object.values(rowData).some(v => v && v !== false && v !== null);
-                        if (hasData) {
-                            data.push(rowData);
-                        }
-                    });
+    // Helper method to extract named field values
+    extractNamedFieldsFromRow(fieldsGrid, fieldMap) {
+        const rowData = {};
+        if (!fieldsGrid) return rowData;
+
+        const fieldItems = fieldsGrid.querySelectorAll('.field-item');
+        fieldItems.forEach(fieldItem => {
+            let fieldName = null;
+            for (const [className, mappedName] of Object.entries(fieldMap)) {
+                if (fieldItem.classList.contains(className)) {
+                    fieldName = mappedName;
+                    break;
+                }
+            }
+
+            if (fieldName) {
+                const input = fieldItem.querySelector('input, select, textarea');
+                if (input) {
+                    if (input.type === 'checkbox') {
+                        rowData[fieldName] = input.checked;
+                    } else {
+                        rowData[fieldName] = input.value || '';
+                    }
                 }
             }
         });
+
+        return rowData;
+    }
+
+    // Helper method to restore named fields in a row
+    restoreNamedFieldsInRow(fieldsGrid, rowData, fieldMap) {
+        if (!fieldsGrid) return;
+
+        const fieldItems = fieldsGrid.querySelectorAll('.field-item');
+        fieldItems.forEach(fieldItem => {
+            let fieldName = null;
+            for (const [className, mappedName] of Object.entries(fieldMap)) {
+                if (fieldItem.classList.contains(className)) {
+                    fieldName = mappedName;
+                    break;
+                }
+            }
+            if (fieldName && rowData[fieldName] !== undefined) {
+                const input = fieldItem.querySelector('input, select, textarea');
+                if (input) {
+                    if (input.type === 'checkbox') {
+                        input.checked = rowData[fieldName] || false;
+                    } else {
+                        input.value = rowData[fieldName] || '';
+                    }
+                }
+            }
+        });
+    }
+
+    collectAppServerData() {
+        const data = {};
+        const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const rows = [];
+                const containerGrid = section.querySelector('.row-container-grid');
+                console.log(`🔍 Section ${sectionId}: found container:`, containerGrid ? 'YES' : 'NO');
+                if (containerGrid) {
+                    const selectFields = containerGrid.querySelectorAll('.field-item.select-field');
+                    console.log(`   Found ${selectFields.length} rows`);
+                    selectFields.forEach((selectField, idx) => {
+                        const rowData = {};
+
+                        const checkbox = selectField.querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            rowData['checkbox'] = checkbox.checked;
+                        }
+
+                        let fieldsGrid = selectField.nextElementSibling;
+                        while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                            fieldsGrid = fieldsGrid.nextElementSibling;
+                        }
+
+                        if (fieldsGrid) {
+                            const namedFields = this.extractNamedFieldsFromRow(fieldsGrid, this.appServerFieldMap);
+                            Object.assign(rowData, namedFields);
+                        }
+
+                        if (Object.values(rowData).some(v => v && v !== false)) {
+                            console.log(`   Row ${idx}:`, rowData);
+                            rows.push(rowData);
+                        }
+                    });
+                }
+                data[sectionId] = rows;
+            }
+        });
+        console.log('📊 AppServer collected:', data);
         return data;
-    } restoreAppServerData() {
+    }
+
+    restoreAppServerData() {
         console.log('Restoring App Server data...');
         this.isRestoring = true;
         const savedData = this.getFromLocalStorage(this.STORAGE_KEYS.appServer);
-
-        if (savedData && Array.isArray(savedData) && savedData.length > 0) {
-            console.log('Found saved data array, restoring table rows...');
-            const envToSectionMap = { 'DEV': 'dev-section', 'TEST': 'test-section', 'QA': 'qa-section', 'PROD': 'prod-section' };
-            const fieldNames = ['serverName', 'serverOsVersion', 'deployedServer', 'domain', 'cluster', 'serviceName', 'ipAddress'];
-
+        if (savedData && Object.keys(savedData).length > 0) {
+            console.log('Found saved data, restoring grid rows...');
             const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
             sections.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    const tbody = section.querySelector('.row-container');
-                    if (tbody) {
-                        const sectionRows = savedData.filter(r => {
-                            const env = sectionId === 'dev-section' ? 'DEV' : sectionId === 'test-section' ? 'TEST' : sectionId === 'qa-section' ? 'QA' : 'PROD';
-                            return r.environment === env;
-                        });
+                if (savedData[sectionId] && savedData[sectionId].length > 0) {
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        const containerGrid = section.querySelector('.row-container-grid');
+                        if (containerGrid) {
+                            const templateSelectField = containerGrid.querySelector('.field-item.select-field');
+                            let templateFieldsGrid = templateSelectField ? templateSelectField.nextElementSibling : null;
+                            while (templateFieldsGrid && !templateFieldsGrid.classList.contains('fields-grid')) {
+                                templateFieldsGrid = templateFieldsGrid.nextElementSibling;
+                            }
 
-                        if (sectionRows.length > 0) {
-                            const templateRow = tbody.querySelector('tr');
-                            tbody.innerHTML = '';
-                            if (templateRow) tbody.appendChild(templateRow);
+                            const selectFields = Array.from(containerGrid.querySelectorAll('.field-item.select-field'));
+                            for (let i = selectFields.length - 1; i > 0; i--) {
+                                const field = selectFields[i];
+                                let fieldsGrid = field.nextElementSibling;
+                                while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                                    fieldsGrid = fieldsGrid.nextElementSibling;
+                                }
+                                field.remove();
+                                if (fieldsGrid) fieldsGrid.remove();
+                            }
 
-                            sectionRows.forEach((rowData, idx) => {
-                                let targetRow;
+                            savedData[sectionId].forEach((rowData, idx) => {
+                                let selectField, fieldsGrid;
+
                                 if (idx === 0) {
-                                    targetRow = tbody.querySelector('tr');
+                                    selectField = containerGrid.querySelector('.field-item.select-field');
+                                    fieldsGrid = selectField ? selectField.nextElementSibling : null;
+                                    while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                                        fieldsGrid = fieldsGrid.nextElementSibling;
+                                    }
                                 } else {
-                                    targetRow = templateRow.cloneNode(true);
-                                    tbody.appendChild(targetRow);
+                                    selectField = templateSelectField.cloneNode(true);
+                                    fieldsGrid = templateFieldsGrid.cloneNode(true);
+                                    containerGrid.appendChild(selectField);
+                                    containerGrid.appendChild(fieldsGrid);
                                 }
 
-                                if (targetRow) {
-                                    const fields = targetRow.querySelectorAll('input, select, textarea');
-                                    fields.forEach((field, fieldIdx) => {
-                                        if (fieldIdx < fieldNames.length) {
-                                            const value = rowData[fieldNames[fieldIdx]];
-                                            if (field.type === 'checkbox') {
-                                                field.checked = value || false;
-                                            } else {
-                                                field.value = value || '';
-                                            }
-                                        }
-                                    });
+                                if (selectField) {
+                                    const checkbox = selectField.querySelector('input[type="checkbox"]');
+                                    if (checkbox) checkbox.checked = rowData['checkbox'] || false;
+                                }
+
+                                if (fieldsGrid) {
+                                    this.restoreNamedFieldsInRow(fieldsGrid, rowData, this.appServerFieldMap);
                                 }
                             });
                         }
@@ -176,97 +277,110 @@ class AppDictionaryStorageManager {
             console.log('App Server data restored');
         }
         this.isRestoring = false;
-    }
-
-    // ===== PAGE 3: CLOUD DETAILS =====
+    }    // ===== PAGE 3: CLOUD DETAILS =====
     initCloudDetailsPage() {
         console.log('Initializing Cloud Details Page');
         this.restoreCloudDetailsData();
         this.attachAutoSaveListeners('cloud');
         this.attachSaveAndContinueButton('cloud', '/databaseserverdetails');
-    } collectCloudDetailsData() {
-        const data = [];
-        const sections = ['non-prod', 'prod'];
-        const fieldNames = ['environment', 'accountId', 'hostType', 'serviceName', 'lambdaNames', 's3Bucket', 'sqsNames', 'iamUser', 'comments'];
+    }
 
+    collectCloudDetailsData() {
+        const data = {};
+        const sections = ['non-prod', 'prod'];
         sections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
             if (section) {
-                const tbody = section.querySelector('.row-container');
-                if (tbody) {
-                    tbody.querySelectorAll('tr').forEach(row => {
+                const rows = [];
+                const containerGrid = section.querySelector('.row-container-grid');
+                console.log(`🔍 Section ${sectionId}: found container:`, containerGrid ? 'YES' : 'NO');
+                if (containerGrid) {
+                    const selectFields = containerGrid.querySelectorAll('.field-item.select-field');
+                    console.log(`   Found ${selectFields.length} rows`);
+                    selectFields.forEach((selectField, idx) => {
                         const rowData = {};
-                        const fields = row.querySelectorAll('input, select, textarea');
 
-                        // Map environment from section ID
-                        rowData['environment'] = sectionId === 'non-prod' ? 'NON_PROD' : 'PROD';
+                        const checkbox = selectField.querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            rowData['checkbox'] = checkbox.checked;
+                        }
 
-                        // Map fields
-                        fields.forEach((field, idx) => {
-                            if (idx < fieldNames.length - 1) { // Skip environment since we set it above
-                                const fieldName = fieldNames[idx + 1]; // Offset by 1 because first is environment
-                                if (field.type === 'checkbox') {
-                                    rowData[fieldName] = field.checked;
-                                } else {
-                                    const value = field.value ? field.value.trim() : '';
-                                    rowData[fieldName] = value || null;
-                                }
-                            }
-                        });
+                        let fieldsGrid = selectField.nextElementSibling;
+                        while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                            fieldsGrid = fieldsGrid.nextElementSibling;
+                        }
 
-                        // Only add if has data
-                        const hasData = Object.values(rowData).some(v => v && v !== false && v !== null);
-                        if (hasData) {
-                            data.push(rowData);
+                        if (fieldsGrid) {
+                            const namedFields = this.extractNamedFieldsFromRow(fieldsGrid, this.cloudDetailsFieldMap);
+                            Object.assign(rowData, namedFields);
+                        }
+
+                        if (Object.values(rowData).some(v => v && v !== false)) {
+                            console.log(`   Row ${idx}:`, rowData);
+                            rows.push(rowData);
                         }
                     });
                 }
+                data[sectionId] = rows;
             }
         });
+        console.log('📊 CloudDetails collected:', data);
         return data;
-    } restoreCloudDetailsData() {
+    }
+
+    restoreCloudDetailsData() {
         console.log('Restoring Cloud Details data...');
         this.isRestoring = true;
         const savedData = this.getFromLocalStorage(this.STORAGE_KEYS.cloudDetails);
-
-        if (savedData && Array.isArray(savedData) && savedData.length > 0) {
-            console.log('Found saved data array, restoring table rows...');
-            const fieldNames = ['accountId', 'hostType', 'serviceName', 'lambdaNames', 's3Bucket', 'sqsNames', 'iamUser', 'comments'];
-
+        if (savedData && Object.keys(savedData).length > 0) {
+            console.log('Found saved data, restoring grid rows...');
             const sections = ['non-prod', 'prod'];
             sections.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    const tbody = section.querySelector('.row-container');
-                    if (tbody) {
-                        const env = sectionId === 'non-prod' ? 'NON_PROD' : 'PROD';
-                        const sectionRows = savedData.filter(r => r.environment === env);
+                if (savedData[sectionId] && savedData[sectionId].length > 0) {
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        const containerGrid = section.querySelector('.row-container-grid');
+                        if (containerGrid) {
+                            const templateSelectField = containerGrid.querySelector('.field-item.select-field');
+                            let templateFieldsGrid = templateSelectField ? templateSelectField.nextElementSibling : null;
+                            while (templateFieldsGrid && !templateFieldsGrid.classList.contains('fields-grid')) {
+                                templateFieldsGrid = templateFieldsGrid.nextElementSibling;
+                            }
 
-                        if (sectionRows.length > 0) {
-                            const templateRow = tbody.querySelector('tr');
-                            while (tbody.rows.length > 1) tbody.deleteRow(1);
+                            const selectFields = Array.from(containerGrid.querySelectorAll('.field-item.select-field'));
+                            for (let i = selectFields.length - 1; i > 0; i--) {
+                                const field = selectFields[i];
+                                let fieldsGrid = field.nextElementSibling;
+                                while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                                    fieldsGrid = fieldsGrid.nextElementSibling;
+                                }
+                                field.remove();
+                                if (fieldsGrid) fieldsGrid.remove();
+                            }
 
-                            sectionRows.forEach((rowData, idx) => {
-                                let targetRow;
+                            savedData[sectionId].forEach((rowData, idx) => {
+                                let selectField, fieldsGrid;
+
                                 if (idx === 0) {
-                                    targetRow = tbody.querySelector('tr');
+                                    selectField = containerGrid.querySelector('.field-item.select-field');
+                                    fieldsGrid = selectField ? selectField.nextElementSibling : null;
+                                    while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                                        fieldsGrid = fieldsGrid.nextElementSibling;
+                                    }
                                 } else {
-                                    targetRow = templateRow.cloneNode(true);
-                                    tbody.appendChild(targetRow);
+                                    selectField = templateSelectField.cloneNode(true);
+                                    fieldsGrid = templateFieldsGrid.cloneNode(true);
+                                    containerGrid.appendChild(selectField);
+                                    containerGrid.appendChild(fieldsGrid);
                                 }
 
-                                if (targetRow) {
-                                    const fields = targetRow.querySelectorAll('input, select, textarea');
-                                    fields.forEach((field, fieldIdx) => {
-                                        if (fieldIdx < fieldNames.length) {
-                                            const value = rowData[fieldNames[fieldIdx]];
-                                            if (field.type === 'checkbox') {
-                                                field.checked = value || false;
-                                            } else {
-                                                field.value = value || '';
-                                            }
-                                        }
-                                    });
+                                if (selectField) {
+                                    const checkbox = selectField.querySelector('input[type="checkbox"]');
+                                    if (checkbox) checkbox.checked = rowData['checkbox'] || false;
+                                }
+
+                                if (fieldsGrid) {
+                                    this.restoreNamedFieldsInRow(fieldsGrid, rowData, this.cloudDetailsFieldMap);
                                 }
                             });
                         }
@@ -284,98 +398,100 @@ class AppDictionaryStorageManager {
         this.restoreDBServerData();
         this.attachAutoSaveListeners('dbServer');
         this.attachFinalSaveButton();
-    } collectDBServerData() {
-        const data = [];
-        const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
-        const fieldNames = ['environment', 'databaseType', 'databaseVersion', 'databaseHostingType', 'databaseName', 'accountName', 'hostName', 'serviceName', 'port', 'accountId', 'ip'];
+    }
 
+    collectDBServerData() {
+        const data = {};
+        const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
         sections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
             if (section) {
-                const tbody = section.querySelector('.row-container');
-                if (tbody) {
-                    const allRows = tbody.querySelectorAll('tr');
-                    console.log(`Collecting ${sectionId}: Found ${allRows.length} rows`);
-                    allRows.forEach((row, rowIdx) => {
+                const rows = [];
+                const containerGrid = section.querySelector('.row-container-grid');
+                if (containerGrid) {
+                    const selectFields = containerGrid.querySelectorAll('.field-item.select-field');
+                    selectFields.forEach((selectField, idx) => {
                         const rowData = {};
-                        const fields = row.querySelectorAll('input, select, textarea');
 
-                        // Map environment from section ID
-                        if (sectionId === 'dev-section') rowData['environment'] = 'DEV';
-                        else if (sectionId === 'test-section') rowData['environment'] = 'TEST';
-                        else if (sectionId === 'qa-section') rowData['environment'] = 'QA';
-                        else if (sectionId === 'prod-section') rowData['environment'] = 'PROD';
+                        const checkbox = selectField.querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            rowData['checkbox'] = checkbox.checked;
+                        }
 
-                        // Map fields
-                        fields.forEach((field, idx) => {
-                            if (idx < fieldNames.length - 1) { // Skip environment
-                                const fieldName = fieldNames[idx + 1]; // Offset by 1
-                                if (field.type === 'checkbox') {
-                                    rowData[fieldName] = field.checked;
-                                } else {
-                                    const value = field.value ? field.value.trim() : '';
-                                    rowData[fieldName] = value || null;
-                                }
-                            }
-                        });
+                        let fieldsGrid = selectField.nextElementSibling;
+                        while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                            fieldsGrid = fieldsGrid.nextElementSibling;
+                        }
 
-                        // Only add if has data
-                        const hasData = Object.values(rowData).some(v => v && v !== false && v !== null);
-                        if (hasData) {
-                            console.log(`  Row ${rowIdx}: Added (has data)`);
-                            data.push(rowData);
-                        } else {
-                            console.log(`  Row ${rowIdx}: Skipped (empty)`);
+                        if (fieldsGrid) {
+                            const namedFields = this.extractNamedFieldsFromRow(fieldsGrid, this.dbServerFieldMap);
+                            Object.assign(rowData, namedFields);
+                        }
+
+                        if (Object.values(rowData).some(v => v && v !== false)) {
+                            rows.push(rowData);
                         }
                     });
                 }
-                console.log(`${sectionId} FINAL COUNT: ${data.length} rows`);
+                data[sectionId] = rows;
             }
         });
         return data;
-    } restoreDBServerData() {
+    }
+
+    restoreDBServerData() {
         console.log('Restoring DB Server data...');
         this.isRestoring = true;
         const savedData = this.getFromLocalStorage(this.STORAGE_KEYS.dbServer);
-
-        if (savedData && Array.isArray(savedData) && savedData.length > 0) {
-            console.log('Found saved data array, restoring table rows...');
-            const fieldNames = ['databaseType', 'databaseVersion', 'databaseHostingType', 'databaseName', 'accountName', 'hostName', 'serviceName', 'port', 'accountId', 'ip'];
-
+        if (savedData && Object.keys(savedData).length > 0) {
+            console.log('Found saved data, restoring grid rows...');
             const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
             sections.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    const tbody = section.querySelector('.row-container');
-                    if (tbody) {
-                        const env = sectionId === 'dev-section' ? 'DEV' : sectionId === 'test-section' ? 'TEST' : sectionId === 'qa-section' ? 'QA' : 'PROD';
-                        const sectionRows = savedData.filter(r => r.environment === env);
+                if (savedData[sectionId] && savedData[sectionId].length > 0) {
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        const containerGrid = section.querySelector('.row-container-grid');
+                        if (containerGrid) {
+                            const templateSelectField = containerGrid.querySelector('.field-item.select-field');
+                            let templateFieldsGrid = templateSelectField ? templateSelectField.nextElementSibling : null;
+                            while (templateFieldsGrid && !templateFieldsGrid.classList.contains('fields-grid')) {
+                                templateFieldsGrid = templateFieldsGrid.nextElementSibling;
+                            }
 
-                        if (sectionRows.length > 0) {
-                            const templateRow = tbody.querySelector('tr');
-                            while (tbody.rows.length > 1) tbody.deleteRow(1);
+                            const selectFields = Array.from(containerGrid.querySelectorAll('.field-item.select-field'));
+                            for (let i = selectFields.length - 1; i > 0; i--) {
+                                const field = selectFields[i];
+                                let fieldsGrid = field.nextElementSibling;
+                                while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                                    fieldsGrid = fieldsGrid.nextElementSibling;
+                                }
+                                field.remove();
+                                if (fieldsGrid) fieldsGrid.remove();
+                            }
 
-                            sectionRows.forEach((rowData, idx) => {
-                                let targetRow;
+                            savedData[sectionId].forEach((rowData, idx) => {
+                                let selectField, fieldsGrid;
+
                                 if (idx === 0) {
-                                    targetRow = tbody.querySelector('tr');
+                                    selectField = containerGrid.querySelector('.field-item.select-field');
+                                    fieldsGrid = selectField ? selectField.nextElementSibling : null;
+                                    while (fieldsGrid && !fieldsGrid.classList.contains('fields-grid')) {
+                                        fieldsGrid = fieldsGrid.nextElementSibling;
+                                    }
                                 } else {
-                                    targetRow = templateRow.cloneNode(true);
-                                    tbody.appendChild(targetRow);
+                                    selectField = templateSelectField.cloneNode(true);
+                                    fieldsGrid = templateFieldsGrid.cloneNode(true);
+                                    containerGrid.appendChild(selectField);
+                                    containerGrid.appendChild(fieldsGrid);
                                 }
 
-                                if (targetRow) {
-                                    const fields = targetRow.querySelectorAll('input, select, textarea');
-                                    fields.forEach((field, fieldIdx) => {
-                                        if (fieldIdx < fieldNames.length) {
-                                            const value = rowData[fieldNames[fieldIdx]];
-                                            if (field.type === 'checkbox') {
-                                                field.checked = value || false;
-                                            } else {
-                                                field.value = value || '';
-                                            }
-                                        }
-                                    });
+                                if (selectField) {
+                                    const checkbox = selectField.querySelector('input[type="checkbox"]');
+                                    if (checkbox) checkbox.checked = rowData['checkbox'] || false;
+                                }
+
+                                if (fieldsGrid) {
+                                    this.restoreNamedFieldsInRow(fieldsGrid, rowData, this.dbServerFieldMap);
                                 }
                             });
                         }
@@ -393,78 +509,32 @@ class AppDictionaryStorageManager {
         const storageKey = this.STORAGE_KEYS[pageType === 'main' ? 'mainDetails' : pageType === 'appServer' ? 'appServer' : pageType === 'cloud' ? 'cloudDetails' : 'dbServer'];
         const collectFn = pageType === 'main' ? this.collectMainFileData.bind(this) : pageType === 'appServer' ? this.collectAppServerData.bind(this) : pageType === 'cloud' ? this.collectCloudDetailsData.bind(this) : this.collectDBServerData.bind(this);
         const self = this;
-
         document.addEventListener('input', function (e) {
             if (self.isRestoring) return;
-            if ((pageType === 'main' && e.target.hasAttribute('data-field')) || (pageType !== 'main' && e.target.closest('table'))) {
+            if ((pageType === 'main' && e.target.hasAttribute('data-field')) || (pageType !== 'main' && (e.target.closest('table') || e.target.closest('.row-container-grid') || e.target.closest('.fields-grid')))) {
                 const data = collectFn();
                 self.saveToLocalStorage(storageKey, data);
             }
         });
         document.addEventListener('change', function (e) {
             if (self.isRestoring) return;
-            if ((pageType === 'main' && e.target.hasAttribute('data-field')) || (pageType !== 'main' && e.target.closest('table'))) {
+            if ((pageType === 'main' && e.target.hasAttribute('data-field')) || (pageType !== 'main' && (e.target.closest('table') || e.target.closest('.row-container-grid') || e.target.closest('.fields-grid')))) {
                 const data = collectFn();
                 self.saveToLocalStorage(storageKey, data);
             }
-        }); console.log('Auto-save listeners attached for ' + pageType);
-    }
-
-    // ===== VALIDATION =====
-    validateMainFilePageFields() {
-        console.log('Validating main file fields...');
-
-        const beatIdField = document.querySelector('[data-field="beatId"]');
-        const appNameField = document.querySelector('[data-field="applicationName"]');
-        const beatId = beatIdField ? (beatIdField.value || '').trim() : '';
-        const appName = appNameField ? (appNameField.value || '').trim() : '';
-        // Check BEAT ID - MANDATORY
-        if (!beatId) {
-            if (window.ValidationManager) {
-                window.ValidationManager.showModal('Please enter BEAT ID');
-            }
-            beatIdField?.focus();
-            return false;
-        }
-
-        // Check Application Name - MANDATORY
-        if (!appName) {
-            if (window.ValidationManager) {
-                window.ValidationManager.showModal('Please enter Application Name');
-            }
-            appNameField?.focus();
-            return false;
-        }
-
-        console.log('Main file validation passed');
-        return true;
-    }
-
-    // ===== BUTTON HANDLERS =====
+        });
+        console.log('Auto-save listeners attached for ' + pageType);
+    }    // ===== BUTTON HANDLERS =====
     attachSaveAndContinueButton(pageType, nextPageUrl) {
-        console.log('Attaching Save and Continue button for pageType: ' + pageType);
-        // Use more specific selectors for different pages
-        let saveBtn;
-        if (pageType === 'main') {
-            saveBtn = document.querySelector('.btn-save');
-        } else if (pageType === 'appServer') {
-            saveBtn = document.querySelector('.btn-save-app-server');
-        } else if (pageType === 'cloud') {
-            saveBtn = document.querySelector('.btn-save-cloud');
-        } else if (pageType === 'dbServer') {
-            saveBtn = document.querySelector('.btn-save-db');
-        }
+        console.log('Attaching Save and Continue button for page:', pageType);
+        const saveBtn = document.querySelector('.btn-save, .btn-save-app-server, .btn-save-cloud, button[type="submit"], .save-btn');
 
         if (saveBtn) {
             const self = this;
             saveBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                console.log('=== SAVE AND CONTINUE - ' + pageType.toUpperCase() + ' ===');
+                console.log('=== SAVE AND CONTINUE CLICKED for page: ' + pageType + ' ===');
 
-                // Validate mandatory fields for main page
-                if (pageType === 'main' && !self.validateMainFilePageFields()) {
-                    return;
-                }                // Show loading modal
                 if (window.ValidationManager) {
                     window.ValidationManager.showLoadingModal('Saving Data...');
                 }
@@ -472,10 +542,11 @@ class AppDictionaryStorageManager {
                 const storageKey = self.STORAGE_KEYS[pageType === 'main' ? 'mainDetails' : pageType === 'appServer' ? 'appServer' : pageType === 'cloud' ? 'cloudDetails' : 'dbServer'];
                 const collectFn = pageType === 'main' ? self.collectMainFileData.bind(self) : pageType === 'appServer' ? self.collectAppServerData.bind(self) : pageType === 'cloud' ? self.collectCloudDetailsData.bind(self) : self.collectDBServerData.bind(self);
                 const data = collectFn();
+                console.log('📊 Collected data for ' + pageType + ':', data);
                 self.saveToLocalStorage(storageKey, data);
-                // Use validation manager's random delay (3-5 seconds)
+                console.log('💾 Saved to localStorage[' + storageKey + ']');
+
                 const delay = window.ValidationManager ? window.ValidationManager.getRandomLoadingDelay() : (3000 + Math.random() * 2000);
-                console.log(`Loading modal will display for ${(delay / 1000).toFixed(1)} seconds`);
 
                 setTimeout(function () {
                     if (window.ValidationManager) {
@@ -483,7 +554,7 @@ class AppDictionaryStorageManager {
                         window.ValidationManager.showSuccessModal('Data saved successfully!');
                         setTimeout(() => {
                             window.ValidationManager.closeSuccessModal();
-                            if (nextPageUrl) window.location.href = nextPageUrl;
+                            window.location.href = nextPageUrl;
                         }, 800);
                     } else {
                         window.location.href = nextPageUrl;
@@ -491,12 +562,9 @@ class AppDictionaryStorageManager {
                 }, delay);
             });
         }
-    }
-
-    attachFinalSaveButton() {
+    }    attachFinalSaveButton() {
         console.log('Attaching FINAL SAVE button');
-        // Only target the final save button on database server details page
-        const finalSaveBtn = document.querySelector('.btn-save-db');
+        const finalSaveBtn = document.querySelector('.btn-save, .btn-save-cloud, .btn-save-db, button[type="submit"], .save-btn');
         if (finalSaveBtn) {
             const self = this;
             finalSaveBtn.addEventListener('click', function (e) {
@@ -505,27 +573,30 @@ class AppDictionaryStorageManager {
                 self.sendAllDataToBackend();
             });
         }
-    }
-
-    // ===== BACKEND SYNC =====
+    }    // ===== BACKEND SYNC =====
     sendAllDataToBackend() {
-        if (this.isSubmitting) return;
-        this.isSubmitting = true;
-
         const self = this;
         console.log('=== FINAL SAVE: COLLECTING ALL DATA ===');
-        const mainDetails = this.getFromLocalStorage(this.STORAGE_KEYS.mainDetails) || {};
-        const appServerArray = this.collectAppServerData() || [];
-        const cloudDetailsArray = this.collectCloudDetailsData() || [];
-        const dbServerArray = this.collectDBServerData() || [];
+
+        // Check what's in localStorage
+        const appServerFromStorage = this.getFromLocalStorage(this.STORAGE_KEYS.appServer);
+        const cloudDetailsFromStorage = this.getFromLocalStorage(this.STORAGE_KEYS.cloudDetails);
+        console.log('📦 AppServer from localStorage:', appServerFromStorage);
+        console.log('📦 CloudDetails from localStorage:', cloudDetailsFromStorage);
+
+        const allData = {
+            mainDetails: this.getFromLocalStorage(this.STORAGE_KEYS.mainDetails) || {},
+            appServer: appServerFromStorage || this.collectAppServerData(),
+            cloudDetails: cloudDetailsFromStorage || this.collectCloudDetailsData(),
+            dbServer: this.collectDBServerData()
+        };
 
         console.log('=== FINAL DATA FOR SUBMISSION ===');
-        console.log('Main Details:', mainDetails);
-        console.log('App Server Rows:', appServerArray);
-        console.log('Cloud Details Rows:', cloudDetailsArray);
-        console.log('DB Server Rows:', dbServerArray);
+        console.log('Main Details:', allData.mainDetails);
+        console.log('App Server:', allData.appServer);
+        console.log('Cloud Details:', allData.cloudDetails);
+        console.log('DB Server:', allData.dbServer);
 
-        // Show loading popup
         if (window.ValidationManager) {
             window.ValidationManager.showLoadingModal('Submitting all data...');
         }
@@ -533,111 +604,90 @@ class AppDictionaryStorageManager {
         const finalSaveBtn = document.querySelector('.btn-save, .btn-save-db, button[type="submit"], .save-btn');
         if (finalSaveBtn) {
             finalSaveBtn.disabled = true;
-            finalSaveBtn.textContent = 'Saving...';
         }
 
-        // Collect all promises
-        const promises = [];
-
-        // SEND DATA TO BACKEND - Main Details
-        if (mainDetails && Object.keys(mainDetails).length > 0) {
-            console.log('Sending main details...');
-            promises.push(this.sendToBackend('/api/basic-identity', mainDetails));
-        }
-
-        // SEND DATA TO BACKEND - App Server Details (multiple rows)
-        if (appServerArray && appServerArray.length > 0) {
-            console.log(`Sending ${appServerArray.length} app server rows...`);
-            appServerArray.forEach(row => {
-                promises.push(this.sendToBackend('/api/application-server-details', row));
-            });
-        }
-
-        // SEND DATA TO BACKEND - Cloud Details (multiple rows)
-        if (cloudDetailsArray && cloudDetailsArray.length > 0) {
-            console.log(`Sending ${cloudDetailsArray.length} cloud detail rows...`);
-            cloudDetailsArray.forEach(row => {
-                promises.push(this.sendToBackend('/api/cloud-details', row));
-            });
-        }
-
-        // SEND DATA TO BACKEND - DB Server Details (multiple rows)
-        if (dbServerArray && dbServerArray.length > 0) {
-            console.log(`Sending ${dbServerArray.length} database server rows...`);
-            dbServerArray.forEach(row => {
-                promises.push(this.sendToBackend('/api/database-server-details', row));
-            });
-        }
-
-        // If no data at all, show error
-        if (promises.length === 0) {
-            console.warn('No data to submit!');
-            if (window.ValidationManager) {
-                window.ValidationManager.hideLoadingModal();
-                window.ValidationManager.showModal('No data to submit. Please fill in at least one form.');
-            }
-            self.isSubmitting = false;
-            if (finalSaveBtn) {
-                finalSaveBtn.disabled = false;
-                finalSaveBtn.textContent = 'Save & Finish';
-            }
-            return;
-        }
-
-        // Wait for all API calls to complete
-        Promise.all(promises)
-            .then(() => {
-                console.log('All data successfully sent to backend');
-                if (window.ValidationManager) {
-                    window.ValidationManager.hideLoadingModal();
-                    window.ValidationManager.showSuccessModal('All data saved successfully!');
-                    setTimeout(() => {
-                        window.ValidationManager.closeSuccessModal();
-                        // Clear storage AFTER successful submission
-                        self.clearAllStorage();
-                        self.isSubmitting = false;
-                        window.location.href = '/home';
-                    }, 800);
-                }
-
-                if (finalSaveBtn) {
-                    finalSaveBtn.disabled = false;
-                    finalSaveBtn.textContent = 'Save & Finish';
-                }
-            })
-            .catch(error => {
-                console.error('Error sending data to backend:', error);
-                if (window.ValidationManager) {
-                    window.ValidationManager.hideLoadingModal();
-                    window.ValidationManager.showModal('Error saving data to backend. Please try again.');
-                }
-
-                self.isSubmitting = false;
-                if (finalSaveBtn) {
-                    finalSaveBtn.disabled = false;
-                    finalSaveBtn.textContent = 'Save & Finish';
-                }
-            });
-    }
-
-    // Helper method to send data to backend
-    sendToBackend(endpoint, data) {
-        console.log(`Sending data to ${endpoint}:`, data);
-        return fetch(endpoint, {
+        // STEP 1: Save BasicIdentity first to get the ID
+        const basicIdentityData = allData.mainDetails;
+        fetch(this.API_ENDPOINTS.basicIdentity, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(basicIdentityData)
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            .then(r => r.json())
+            .then(basicIdentityResponse => {
+                console.log('✅ BasicIdentity response:', basicIdentityResponse);
+                const basicIdentityId = basicIdentityResponse.id;
+                const beatId = basicIdentityData.beatId;
+
+                // STEP 2: Send other details and bulk data with basicIdentityId
+                const mainDetailsWithId = { basicIdentityId: basicIdentityId, ...allData.mainDetails };
+                console.log('📤 Sending to descriptionImpact:', mainDetailsWithId);
+                const requests = [
+                    fetch(self.API_ENDPOINTS.descriptionImpact, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mainDetailsWithId) }),
+                    fetch(self.API_ENDPOINTS.authenticationVendor, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mainDetailsWithId) }),
+                    fetch(self.API_ENDPOINTS.technicalDetails, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mainDetailsWithId) }),
+                    fetch(self.API_ENDPOINTS.resourceContacts, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mainDetailsWithId) }),
+                    fetch(self.API_ENDPOINTS.appServer + '/bulk', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ basicIdentityId: basicIdentityId, beatId: beatId, gridData: allData.appServer })
+                    }),
+                    fetch(self.API_ENDPOINTS.cloudDetails + '/bulk', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ basicIdentityId: basicIdentityId, beatId: beatId, gridData: allData.cloudDetails })
+                    }),
+                    fetch(self.API_ENDPOINTS.dbServer + '/bulk', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ basicIdentityId: basicIdentityId, beatId: beatId, gridData: allData.dbServer })
+                    })
+                ];
+
+                return Promise.all(requests);
+            })
+            .then(function (responses) {
+                const allSuccess = responses.every(r => r.ok);
+                if (allSuccess) {
+                    console.log('SUCCESS: All requests successful');
+                    if (window.ValidationManager) {
+                        window.ValidationManager.hideLoadingModal();
+                        window.ValidationManager.showSuccessModal('All data saved successfully!');
+                        setTimeout(() => {
+                            window.ValidationManager.closeSuccessModal();
+                            self.clearAllStorage();
+                            window.location.href = '/home';
+                        }, 800);
+                    } else {
+                        self.showNotification('All data saved successfully!', 'success');
+                        self.clearAllStorage();
+                        setTimeout(() => window.location.href = '/home', 2000);
+                    }
+                } else {
+                    console.error('FAILED: Some requests failed');
+                    if (window.ValidationManager) {
+                        window.ValidationManager.hideLoadingModal();
+                        window.ValidationManager.showModal('Save failed! Please try again.');
+                    } else {
+                        self.showNotification('Save failed!', 'error');
+                    }
+
+                    if (finalSaveBtn) {
+                        finalSaveBtn.disabled = false;
+                    }
                 }
-                return response.json();
-            }).then(data => {
-                console.log(`Successfully saved to ${endpoint}:`, data);
-                return data;
+            }).catch(error => {
+                console.error('ERROR:', error);
+                if (window.ValidationManager) {
+                    window.ValidationManager.hideLoadingModal();
+                    window.ValidationManager.showModal(`Error: ${error.message}`);
+                } else {
+                    self.showNotification('Error: ' + error.message, 'error');
+                }
+
+                if (finalSaveBtn) {
+                    finalSaveBtn.disabled = false;
+                }
             });
     }
 
@@ -670,7 +720,15 @@ class AppDictionaryStorageManager {
             console.error('Error clearing:', error);
         }
     }
+
+    showNotification(message, type) {
+        const div = document.createElement('div');
+        div.className = 'toast-notification ' + type;
+        div.textContent = message;
+        div.style.cssText = 'position: fixed; top: 80px; right: 20px; padding: 15px 20px; border-radius: 6px; font-size: 14px; z-index: 9999;';
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 5000);
+    }
 }
 
 window.StorageManager = new AppDictionaryStorageManager();
-console.log('Storage Manager with Validation initialized');

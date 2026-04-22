@@ -1,6 +1,8 @@
 package com.example.dictionary.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.util.List;
 
 @Entity
 public class BasicIdentity {
@@ -16,6 +18,35 @@ public class BasicIdentity {
     private String appRegion;
     private String serviceVariant;    private String typeCategory;
     private String systemOwner;
+
+    // Relationships to detail entities
+    @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<ApplicationServerDetail> applicationServerDetails;
+
+    @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<CloudDetail> cloudDetails;
+
+    @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<DatabaseServerDetail> databaseServerDetails;
+
+    @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<AuthenticationVendor> authenticationVendors;
+
+    @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<TechnicalDetails> technicalDetails;
+
+    @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<DescriptionImpact> descriptionImpacts;
+
+    @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<ResourceContacts> resourceContacts;
 
     // Getters and Setters
     public Long getId() {
@@ -96,11 +127,66 @@ public class BasicIdentity {
 
     public void setTypeCategory(String typeCategory) {
         this.typeCategory = typeCategory;
-    }
-
-    public String getSystemOwner() {
+    }    public String getSystemOwner() {
         return systemOwner;
     }    public void setSystemOwner(String systemOwner) {
         this.systemOwner = systemOwner;
+    }
+
+    // Getters and Setters for relationships
+    public List<ApplicationServerDetail> getApplicationServerDetails() {
+        return applicationServerDetails;
+    }
+
+    public void setApplicationServerDetails(List<ApplicationServerDetail> applicationServerDetails) {
+        this.applicationServerDetails = applicationServerDetails;
+    }
+
+    public List<CloudDetail> getCloudDetails() {
+        return cloudDetails;
+    }
+
+    public void setCloudDetails(List<CloudDetail> cloudDetails) {
+        this.cloudDetails = cloudDetails;
+    }
+
+    public List<DatabaseServerDetail> getDatabaseServerDetails() {
+        return databaseServerDetails;
+    }
+
+    public void setDatabaseServerDetails(List<DatabaseServerDetail> databaseServerDetails) {
+        this.databaseServerDetails = databaseServerDetails;
+    }
+
+    public List<AuthenticationVendor> getAuthenticationVendors() {
+        return authenticationVendors;
+    }
+
+    public void setAuthenticationVendors(List<AuthenticationVendor> authenticationVendors) {
+        this.authenticationVendors = authenticationVendors;
+    }
+
+    public List<TechnicalDetails> getTechnicalDetails() {
+        return technicalDetails;
+    }
+
+    public void setTechnicalDetails(List<TechnicalDetails> technicalDetails) {
+        this.technicalDetails = technicalDetails;
+    }
+
+    public List<DescriptionImpact> getDescriptionImpacts() {
+        return descriptionImpacts;
+    }
+
+    public void setDescriptionImpacts(List<DescriptionImpact> descriptionImpacts) {
+        this.descriptionImpacts = descriptionImpacts;
+    }
+
+    public List<ResourceContacts> getResourceContacts() {
+        return resourceContacts;
+    }
+
+    public void setResourceContacts(List<ResourceContacts> resourceContacts) {
+        this.resourceContacts = resourceContacts;
     }
 }

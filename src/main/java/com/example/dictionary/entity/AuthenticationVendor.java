@@ -1,6 +1,7 @@
 package com.example.dictionary.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +11,12 @@ import jakarta.persistence.GenerationType;
 @Entity
 public class AuthenticationVendor {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "basic_identity_id", nullable = true)
+    @JsonBackReference
+    private BasicIdentity basicIdentity;
 
     private String authenticationType;
     @Column(length = 2000)
@@ -103,11 +108,12 @@ public class AuthenticationVendor {
 
     public void setVendorContactDetails(String vendorContactDetails) {
         this.vendorContactDetails = vendorContactDetails;
-    }
-
-    public String getAppHostedIn() {
+    }    public String getAppHostedIn() {
         return appHostedIn;
     }    public void setAppHostedIn(String appHostedIn) {
         this.appHostedIn = appHostedIn;
     }
+
+    public BasicIdentity getBasicIdentity() { return basicIdentity; }
+    public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }
 }

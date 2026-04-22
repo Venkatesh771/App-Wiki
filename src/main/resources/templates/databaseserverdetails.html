@@ -16,16 +16,16 @@
             font-family: "Open Sans", sans-serif;
             min-height: 100vh;
             padding-bottom: 50px;
-        }
-
-        .navbar {
+        }        .navbar {
             background: #000 !important;
-            padding-top: 0.6rem;
-            padding-bottom: 0.6rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            min-height: 44px;
+            height: 55px;
             position: sticky;
             top: 0;
             z-index: 1030;
-        }        .navbar-brand {
+        }.navbar-brand {
             font-family: "Quicksand", sans-serif;
             font-weight: 400;
             font-size: 1.1rem;
@@ -39,6 +39,26 @@
 
         .navbar-brand:hover {
             opacity: 0.8;
+        }
+
+        .navbar-brand-company {
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            font-family: "Open Sans", sans-serif;
+            color: #fff;
+        }
+
+        .navbar-separator {
+            color: #fff;
+            margin: 0 0.2rem;
+            opacity: 0.6;
+        }
+
+        .navbar-app-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #fff;
         }
 
         .navbar-logo {
@@ -1383,8 +1403,9 @@
     </div>    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/home">
-                <img src="/assets/logo.png" alt="App Wiki Logo" class="navbar-logo">
-                <span class="navbar-brand-text">App Wiki</span>
+                <span class="navbar-brand-company">BAYER</span>
+                <span class="navbar-separator">|</span>
+                <span class="navbar-app-name">App Wiki</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1831,12 +1852,10 @@
                     nextFieldsGrid.remove();
                 }
             });
-        }    </script>
-
-    <!-- Validation Manager with Simple iPhone Popups v3.0 -->
+        }    </script>    <!-- Validation Manager with Simple iPhone Popups v3.0 -->
     <script src="/static/validation-manager-clean.js?v=3.0.0"></script>
-    <!-- Storage Manager V3 -->
-    <script src="/static/storage-manager-v3.js"></script>
+    <!-- Storage Manager V4 -->
+    <script src="/static/storage-manager-v4.js"></script>
     
     <!-- Dynamic Dropdown Manager -->
     <script src="/static/dynamic-dropdown.js"></script>
@@ -1972,10 +1991,8 @@
                 } catch (e) {
                     console.error('Ã¢Å“â€” Error restoring from LocalStorage:', e);
                 }
-            }
-
-            /**
-             * Send data to backend
+            }            /**
+             * Send data to backend using bulk endpoint with basicIdentityId
              */
             async sendToBackend() {
                 const data = this.collectFormData();
@@ -1987,37 +2004,30 @@
                         submitButton.textContent = 'Saving...';
                     }
 
-                    const requests = [];
-                    let totalRecords = 0;
-
-                    // Send each environment's data
-                    this.SECTIONS.forEach(sectionId => {
-                        if (data[sectionId] && data[sectionId].length > 0) {
-                            data[sectionId].forEach(rowData => {
-                                totalRecords++;
-                                requests.push(
-                                    fetch('/api/database-server-details', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(rowData)
-                                    })
-                                );
-                            });
-                        }
-                    });
-
-                    if (requests.length === 0) {
-                        this.showNotification('Please add at least one database entry', 'warning');
-                        if (submitButton) {
-                            submitButton.disabled = false;
-                            submitButton.textContent = 'Save & Finish';
-                        }
-                        return false;
+                    // Get basicIdentityId from localStorage (saved from main file page)
+                    const mainDetailsData = localStorage.getItem('app_mainDetails_form');
+                    let basicIdentityId = null;
+                    if (mainDetailsData) {
+                        const parsed = JSON.parse(mainDetailsData);
+                        basicIdentityId = parsed.basicIdentityId;
                     }
 
-                    console.log(`Sending ${requests.length} records to backend...`);
-                    const responses = await Promise.all(requests);
-                    const allSuccess = responses.every(r => r.ok);
+                    // Prepare bulk request data
+                    const bulkRequestData = {
+                        basicIdentityId: basicIdentityId,
+                        gridData: data
+                    };
+
+                    console.log('Sending bulk data:', bulkRequestData);
+
+                    // Send all data to the bulk endpoint
+                    const response = await fetch('/api/database-server-details/bulk', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bulkRequestData)
+                    });
+
+                    const allSuccess = response.ok;
 
                     if (allSuccess) {
                         localStorage.setItem(this.STORAGE_KEY + '_lastSync', new Date().toISOString());

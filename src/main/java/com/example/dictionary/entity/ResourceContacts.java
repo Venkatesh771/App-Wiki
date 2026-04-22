@@ -1,12 +1,17 @@
 package com.example.dictionary.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class ResourceContacts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "basic_identity_id", nullable = true)
+    @JsonBackReference
+    private BasicIdentity basicIdentity;
+
     private String offshorePrimary;
     private String offshoreSecondary;
     private String offshoreTertiary;
@@ -25,7 +30,9 @@ public class ResourceContacts {
     public String getOnshorePrimary() { return onshorePrimary; }
     public void setOnshorePrimary(String onshorePrimary) { this.onshorePrimary = onshorePrimary; }
     public String getOnshoreSecondary() { return onshoreSecondary; }
-    public void setOnshoreSecondary(String onshoreSecondary) { this.onshoreSecondary = onshoreSecondary; }
-    public String getOnshoreTertiary() { return onshoreTertiary; }
+    public void setOnshoreSecondary(String onshoreSecondary) { this.onshoreSecondary = onshoreSecondary; }    public String getOnshoreTertiary() { return onshoreTertiary; }
     public void setOnshoreTertiary(String onshoreTertiary) { this.onshoreTertiary = onshoreTertiary; }
+
+    public BasicIdentity getBasicIdentity() { return basicIdentity; }
+    public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }
 }

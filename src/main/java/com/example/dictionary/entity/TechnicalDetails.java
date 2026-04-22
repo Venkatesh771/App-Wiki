@@ -1,12 +1,17 @@
 package com.example.dictionary.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class TechnicalDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "basic_identity_id", nullable = true)
+    @JsonBackReference
+    private BasicIdentity basicIdentity;
+
     @Column(length = 2000)
     private String appUrlsDevTest;
     private String githubRepos;
@@ -36,7 +41,9 @@ public class TechnicalDetails {
     public String getAkanaMulesoft() { return akanaMulesoft; }
     public void setAkanaMulesoft(String akanaMulesoft) { this.akanaMulesoft = akanaMulesoft; }
     public String getKafkaTopic() { return kafkaTopic; }
-    public void setKafkaTopic(String kafkaTopic) { this.kafkaTopic = kafkaTopic; }
-    public String getAzureClientIds() { return azureClientIds; }
+    public void setKafkaTopic(String kafkaTopic) { this.kafkaTopic = kafkaTopic; }    public String getAzureClientIds() { return azureClientIds; }
     public void setAzureClientIds(String azureClientIds) { this.azureClientIds = azureClientIds; }
+
+    public BasicIdentity getBasicIdentity() { return basicIdentity; }
+    public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }
 }

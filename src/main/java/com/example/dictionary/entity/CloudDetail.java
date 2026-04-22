@@ -1,12 +1,17 @@
 package com.example.dictionary.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class CloudDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "basic_identity_id", nullable = true)
+    @JsonBackReference
+    private BasicIdentity basicIdentity;
+
     private String environment; // NON_PROD or PROD
     private String accountId;
     private String hostType;
@@ -39,7 +44,9 @@ public class CloudDetail {
     public String getSqsNames() { return sqsNames; }
     public void setSqsNames(String sqsNames) { this.sqsNames = sqsNames; }
     public String getIamUser() { return iamUser; }
-    public void setIamUser(String iamUser) { this.iamUser = iamUser; }
-    public String getComments() { return comments; }
+    public void setIamUser(String iamUser) { this.iamUser = iamUser; }    public String getComments() { return comments; }
     public void setComments(String comments) { this.comments = comments; }
+
+    public BasicIdentity getBasicIdentity() { return basicIdentity; }
+    public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }
 }
