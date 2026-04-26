@@ -24,32 +24,22 @@ public class AuthenticationService {
     
     @Autowired
     public void initializeMockUsers() {
-        // Initialize mock data only if database is empty
-        if (userRepository.count() == 0) {
-            List<User> mockUsers = new ArrayList<>();
-            
-            // Super Admin Users
-            mockUsers.add(new User("CW001", "James Wilson", "james.wilson@example.com", "password123", "Super Admin", true));
-            mockUsers.add(new User("CW006", "Lisa Thompson", "lisa.thompson@example.com", "password123", "Super Admin", true));
-            mockUsers.add(new User("CW012", "Jessica Rodriguez", "jessica.rodriguez@example.com", "password123", "Super Admin", true));
-            
-            // Admin Users
-            mockUsers.add(new User("CW002", "Sarah Anderson", "sarah.anderson@example.com", "password123", "Admin", true));
-            mockUsers.add(new User("CW004", "Emma Johnson", "emma.johnson@example.com", "password123", "Admin", false));
-            mockUsers.add(new User("CW008", "Jennifer Lee", "jennifer.lee@example.com", "password123", "Admin", true));
-            mockUsers.add(new User("CW010", "Amanda White", "amanda.white@example.com", "password123", "Admin", true));
-            mockUsers.add(new User("CW014", "Michelle Davis", "michelle.davis@example.com", "password123", "Admin", false));
-            
-            // Regular Users
-            mockUsers.add(new User("CW003", "Michael Chen", "michael.chen@example.com", "password123", "User", true));
-            mockUsers.add(new User("CW005", "David Martinez", "david.martinez@example.com", "password123", "User", true));
-            mockUsers.add(new User("CW007", "Robert Garcia", "robert.garcia@example.com", "password123", "User", true));
-            mockUsers.add(new User("CW009", "Christopher Brown", "christopher.brown@example.com", "password123", "User", false));
-            mockUsers.add(new User("CW011", "Kevin Park", "kevin.park@example.com", "password123", "User", true));
-            mockUsers.add(new User("CW013", "Daniel Taylor", "daniel.taylor@example.com", "password123", "User", true));
-            mockUsers.add(new User("CW015", "Matthew Jackson", "matthew.jackson@example.com", "password123", "User", true));
-            
-            userRepository.saveAll(mockUsers);
+        List<String> keepCwids = Arrays.asList("CW001", "CW002", "CW003");
+
+        // Remove any mock users that are not in the keep list
+        userRepository.findAll().stream()
+            .filter(u -> !keepCwids.contains(u.getCwid()))
+            .forEach(userRepository::delete);
+
+        // Seed the three base users if they don't exist yet
+        if (!userRepository.findByCwid("CW001").isPresent()) {
+            userRepository.save(new User("CW001", "James Wilson", "james.wilson@example.com", "password123", "Super Admin", true));
+        }
+        if (!userRepository.findByCwid("CW002").isPresent()) {
+            userRepository.save(new User("CW002", "Sarah Anderson", "sarah.anderson@example.com", "password123", "Admin", true));
+        }
+        if (!userRepository.findByCwid("CW003").isPresent()) {
+            userRepository.save(new User("CW003", "Michael Chen", "michael.chen@example.com", "password123", "User", true));
         }
     }    /**
      * Authenticate user by CWID and password

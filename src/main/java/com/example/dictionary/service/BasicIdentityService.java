@@ -21,6 +21,10 @@ public class BasicIdentityService {
         return repository.findAllActive();
     }
 
+    public List<BasicIdentity> getAllIncludingInactive() {
+        return repository.findAll();
+    }
+
     @Transactional
     public boolean deactivate(Long id) {
         return repository.findById(id).map(app -> {

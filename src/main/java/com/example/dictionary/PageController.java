@@ -117,6 +117,20 @@ public class PageController {
         return "home";
     }
 
+    @GetMapping("/admin-apps")
+    public String adminApps(HttpSession session, Model model) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        User user = (User) session.getAttribute("user");
+        if (!user.getRole().equals("Super Admin") && !user.getRole().equals("Admin")) {
+            return "redirect:/home";
+        }
+        model.addAttribute("currentUser", user);
+        model.addAttribute("applications", basicIdentityService.getAllIncludingInactive());
+        return "adminapps";
+    }
+
     @GetMapping("/admindashboard")
     public String adminDashboard(HttpSession session, Model model) {
         if (session.getAttribute("user") == null) {
