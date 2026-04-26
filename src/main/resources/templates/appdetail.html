@@ -1,0 +1,2441 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${app.applicationName != null ? app.applicationName + ' - App Wiki' : 'App Detail'}">App Detail
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
+
+        body {
+            background: #f2f2f7;
+            font-family: "Open Sans", sans-serif;
+            min-height: 100vh;
+            padding-bottom: 24px;
+        }
+
+        .navbar {
+            background: #000 !important;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            min-height: 44px;
+            height: 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            font-family: "Quicksand", sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            margin-left: 1.5rem;
+            line-height: 1.1;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-brand-company {
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            font-family: "Open Sans", sans-serif;
+            color: #fff;
+        }
+
+        .navbar-separator {
+            color: #fff;
+            margin: 0 0.2rem;
+            opacity: 0.6;
+        }
+
+        .navbar-app-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .navbar-nav {
+            column-gap: 0.75rem;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 0.85rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            color: #fff !important;
+        }
+
+        .navbar-nav .nav-link.text-white {
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .navbar-nav .nav-link.text-white::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar-nav .nav-link.text-white:hover::after {
+            width: 100%;
+        }
+
+        .user-icon-round {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0;
+            margin-right: 3px;
+            line-height: 1;
+            font-family: "Quicksand", sans-serif;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .navbar-brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(173, 216, 230, 0.22);
+            border: 1px solid rgba(173, 216, 230, 0.38);
+            padding: 0.28rem 0.85rem;
+            border-radius: 50px;
+        }
+
+        .user-menu-trigger {
+            display: flex !important;
+            align-items: center;
+            gap: 0.4rem;
+            color: #fff !important;
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.22rem 0.7rem 0.22rem 0.3rem !important;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.18) !important;
+            transition: background 0.15s ease;
+        }
+
+        .user-menu-trigger:hover {
+            background: rgba(255, 255, 255, 0.26) !important;
+        }
+
+        .user-menu-caret {
+            font-size: 0.62rem;
+            opacity: 0.75;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            margin-left: 1px;
+        }
+
+        .user-menu-caret.open {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+            min-width: 230px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.88) translateY(-8px);
+            transform-origin: top right;
+            transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1050;
+        }
+
+        .profile-dropdown.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem 0.85rem;
+        }
+
+        .profile-avatar-lg {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: "Quicksand", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .profile-info-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 145px;
+        }
+
+        .profile-info-role {
+            display: inline-block;
+            background: #e6f7f7;
+            color: #008080;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.15rem 0.6rem;
+            border-radius: 50px;
+            margin-top: 0.22rem;
+            letter-spacing: 0.2px;
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: #f0f0f0;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
+            color: #333;
+            text-decoration: none !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .profile-dropdown-item:hover {
+            background: #f7f7f7;
+            color: #008080;
+        }
+
+        .profile-dropdown-item.logout-item {
+            color: #e74c3c;
+        }
+
+        .profile-dropdown-item.logout-item:hover {
+            background: #fff5f5;
+            color: #c0392b;
+        }
+
+        .navbar-center-pill {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.13);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 50px;
+            padding: 0.28rem 1.1rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #fff;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.2px;
+            pointer-events: none;
+        }
+
+        .navbar-center-pill .pill-separator {
+            opacity: 0.45;
+            font-size: 0.75rem;
+        }
+
+        .top-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 1.1rem 1.5rem 2.2rem 1.5rem;
+        }
+
+        .tab-pills-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-pill {
+            border: none;
+            background: #e5e5ea;
+            color: #555;
+            border-radius: 50px;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .tab-pill:hover {
+            background: #d1d1d6;
+            color: #333;
+        }
+
+        .tab-pill.active {
+            background: #008080;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+        }
+
+        .back-btn {
+            position: absolute;
+            right: 3rem;
+            border: none;
+            border-radius: 50px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.82rem;
+            background: #e5e5ea;
+            color: #444;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.18s ease, color 0.18s ease;
+            white-space: nowrap;
+        }
+
+        .back-btn:hover {
+            background: #d1d1d6;
+            color: #222;
+        }
+
+        .edit-mode-badge {
+            position: absolute;
+            left: 3rem;
+            background: rgba(0, 128, 128, 0.12);
+            color: #008080;
+            border: 1.5px solid rgba(0, 128, 128, 0.4);
+            border-radius: 20px;
+            padding: 0.32rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+            padding-bottom: 80px;
+        }
+
+        .form-container {
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+            padding: 0;
+            margin: 0 auto;
+            width: 95%;
+        }
+
+        .section-box {
+            border: none;
+            border-radius: 20px;
+            padding: 40px 25px;
+            margin-bottom: 40px;
+            background: #fff;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            position: relative;
+            padding-top: 50px;
+        }
+
+        .section-box:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .section-header-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            background: #fff;
+            border: 1.5px solid #d1d1d6;
+            padding: 5px 16px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: #008080;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .btn-add-section-row,
+        .btn-remove-section-row {
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            padding: 0;
+            flex-shrink: 0;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+
+        .btn-add-section-row i,
+        .btn-remove-section-row i {
+            font-size: 10px;
+            line-height: 1;
+            display: block;
+        }
+
+        @keyframes sectionSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-box-enter {
+            animation: sectionSlideDown 0.28s ease forwards;
+        }
+
+        .btn-add-section-row {
+            background: #355E3B;
+            color: #fff;
+        }
+
+        .btn-add-section-row:hover {
+            background: #27472c;
+        }
+
+        .btn-remove-section-row {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-remove-section-row:hover {
+            background: #b02a37;
+        }
+
+        .form-group-custom {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .form-group-custom.textarea-row {
+            align-items: flex-start;
+        }
+
+        .field-label {
+            width: 40%;
+            font-weight: 500;
+            color: #444;
+            font-size: 0.85rem;
+            text-align: right;
+            padding-right: 15px;
+            line-height: 1.2;
+        }
+
+        .field-input {
+            width: 60%;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #e9ecef;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #fff;
+            border-color: #b0b0b0 !important;
+            box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25);
+            outline: none !important;
+        }
+
+        .form-control[readonly],
+        .form-select:disabled {
+            background-color: #e9ecef !important;
+            border-color: #d1d5db !important;
+            color: #555 !important;
+            cursor: default;
+        }
+
+        textarea.form-control {
+            min-height: 65px;
+            resize: vertical;
+        }
+
+        textarea.form-control[readonly] {
+            resize: none;
+        }
+
+        .grid-section-box {
+            margin-bottom: 20px;
+        }
+
+        .grid-env-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #008080;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .grid-env-label::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 14px;
+            background: #008080;
+            border-radius: 2px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #aaa;
+            padding: 2.5rem 1rem;
+            font-size: 0.88rem;
+            font-style: italic;
+        }
+
+        .footer-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .footer-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #fff;
+            border-radius: 50px;
+            padding: 0.28rem 0.28rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.13);
+            border: 1px solid #e4e4e4;
+            pointer-events: all;
+        }
+
+        .btn-nav {
+            border: 1.5px solid #008080;
+            background: transparent;
+            color: #008080;
+            border-radius: 50px;
+            padding: 0.32rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .btn-nav:hover {
+            background: #f0fafa;
+        }
+
+        .btn-nav.btn-muted {
+            border-color: #ddd;
+            color: #bbb;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #888;
+            padding: 0.32rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1.5px solid #ccc;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: #888;
+            color: #fff;
+            border-color: #888;
+        }
+
+        .btn-save {
+            background: transparent;
+            color: #aaa;
+            padding: 0.32rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1.5px solid #ccc;
+            display: inline-flex;
+            align-items: center;
+            text-transform: uppercase;
+            gap: 6px;
+            letter-spacing: 0.3px;
+            cursor: default;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            pointer-events: none;
+        }
+
+        .btn-save.dirty {
+            color: #1b98e0;
+            border-color: #1b98e0;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .btn-save.dirty:hover {
+            background: #1b98e0;
+            color: #fff;
+        }
+
+        .btn-save:disabled {
+            background: transparent;
+            border-color: #aac9e0;
+            color: #aac9e0;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-msg {
+            padding: 0.65rem 1.1rem;
+            border-radius: 6px;
+            font-size: 0.84rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast-msg.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .toast-msg.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .field-input.has-dropdown {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .field-input.has-dropdown .form-select {
+            flex: 1;
+        }
+
+        .btn-add-option {
+            background: #e5e5ea;
+            color: #555;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 11px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-add-option:hover {
+            background: #b8bcc4;
+            border-color: #b8bcc4;
+        }
+
+        .btn-add-option:active {
+            transform: scale(0.95);
+        }
+
+        .edit-btn-link {
+            position: absolute;
+            left: 3rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #008080;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 0.32rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+            transition: background 0.18s ease, transform 0.12s ease;
+        }
+
+        .edit-btn-link:hover {
+            background: #006666;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .edit-btn-link:active {
+            transform: scale(0.96);
+        }
+
+        .btn-add-env {
+            background: transparent;
+            border: 1.5px solid #355E3B;
+            color: #355E3B;
+            border-radius: 50px;
+            padding: 0.28rem 0.85rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-add-env:hover {
+            background: #355E3B;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">
+                <span class="navbar-brand-pill">
+                    <span class="navbar-brand-company">BAYER</span>
+                    <span class="navbar-separator">|</span>
+                    <span class="navbar-app-name">App Wiki</span>
+                </span>
+            </a>
+
+            <div class="navbar-center-pill d-none d-lg-flex">
+                <span th:text="${app.beatId ?: ''}">BEAT ID</span>
+                <span class="pill-separator">|</span>
+                <span th:text="${app.applicationName ?: ''}">App Name</span>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#detailNavbar"
+                aria-controls="detailNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse pe-4" id="detailNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item user-menu" style="position:relative;">
+                        <a class="nav-link user-menu-trigger" href="#" id="profileTrigger"
+                            onclick="toggleProfileMenu(event)">
+                            <span class="user-icon-round" th:text="${session.user != null ?
+                                #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                (#strings.contains(session.user.username,' ') ?
+                                  #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                  : '')
+                                : '?'}">AB</span>
+                            <span th:text="${session.user != null ? session.user.username : 'User'}">User</span>
+                            <i class="fa-solid fa-chevron-down user-menu-caret" id="profileCaret"></i>
+                        </a>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-dropdown-header">
+                                <div class="profile-avatar-lg" th:text="${session.user != null ?
+                                    #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                    (#strings.contains(session.user.username,' ') ?
+                                      #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                      : '')
+                                    : '?'}">AB</div>
+                                <div>
+                                    <div class="profile-info-name"
+                                        th:text="${session.user != null ? session.user.username : 'User'}">User</div>
+                                    <div class="profile-info-role"
+                                        th:text="${session.user != null ? session.user.role : ''}">Role</div>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown-divider"></div>
+                            <a href="/logout" class="profile-dropdown-item logout-item">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="top-header">
+        <div class="tab-pills-container">
+            <button class="tab-pill active" data-tab="app-details" onclick="switchTab('app-details')">App
+                Details</button>
+            <button class="tab-pill" data-tab="server-details" onclick="switchTab('server-details')">Server
+                Details</button>
+            <button class="tab-pill" data-tab="cloud-details" onclick="switchTab('cloud-details')">Cloud
+                Details</button>
+            <button class="tab-pill" data-tab="db-details" onclick="switchTab('db-details')">DB Server Details</button>
+        </div>
+
+        <span th:if="${editMode}" class="edit-mode-badge">
+            <i class="fa-solid fa-pen-to-square"></i> Editing
+        </span>
+        <a th:if="${!editMode && (userRole == 'Admin' || userRole == 'Super Admin')}"
+            th:href="'/application/' + ${app.id} + '?edit=true'" class="edit-btn-link">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+        </a>
+        <button class="back-btn" onclick="window.location.href='/home'">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="container-fluid" th:with="di=${!#lists.isEmpty(app.descriptionImpacts)   ? app.descriptionImpacts[0]   : null},
+              av=${!#lists.isEmpty(app.authenticationVendors) ? app.authenticationVendors[0] : null},
+              td=${!#lists.isEmpty(app.technicalDetails)      ? app.technicalDetails[0]      : null},
+              rc=${!#lists.isEmpty(app.resourceContacts)      ? app.resourceContacts[0]      : null}">
+        <div class="form-container">
+
+            <div id="tab-app-details" class="tab-pane active">
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Basic Identity</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Beat ID</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="beatId" th:value="${app.beatId}"
+                                        th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Application Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="applicationName"
+                                        th:value="${app.applicationName}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">GxP</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control" th:value="${app.gxp}"
+                                        readonly>
+                                    <select th:if="${editMode}" class="form-select" id="gxp">
+                                        <option value="">Select</option>
+                                        <option value="Yes" th:selected="${app.gxp == 'Yes'}">Yes</option>
+                                        <option value="No" th:selected="${app.gxp == 'No'}">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Squad</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control" th:value="${app.squad}"
+                                        readonly>
+                                    <select th:if="${editMode}" class="form-select" id="squad">
+                                        <option value="">Select</option>
+                                        <option value="PF" th:selected="${app.squad == 'PF'}">PF</option>
+                                        <option value="CX" th:selected="${app.squad == 'CX'}">CX</option>
+                                        <option value="AEGS" th:selected="${app.squad == 'AEGS'}">AEGS</option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Business Owner</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="businessOwner"
+                                        th:value="${app.businessOwner}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Assignment Group</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${app.assignmentGroup}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="assignmentGroup">
+                                        <option value="">Select</option>
+                                        <option th:each="ag : ${assignmentGroups}" th:value="${ag}" th:text="${ag}"
+                                            th:selected="${app.assignmentGroup != null and app.assignmentGroup == ag}">
+                                        </option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Sub Domain</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${app.subDomain}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="subDomain">
+                                        <option value="">Select</option>
+                                        <option value="Global" th:selected="${app.subDomain == 'Global'}">Global
+                                        </option>
+                                        <option value="Local" th:selected="${app.subDomain == 'Local'}">Local</option>
+                                        <option value="Latam" th:selected="${app.subDomain == 'Latam'}">Latam</option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">App Region</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${app.appRegion}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="appRegion">
+                                        <option value="">Select</option>
+                                        <option value="Emea" th:selected="${app.appRegion == 'Emea'}">Emea</option>
+                                        <option value="Apac" th:selected="${app.appRegion == 'Apac'}">Apac</option>
+                                        <option value="US" th:selected="${app.appRegion == 'US'}">US</option>
+                                        <option value="Canada" th:selected="${app.appRegion == 'Canada'}">Canada
+                                        </option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Service Variant</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${app.serviceVariant}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="serviceVariant">
+                                        <option value="">Select</option>
+                                        <option value="Gold+" th:selected="${app.serviceVariant == 'Gold+'}">Gold+
+                                        </option>
+                                        <option value="Gold" th:selected="${app.serviceVariant == 'Gold'}">Gold</option>
+                                        <option value="Bronze" th:selected="${app.serviceVariant == 'Bronze'}">Bronze
+                                        </option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Type Category</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${app.typeCategory}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="typeCategory">
+                                        <option value="">Select</option>
+                                        <option value="Type 1" th:selected="${app.typeCategory == 'Type 1'}">Type 1
+                                        </option>
+                                        <option value="Type 2" th:selected="${app.typeCategory == 'Type 2'}">Type 2
+                                        </option>
+                                        <option value="Type 3" th:selected="${app.typeCategory == 'Type 3'}">Type 3
+                                        </option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">System Owner</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="systemOwner"
+                                        th:value="${app.systemOwner}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Description &amp; Impact</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group-custom textarea-row" style="align-items: flex-start;">
+                                <label class="field-label" style="width: 19.5%;">Application Description</label>
+                                <div class="field-input" style="width: 80.5%;">
+                                    <textarea class="form-control" id="applicationDescription"
+                                        th:readonly="${!editMode}"
+                                        th:text="${di != null ? di.applicationDescription : ''}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom textarea-row" style="align-items: flex-start;">
+                                <label class="field-label">Business Impact Description</label>
+                                <div class="field-input">
+                                    <textarea class="form-control" id="businessImpactDescription"
+                                        th:readonly="${!editMode}"
+                                        th:text="${di != null ? di.businessImpactDescription : ''}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Financial Impact ($/€)</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="financialImpact"
+                                        th:value="${di != null ? di.financialImpact : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">User Access Review</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${di != null ? di.userAccessReview : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="userAccessReview">
+                                        <option value="">Select</option>
+                                        <option value="Monthly"
+                                            th:selected="${di != null && di.userAccessReview == 'Monthly'}">Monthly
+                                        </option>
+                                        <option value="Quarterly"
+                                            th:selected="${di != null && di.userAccessReview == 'Quarterly'}">Quarterly
+                                        </option>
+                                        <option value="Half Yearly"
+                                            th:selected="${di != null && di.userAccessReview == 'Half Yearly'}">Half
+                                            Yearly</option>
+                                        <option value="Yearly"
+                                            th:selected="${di != null && di.userAccessReview == 'Yearly'}">Yearly
+                                        </option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Authentication &amp; Vendor</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Authentication Type</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${av != null ? av.authenticationType : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="authenticationType">
+                                        <option value="">Select</option>
+                                        <option value="Internal Ocelot"
+                                            th:selected="${av != null && av.authenticationType == 'Internal Ocelot'}">
+                                            Internal Ocelot</option>
+                                        <option value="External Ocelot"
+                                            th:selected="${av != null && av.authenticationType == 'External Ocelot'}">
+                                            External Ocelot</option>
+                                        <option value="LDAP"
+                                            th:selected="${av != null && av.authenticationType == 'LDAP'}">LDAP</option>
+                                        <option value="BAM"
+                                            th:selected="${av != null && av.authenticationType == 'BAM'}">BAM</option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom textarea-row">
+                                <label class="field-label">Auth Details / Routing</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${av != null ? av.authDetailsRouting : ''}" readonly>
+                                    <textarea th:if="${editMode}" class="form-control" id="authDetailsRouting"
+                                        th:text="${av != null ? av.authDetailsRouting : ''}"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Authorization Type</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${av != null ? av.authorizationType : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="authorizationType">
+                                        <option value="">Select</option>
+                                        <option value="User Roles"
+                                            th:selected="${av != null && av.authorizationType == 'User Roles'}">User
+                                            Roles</option>
+                                        <option value="Entitlements"
+                                            th:selected="${av != null && av.authorizationType == 'Entitlements'}">
+                                            Entitlements</option>
+                                        <option value="AD Groups"
+                                            th:selected="${av != null && av.authorizationType == 'AD Groups'}">AD Groups
+                                        </option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Vendor App</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${av != null ? av.vendorApp : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="vendorApp">
+                                        <option value="">Select</option>
+                                        <option value="Yes" th:selected="${av != null && av.vendorApp == 'Yes'}">Yes
+                                        </option>
+                                        <option value="No" th:selected="${av != null && av.vendorApp == 'No'}">No
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Vendor Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="vendorName"
+                                        th:value="${av != null ? av.vendorName : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">App Decommissioned</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${av != null ? av.appDecommissioned : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="appDecommissioned">
+                                        <option value="">Select</option>
+                                        <option value="Yes"
+                                            th:selected="${av != null && av.appDecommissioned == 'Yes'}">Yes</option>
+                                        <option value="No" th:selected="${av != null && av.appDecommissioned == 'No'}">
+                                            No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Vendor Ticketing URL</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="vendorTicketingUrl"
+                                        th:value="${av != null ? av.vendorTicketingUrl : ''}"
+                                        th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Vendor Support Exist</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${av != null ? av.vendorSupportExist : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="vendorSupportExist">
+                                        <option value="">Select</option>
+                                        <option value="Yes"
+                                            th:selected="${av != null && av.vendorSupportExist == 'Yes'}">Yes</option>
+                                        <option value="No" th:selected="${av != null && av.vendorSupportExist == 'No'}">
+                                            No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Vendor Contact Details</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="vendorContactDetails"
+                                        th:value="${av != null ? av.vendorContactDetails : ''}"
+                                        th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">App Hosted In</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${av != null ? av.appHostedIn : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="appHostedIn">
+                                        <option value="">Select</option>
+                                        <option value="Cloud" th:selected="${av != null && av.appHostedIn == 'Cloud'}">
+                                            Cloud</option>
+                                        <option value="AWS" th:selected="${av != null && av.appHostedIn == 'AWS'}">AWS
+                                        </option>
+                                        <option value="Azure" th:selected="${av != null && av.appHostedIn == 'Azure'}">
+                                            Azure</option>
+                                        <option value="On Prem"
+                                            th:selected="${av != null && av.appHostedIn == 'On Prem'}">On Prem</option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Technical Details</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom textarea-row">
+                                <label class="field-label">App URLs - Dev/Test</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${td != null ? td.appUrlsDevTest : ''}" readonly>
+                                    <textarea th:if="${editMode}" class="form-control" id="appUrlsDevTest"
+                                        th:text="${td != null ? td.appUrlsDevTest : ''}"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">GitHub Repos</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="githubRepos"
+                                        th:value="${td != null ? td.githubRepos : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">LB / VIP Details</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="lbVipDetails"
+                                        th:value="${td != null ? td.lbVipDetails : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">External / Internal</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${td != null ? td.externalInternal : ''}" readonly>
+                                    <select th:if="${editMode}" class="form-select" id="externalInternal">
+                                        <option value="">Select</option>
+                                        <option value="External"
+                                            th:selected="${td != null && td.externalInternal == 'External'}">External
+                                        </option>
+                                        <option value="Internal"
+                                            th:selected="${td != null && td.externalInternal == 'Internal'}">Internal
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom textarea-row">
+                                <label class="field-label">Upstream System</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${td != null ? td.upstreamSystem : ''}" readonly>
+                                    <textarea th:if="${editMode}" class="form-control" id="upstreamSystem"
+                                        th:text="${td != null ? td.upstreamSystem : ''}"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group-custom textarea-row">
+                                <label class="field-label">Akana / Mulesoft</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${td != null ? td.akanaMulesoft : ''}" readonly>
+                                    <textarea th:if="${editMode}" class="form-control" id="akanaMulesoft"
+                                        th:text="${td != null ? td.akanaMulesoft : ''}"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group-custom textarea-row">
+                                <label class="field-label">Kafka Topic</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${td != null ? td.kafkaTopic : ''}" readonly>
+                                    <textarea th:if="${editMode}" class="form-control" id="kafkaTopic"
+                                        th:text="${td != null ? td.kafkaTopic : ''}"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group-custom textarea-row">
+                                <label class="field-label">Azure Client IDs</label>
+                                <div class="field-input">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${td != null ? td.azureClientIds : ''}" readonly>
+                                    <textarea th:if="${editMode}" class="form-control" id="azureClientIds"
+                                        th:text="${td != null ? td.azureClientIds : ''}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">Resource Contacts</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Offshore Primary</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="offshorePrimary"
+                                        th:value="${rc != null ? rc.offshorePrimary : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Offshore Secondary</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="offshoreSecondary"
+                                        th:value="${rc != null ? rc.offshoreSecondary : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Offshore Tertiary</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="offshoreTertiary"
+                                        th:value="${rc != null ? rc.offshoreTertiary : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Onshore Primary</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="onshorePrimary"
+                                        th:value="${rc != null ? rc.onshorePrimary : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Onshore Secondary</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="onshoreSecondary"
+                                        th:value="${rc != null ? rc.onshoreSecondary : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Onshore Tertiary</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" id="onshoreTertiary"
+                                        th:value="${rc != null ? rc.onshoreTertiary : ''}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="tab-server-details" class="tab-pane">
+                <div th:if="${#lists.isEmpty(app.applicationServerDetails)}" class="empty-state">
+                    <i class="fa-solid fa-server me-2"></i> No server data available.
+                    <div th:if="${editMode}" class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                        <button type="button" class="btn-add-env" onclick="addNewServerEntry('DEV')">+ DEV</button>
+                        <button type="button" class="btn-add-env" onclick="addNewServerEntry('TEST')">+ TEST</button>
+                        <button type="button" class="btn-add-env" onclick="addNewServerEntry('QA')">+ QA</button>
+                        <button type="button" class="btn-add-env" onclick="addNewServerEntry('PROD')">+ PROD</button>
+                    </div>
+                </div>
+                <div th:each="srv : ${app.applicationServerDetails}" th:if="${srv.active == null or srv.active}"
+                    class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">
+                            <span
+                                th:text="${#strings.capitalizeWords(#strings.toLowerCase(#strings.replace(srv.environment ?: 'Environment', '_', ' ')))}">ENV</span>
+                            <button th:if="${editMode}" type="button" class="btn-add-section-row"
+                                th:attr="data-env=${srv.environment}"
+                                onclick="addNewServerEntry(this.dataset.env, this)" title="Add row">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button th:if="${editMode}" type="button" class="btn-remove-section-row"
+                                th:attr="data-id=${srv.id}"
+                                onclick="deleteServerEntry(this.dataset.id, this.closest('.section-box'))"
+                                title="Remove entry">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Deployed Server</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${srv.deployedServer}" readonly>
+                                    <select th:if="${editMode}" class="form-select" data-field="deployedServer"
+                                        th:id="${'srv_' + srv.id + '_deployedServer'}">
+                                        <option value="">Select</option>
+                                        <option value="Tomcat" th:selected="${srv.deployedServer == 'Tomcat'}">Tomcat
+                                        </option>
+                                        <option value="Weblogic" th:selected="${srv.deployedServer == 'Weblogic'}">
+                                            Weblogic</option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Server Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'srv_' + srv.id + '_serverName'}"
+                                        th:value="${srv.serverName}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Server OS &amp; Version</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control"
+                                        th:id="${'srv_' + srv.id + '_serverOsVersion'}"
+                                        th:value="${srv.serverOsVersion}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Domain</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'srv_' + srv.id + '_domain'}"
+                                        th:value="${srv.domain}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Cluster</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'srv_' + srv.id + '_cluster'}"
+                                        th:value="${srv.cluster}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Service Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'srv_' + srv.id + '_serviceName'}"
+                                        th:value="${srv.serviceName}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">IP Address</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'srv_' + srv.id + '_ipAddress'}"
+                                        th:value="${srv.ipAddress}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-cloud-details" class="tab-pane">
+                <div th:if="${#lists.isEmpty(app.cloudDetails)}" class="empty-state">
+                    <i class="fa-solid fa-cloud me-2"></i> No cloud data available.
+                    <div th:if="${editMode}" class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                        <button type="button" class="btn-add-env" onclick="addNewCloudEntry('NON_PROD')">+
+                            Non-Prod</button>
+                        <button type="button" class="btn-add-env" onclick="addNewCloudEntry('PROD')">+ Prod</button>
+                    </div>
+                </div>
+                <div th:each="cloud : ${app.cloudDetails}" th:if="${cloud.active == null or cloud.active}"
+                    class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">
+                            <span
+                                th:text="${#strings.capitalizeWords(#strings.toLowerCase(#strings.replace(cloud.environment ?: 'Environment', '_', ' ')))}">ENV</span>
+                            <button th:if="${editMode}" type="button" class="btn-add-section-row"
+                                th:attr="data-env=${cloud.environment}"
+                                onclick="addNewCloudEntry(this.dataset.env, this)" title="Add row">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button th:if="${editMode}" type="button" class="btn-remove-section-row"
+                                th:attr="data-id=${cloud.id}"
+                                onclick="deleteCloudEntry(this.dataset.id, this.closest('.section-box'))"
+                                title="Remove entry">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Account ID</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control"
+                                        th:id="${'cloud_' + cloud.id + '_accountId'}" th:value="${cloud.accountId}"
+                                        th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Host Type</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${cloud.hostType}" readonly>
+                                    <select th:if="${editMode}" class="form-select" data-field="hostType"
+                                        th:id="${'cloud_' + cloud.id + '_hostType'}">
+                                        <option value="">Select</option>
+                                        <option value="Ec2" th:selected="${cloud.hostType == 'Ec2'}">Ec2</option>
+                                        <option value="VM" th:selected="${cloud.hostType == 'VM'}">VM</option>
+                                        <option value="ECS" th:selected="${cloud.hostType == 'ECS'}">ECS</option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Service Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control"
+                                        th:id="${'cloud_' + cloud.id + '_serviceName'}" th:value="${cloud.serviceName}"
+                                        th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Lambda Names</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control"
+                                        th:id="${'cloud_' + cloud.id + '_lambdaNames'}" th:value="${cloud.lambdaNames}"
+                                        th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">S3 Bucket</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'cloud_' + cloud.id + '_s3Bucket'}"
+                                        th:value="${cloud.s3Bucket}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">SQS Names</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'cloud_' + cloud.id + '_sqsNames'}"
+                                        th:value="${cloud.sqsNames}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">IAM User</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'cloud_' + cloud.id + '_iamUser'}"
+                                        th:value="${cloud.iamUser}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Comments</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'cloud_' + cloud.id + '_comments'}"
+                                        th:value="${cloud.comments}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-db-details" class="tab-pane">
+                <div th:if="${#lists.isEmpty(app.databaseServerDetails)}" class="empty-state">
+                    <i class="fa-solid fa-database me-2"></i> No database data available.
+                    <div th:if="${editMode}" class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                        <button type="button" class="btn-add-env" onclick="addNewDbEntry('DEV')">+ DEV</button>
+                        <button type="button" class="btn-add-env" onclick="addNewDbEntry('TEST')">+ TEST</button>
+                        <button type="button" class="btn-add-env" onclick="addNewDbEntry('QA')">+ QA</button>
+                        <button type="button" class="btn-add-env" onclick="addNewDbEntry('PROD')">+ PROD</button>
+                    </div>
+                </div>
+                <div th:each="db : ${app.databaseServerDetails}" th:if="${db.active == null or db.active}"
+                    class="section-box">
+                    <div class="section-header-wrapper">
+                        <div class="section-header">
+                            <span
+                                th:text="${#strings.capitalizeWords(#strings.toLowerCase(#strings.replace(db.environment ?: 'Environment', '_', ' ')))}">ENV</span>
+                            <button th:if="${editMode}" type="button" class="btn-add-section-row"
+                                th:attr="data-env=${db.environment}" onclick="addNewDbEntry(this.dataset.env, this)"
+                                title="Add row">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button th:if="${editMode}" type="button" class="btn-remove-section-row"
+                                th:attr="data-id=${db.id}"
+                                onclick="deleteDbEntry(this.dataset.id, this.closest('.section-box'))"
+                                title="Remove entry">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Database Type</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${db.databaseType}" readonly>
+                                    <select th:if="${editMode}" class="form-select" data-field="databaseType"
+                                        th:id="${'db_' + db.id + '_databaseType'}">
+                                        <option value="">Select</option>
+                                        <option value="Oracle" th:selected="${db.databaseType == 'Oracle'}">Oracle
+                                        </option>
+                                        <option value="PostgreSQL" th:selected="${db.databaseType == 'PostgreSQL'}">
+                                            PostgreSQL</option>
+                                        <option value="MySQL" th:selected="${db.databaseType == 'MySQL'}">MySQL</option>
+                                        <option value="MSSQL" th:selected="${db.databaseType == 'MSSQL'}">MSSQL</option>
+                                        <option value="Couch DB" th:selected="${db.databaseType == 'Couch DB'}">Couch DB
+                                        </option>
+                                        <option value="RDS" th:selected="${db.databaseType == 'RDS'}">RDS</option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Database Version</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control"
+                                        th:id="${'db_' + db.id + '_databaseVersion'}" th:value="${db.databaseVersion}"
+                                        th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Database Hosting Type</label>
+                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                    <input th:if="${!editMode}" type="text" class="form-control"
+                                        th:value="${db.databaseHostingType}" readonly>
+                                    <select th:if="${editMode}" class="form-select" data-field="databaseHostingType"
+                                        th:id="${'db_' + db.id + '_databaseHostingType'}">
+                                        <option value="">Select</option>
+                                        <option value="EXCC" th:selected="${db.databaseHostingType == 'EXCC'}">EXCC
+                                        </option>
+                                        <option value="EXCS" th:selected="${db.databaseHostingType == 'EXCS'}">EXCS
+                                        </option>
+                                        <option value="On Prem" th:selected="${db.databaseHostingType == 'On Prem'}">On
+                                            Prem</option>
+                                        <option value="AWS" th:selected="${db.databaseHostingType == 'AWS'}">AWS
+                                        </option>
+                                        <option value="Azure" th:selected="${db.databaseHostingType == 'Azure'}">Azure
+                                        </option>
+                                    </select>
+                                    <button th:if="${editMode}" type="button" class="btn-add-option"
+                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Database Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'db_' + db.id + '_databaseName'}"
+                                        th:value="${db.databaseName}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Account Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'db_' + db.id + '_accountName'}"
+                                        th:value="${db.accountName}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-custom">
+                                <label class="field-label">Host Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'db_' + db.id + '_hostName'}"
+                                        th:value="${db.hostName}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Service Name</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'db_' + db.id + '_serviceName'}"
+                                        th:value="${db.serviceName}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Port</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'db_' + db.id + '_port'}"
+                                        th:value="${db.port}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">Account ID</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'db_' + db.id + '_accountId'}"
+                                        th:value="${db.accountId}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                            <div class="form-group-custom">
+                                <label class="field-label">IP</label>
+                                <div class="field-input">
+                                    <input type="text" class="form-control" th:id="${'db_' + db.id + '_ip'}"
+                                        th:value="${db.ip}" th:readonly="${!editMode}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer-bar">
+        <div style="display:inline-flex; align-items:center; gap:0.5rem; pointer-events:all;">
+
+            <div class="footer-pill">
+                <button class="btn-nav" id="backNavBtn" onclick="navigateBack()">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+                <button class="btn-nav" id="continueBtn" onclick="navigateContinue()">
+                    Continue <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="footer-pill" th:if="${editMode}">
+                <button class="btn-cancel" id="cancelBtn" th:attr="data-href='/application/' + ${app.id}"
+                    onclick="window.location.href=this.dataset.href">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+                <button class="btn-save" id="saveBtn" onclick="saveAll()">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:if="${editMode}" src="/static/dynamic-dropdown.js?v=5.0.1"></script>
+    <script th:inline="javascript">
+        const APP_ID   = /*[[${app.id}]]*/ null;
+        const EDIT_MODE = /*[[${editMode}]]*/ false;
+        const DI_ID    = /*[[${!#lists.isEmpty(app.descriptionImpacts)    ? app.descriptionImpacts[0].id    : null}]]*/ null;
+        const AV_ID    = /*[[${!#lists.isEmpty(app.authenticationVendors) ? app.authenticationVendors[0].id : null}]]*/ null;
+        const TD_ID    = /*[[${!#lists.isEmpty(app.technicalDetails)      ? app.technicalDetails[0].id      : null}]]*/ null;
+        const RC_ID    = /*[[${!#lists.isEmpty(app.resourceContacts)      ? app.resourceContacts[0].id      : null}]]*/ null;
+
+        const TABS = ['app-details', 'server-details', 'cloud-details', 'db-details'];
+        let currentIdx = 0;
+
+        function switchTab(tabId) {
+            currentIdx = TABS.indexOf(tabId);
+            TABS.forEach(t => {
+                document.getElementById('tab-' + t).classList.toggle('active', t === tabId);
+                const pill = document.querySelector(`[data-tab="${t}"]`);
+                if (pill) pill.classList.toggle('active', t === tabId);
+            });
+            updateFooterButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateFooterButtons() {
+            const continueBtn = document.getElementById('continueBtn');
+            const backNavBtn = document.getElementById('backNavBtn');
+            if (currentIdx === TABS.length - 1) {
+                continueBtn.innerHTML = 'Exit';
+            } else {
+                continueBtn.innerHTML = 'Continue <i class="fa-solid fa-arrow-right ms-1"></i>';
+            }
+            if (backNavBtn) {
+                backNavBtn.classList.toggle('btn-muted', currentIdx === 0);
+            }
+        }
+
+        function navigateContinue() {
+            if (currentIdx < TABS.length - 1) {
+                switchTab(TABS[currentIdx + 1]);
+            } else {
+                window.location.href = '/home';
+            }
+        }
+
+        function navigateBack() {
+            if (currentIdx > 0) {
+                switchTab(TABS[currentIdx - 1]);
+            } else {
+                window.location.href = '/home';
+            }
+        }
+
+        function val(id) {
+            const el = document.getElementById(id);
+            return el ? (el.value.trim() || null) : null;
+        }
+
+        function showToast(msg, type) {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = 'toast-msg ' + type;
+            t.innerHTML = (type === 'success'
+                ? '<i class="fa-solid fa-circle-check"></i>'
+                : '<i class="fa-solid fa-circle-xmark"></i>') + ' ' + msg;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3500);
+        }
+
+        function collectListEntities(prefix) {
+            const map = {};
+            document.querySelectorAll(`[id^="${prefix}_"]`).forEach(el => {
+                const parts = el.id.split('_');
+                const entId = parts[1];
+                const field = parts.slice(2).join('_');
+                if (!map[entId]) map[entId] = {};
+                map[entId][field] = el.value.trim() || null;
+            });
+            return map;
+        }
+
+        async function apiCall(url, method, body) {
+            const r = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (r.status === 409) {
+                const data = await r.json().catch(() => ({}));
+                throw new Error(data.error || 'Duplicate entry detected.');
+            }
+            if (!r.ok) throw new Error('Save failed (status ' + r.status + '). Please try again.');
+            return r;
+        }
+
+        (function initEditDuplicateCheck() {
+            if (!EDIT_MODE) return;
+            const showWarn = (field, msg) => {
+                let w = field.parentElement?.querySelector('.dup-warn');
+                if (!w) { w = document.createElement('div'); w.className = 'dup-warn'; field.parentElement?.appendChild(w); }
+                w.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ' + msg;
+                w.style.cssText = 'color:#c0392b;font-size:0.79rem;margin-top:4px;display:flex;align-items:center;gap:5px;background:#fff0f0;border:1px solid #f5c6c6;border-radius:6px;padding:4px 8px;font-weight:500;';
+                field.style.border = '2px solid #e74c3c';
+                field.style.boxShadow = '0 0 0 3px rgba(231,76,60,0.15)';
+            };
+            const clearWarn = (field) => {
+                const w = field.parentElement?.querySelector('.dup-warn');
+                if (w) w.remove();
+                field.style.border = '';
+                field.style.boxShadow = '';
+            };
+            const debounce = (fn, ms) => { let t; return function(...a) { clearTimeout(t); t = setTimeout(() => fn.apply(this,a), ms); }; };
+            const checkDup = (field, param, label) => {
+                const v = field.value.trim();
+                if (!v) { clearWarn(field); return; }
+                fetch('/api/basic-identity/check?' + param + '=' + encodeURIComponent(v) + '&excludeId=' + APP_ID)
+                    .then(r => r.json())
+                    .then(res => {
+                        const exists = param === 'beatId' ? res.beatIdExists : res.applicationNameExists;
+                        exists ? showWarn(field, label + ' already used by another application!') : clearWarn(field);
+                    }).catch(() => clearWarn(field));
+            };
+            const bf = document.getElementById('beatId');
+            const af = document.getElementById('applicationName');
+            if (bf) {
+                bf.addEventListener('blur', () => checkDup(bf, 'beatId', 'This Beat ID'));
+                bf.addEventListener('input', debounce(() => checkDup(bf, 'beatId', 'This Beat ID'), 800));
+                bf.addEventListener('input', () => { if (!bf.value.trim()) clearWarn(bf); });
+            }
+            if (af) {
+                af.addEventListener('blur', () => checkDup(af, 'applicationName', 'This Application Name'));
+                af.addEventListener('input', debounce(() => checkDup(af, 'applicationName', 'This Application Name'), 800));
+                af.addEventListener('input', () => { if (!af.value.trim()) clearWarn(af); });
+            }
+        })();
+
+        function saveAll() {
+            const btn = document.getElementById('saveBtn');
+            if (!btn || !btn.classList.contains('dirty')) return;
+            document.getElementById('saveConfirmOverlay').style.display = 'flex';
+        }
+
+        function _closeSaveConfirm() {
+            document.getElementById('saveConfirmOverlay').style.display = 'none';
+        }
+
+        async function _doSaveAll() {
+            _closeSaveConfirm();
+            const btn = document.getElementById('saveBtn');
+            if (!btn) return;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+
+            try {
+
+                await apiCall('/api/basic-identity/' + APP_ID, 'PUT', {
+                    beatId: val('beatId'),
+                    applicationName: val('applicationName'),
+                    gxp: val('gxp'),
+                    squad: val('squad'),
+                    businessOwner: val('businessOwner'),
+                    assignmentGroup: val('assignmentGroup'),
+                    subDomain: val('subDomain'),
+                    appRegion: val('appRegion'),
+                    serviceVariant: val('serviceVariant'),
+                    typeCategory: val('typeCategory'),
+                    systemOwner: val('systemOwner')
+                });
+
+                await apiCall(
+                    DI_ID ? '/api/description-impact/' + DI_ID : '/api/description-impact',
+                    DI_ID ? 'PUT' : 'POST',
+                    {
+                        basicIdentityId: APP_ID,
+                        applicationDescription: val('applicationDescription'),
+                        businessImpactDescription: val('businessImpactDescription'),
+                        financialImpact: val('financialImpact'),
+                        userAccessReview: val('userAccessReview')
+                    }
+                );
+
+                await apiCall(
+                    AV_ID ? '/api/authentication-vendor/' + AV_ID : '/api/authentication-vendor',
+                    AV_ID ? 'PUT' : 'POST',
+                    {
+                        basicIdentityId: APP_ID,
+                        authenticationType: val('authenticationType'),
+                        authDetailsRouting: val('authDetailsRouting'),
+                        authorizationType: val('authorizationType'),
+                        vendorApp: val('vendorApp'),
+                        vendorName: val('vendorName'),
+                        appDecommissioned: val('appDecommissioned'),
+                        vendorTicketingUrl: val('vendorTicketingUrl'),
+                        vendorSupportExist: val('vendorSupportExist'),
+                        vendorContactDetails: val('vendorContactDetails'),
+                        appHostedIn: val('appHostedIn')
+                    }
+                );
+
+                await apiCall(
+                    TD_ID ? '/api/technical-details/' + TD_ID : '/api/technical-details',
+                    TD_ID ? 'PUT' : 'POST',
+                    {
+                        basicIdentityId: APP_ID,
+                        appUrlsDevTest: val('appUrlsDevTest'),
+                        githubRepos: val('githubRepos'),
+                        lbVipDetails: val('lbVipDetails'),
+                        externalInternal: val('externalInternal'),
+                        upstreamSystem: val('upstreamSystem'),
+                        akanaMusoft: val('akanaMulesoft'),
+                        kafkaTopic: val('kafkaTopic'),
+                        azureClientIds: val('azureClientIds')
+                    }
+                );
+
+                await apiCall(
+                    RC_ID ? '/api/resource-contacts/' + RC_ID : '/api/resource-contacts',
+                    RC_ID ? 'PUT' : 'POST',
+                    {
+                        basicIdentityId: APP_ID,
+                        offshorePrimary: val('offshorePrimary'),
+                        offshoreSecondary: val('offshoreSecondary'),
+                        offshoreTertiary: val('offshoreTertiary'),
+                        onshorePrimary: val('onshorePrimary'),
+                        onshoreSecondary: val('onshoreSecondary'),
+                        onshoreTertiary: val('onshoreTertiary')
+                    }
+                );
+
+                const srvMap = collectListEntities('srv');
+                for (const [entId, fields] of Object.entries(srvMap)) {
+                    if (entId.startsWith('new')) {
+                        await apiCall('/api/application-server-details?basicIdentityId=' + APP_ID, 'POST', fields);
+                    } else {
+                        await apiCall('/api/application-server-details/' + entId, 'PUT', fields);
+                    }
+                }
+
+                const cloudMap = collectListEntities('cloud');
+                for (const [entId, fields] of Object.entries(cloudMap)) {
+                    if (entId.startsWith('new')) {
+                        await apiCall('/api/cloud-details?basicIdentityId=' + APP_ID, 'POST', fields);
+                    } else {
+                        await apiCall('/api/cloud-details/' + entId, 'PUT', fields);
+                    }
+                }
+
+                const dbMap = collectListEntities('db');
+                for (const [entId, fields] of Object.entries(dbMap)) {
+                    if (entId.startsWith('new')) {
+                        await apiCall('/api/database-server-details?basicIdentityId=' + APP_ID, 'POST', fields);
+                    } else {
+                        await apiCall('/api/database-server-details/' + entId, 'PUT', fields);
+                    }
+                }
+
+                showToast('Changes saved successfully!', 'success');
+                if (EDIT_MODE) {
+                    setTimeout(() => { window.location.href = '/application/' + APP_ID; }, 1200);
+                }
+            } catch (e) {
+                console.error('Save error:', e);
+                showToast('Save failed: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+            }
+        }
+
+        updateFooterButtons();
+
+        function markDirty() {
+            const btn = document.getElementById('saveBtn');
+            if (btn) btn.classList.add('dirty');
+        }
+
+        (function initDirtyTracking() {
+            if (!EDIT_MODE) return;
+
+            document.addEventListener('input', function (e) {
+                if (e.target.matches('input, select, textarea')) markDirty();
+            });
+            document.addEventListener('change', function (e) {
+                if (e.target.matches('input, select, textarea')) markDirty();
+            });
+        })();
+    </script>
+
+    <script>
+        let _newEntrySeq = 0;
+        function _nextNewId() { return 'new' + (++_newEntrySeq); }
+
+        function _envDisplay(env) {
+            return (env || 'Environment').split('_')
+                .map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
+        }
+
+        function addNewServerEntry(environment, triggerBtn) {
+            const nid = _nextNewId();
+            const label = _envDisplay(environment);
+            const html = `
+            <div class="section-box section-box-enter" id="new-srv-box-${nid}">
+                <div class="section-header-wrapper">
+                    <div class="section-header">
+                        <span>${label}</span>
+                        <button type="button" class="btn-add-section-row" onclick="addNewServerEntry('${environment}', this)" title="Add row"><i class="fa-solid fa-plus"></i></button>
+                        <button type="button" class="btn-remove-section-row" onclick="removeNewEntry('new-srv-box-${nid}')" title="Remove entry"><i class="fa-solid fa-minus"></i></button>
+                    </div>
+                </div>
+                <input type="hidden" id="srv_${nid}_environment" value="${environment}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-custom"><label class="field-label">Deployed Server</label>
+                            <div class="field-input has-dropdown">
+                                <select class="form-select" id="srv_${nid}_deployedServer">
+                                    <option value="">Select</option>
+                                    <option>Tomcat</option><option>Weblogic</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Server Name</label>
+                            <div class="field-input"><input type="text" class="form-control" id="srv_${nid}_serverName" placeholder="Server Name"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Server OS &amp; Version</label>
+                            <div class="field-input"><input type="text" class="form-control" id="srv_${nid}_serverOsVersion" placeholder="Server OS &amp; Version"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Domain</label>
+                            <div class="field-input"><input type="text" class="form-control" id="srv_${nid}_domain" placeholder="Domain"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-custom"><label class="field-label">Cluster</label>
+                            <div class="field-input"><input type="text" class="form-control" id="srv_${nid}_cluster" placeholder="Cluster"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Service Name</label>
+                            <div class="field-input"><input type="text" class="form-control" id="srv_${nid}_serviceName" placeholder="Service Name"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">IP Address</label>
+                            <div class="field-input"><input type="text" class="form-control" id="srv_${nid}_ipAddress" placeholder="IP Address"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            const refBox = triggerBtn ? triggerBtn.closest('.section-box') : null;
+            if (refBox) {
+                refBox.insertAdjacentHTML('afterend', html);
+            } else {
+                document.getElementById('tab-server-details').insertAdjacentHTML('beforeend', html);
+            }
+            markDirty();
+        }
+
+        function addNewCloudEntry(environment, triggerBtn) {
+            const nid = _nextNewId();
+            const label = _envDisplay(environment);
+            const html = `
+            <div class="section-box section-box-enter" id="new-cloud-box-${nid}">
+                <div class="section-header-wrapper">
+                    <div class="section-header">
+                        <span>${label}</span>
+                        <button type="button" class="btn-add-section-row" onclick="addNewCloudEntry('${environment}', this)" title="Add row"><i class="fa-solid fa-plus"></i></button>
+                        <button type="button" class="btn-remove-section-row" onclick="removeNewEntry('new-cloud-box-${nid}')" title="Remove entry"><i class="fa-solid fa-minus"></i></button>
+                    </div>
+                </div>
+                <input type="hidden" id="cloud_${nid}_environment" value="${environment}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-custom"><label class="field-label">Account ID</label>
+                            <div class="field-input"><input type="text" class="form-control" id="cloud_${nid}_accountId" placeholder="Account ID"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Host Type</label>
+                            <div class="field-input has-dropdown">
+                                <select class="form-select" id="cloud_${nid}_hostType">
+                                    <option value="">Select</option>
+                                    <option>Ec2</option><option>VM</option><option>ECS</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Service Name</label>
+                            <div class="field-input"><input type="text" class="form-control" id="cloud_${nid}_serviceName" placeholder="Service Name"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Lambda Names</label>
+                            <div class="field-input"><input type="text" class="form-control" id="cloud_${nid}_lambdaNames" placeholder="Lambda Names"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-custom"><label class="field-label">S3 Bucket</label>
+                            <div class="field-input"><input type="text" class="form-control" id="cloud_${nid}_s3Bucket" placeholder="S3 Bucket"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">SQS Names</label>
+                            <div class="field-input"><input type="text" class="form-control" id="cloud_${nid}_sqsNames" placeholder="SQS Names"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">IAM User</label>
+                            <div class="field-input"><input type="text" class="form-control" id="cloud_${nid}_iamUser" placeholder="IAM User"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Comments</label>
+                            <div class="field-input"><input type="text" class="form-control" id="cloud_${nid}_comments" placeholder="Comments"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            const refBoxCloud = triggerBtn ? triggerBtn.closest('.section-box') : null;
+            if (refBoxCloud) {
+                refBoxCloud.insertAdjacentHTML('afterend', html);
+            } else {
+                document.getElementById('tab-cloud-details').insertAdjacentHTML('beforeend', html);
+            }
+            markDirty();
+        }
+
+        function addNewDbEntry(environment, triggerBtn) {
+            const nid = _nextNewId();
+            const label = _envDisplay(environment);
+            const html = `
+            <div class="section-box section-box-enter" id="new-db-box-${nid}">
+                <div class="section-header-wrapper">
+                    <div class="section-header">
+                        <span>${label}</span>
+                        <button type="button" class="btn-add-section-row" onclick="addNewDbEntry('${environment}', this)" title="Add row"><i class="fa-solid fa-plus"></i></button>
+                        <button type="button" class="btn-remove-section-row" onclick="removeNewEntry('new-db-box-${nid}')" title="Remove entry"><i class="fa-solid fa-minus"></i></button>
+                    </div>
+                </div>
+                <input type="hidden" id="db_${nid}_environment" value="${environment}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-custom"><label class="field-label">Database Type</label>
+                            <div class="field-input has-dropdown">
+                                <select class="form-select" id="db_${nid}_databaseType">
+                                    <option value="">Select</option>
+                                    <option>Oracle</option><option>PostgreSQL</option><option>MySQL</option><option>MSSQL</option><option>Couch DB</option><option>RDS</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Database Version</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_databaseVersion" placeholder="Database Version"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Database Hosting Type</label>
+                            <div class="field-input has-dropdown">
+                                <select class="form-select" id="db_${nid}_databaseHostingType">
+                                    <option value="">Select</option>
+                                    <option>EXCC</option><option>EXCS</option><option>On Prem</option><option>AWS</option><option>Azure</option>
+                                </select>
+                                <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Database Name</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_databaseName" placeholder="Database Name"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Account Name</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_accountName" placeholder="Account Name"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-custom"><label class="field-label">Host Name</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_hostName" placeholder="Host Name"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Service Name</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_serviceName" placeholder="Service Name"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Port</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_port" placeholder="Port"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">Account ID</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_accountId" placeholder="Account ID"></div>
+                        </div>
+                        <div class="form-group-custom"><label class="field-label">IP</label>
+                            <div class="field-input"><input type="text" class="form-control" id="db_${nid}_ip" placeholder="IP"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            const refBoxDb = triggerBtn ? triggerBtn.closest('.section-box') : null;
+            if (refBoxDb) {
+                refBoxDb.insertAdjacentHTML('afterend', html);
+            } else {
+                document.getElementById('tab-db-details').insertAdjacentHTML('beforeend', html);
+            }
+            markDirty();
+        }
+
+        function removeNewEntry(boxId) {
+            const el = document.getElementById(boxId);
+            if (el) { el.remove(); markDirty(); }
+        }
+
+        let _pendingEntryRemoveFn = null;
+
+        function _openEntryDeleteModal(onConfirm) {
+            _pendingEntryRemoveFn = onConfirm;
+            document.getElementById('entryDeleteModalOverlay').style.display = 'flex';
+        }
+
+        function _closeEntryDeleteModal() {
+            document.getElementById('entryDeleteModalOverlay').style.display = 'none';
+            _pendingEntryRemoveFn = null;
+        }
+
+        async function _confirmEntryDelete() {
+            if (_pendingEntryRemoveFn) await _pendingEntryRemoveFn();
+            _closeEntryDeleteModal();
+        }
+
+        function deleteServerEntry(id, boxEl) {
+            _openEntryDeleteModal(async () => {
+                try {
+                    const r = await fetch('/api/application-server-details/' + id + '/deactivate', { method: 'PATCH' });
+                    if (!r.ok) throw new Error('Status ' + r.status);
+                    boxEl.style.transition = 'opacity 0.25s'; boxEl.style.opacity = '0';
+                    setTimeout(() => boxEl.remove(), 260);
+                    showToast('Server entry removed.', 'success');
+                } catch (e) { showToast('Remove failed: ' + e.message, 'error'); }
+            });
+        }
+
+        function deleteCloudEntry(id, boxEl) {
+            _openEntryDeleteModal(async () => {
+                try {
+                    const r = await fetch('/api/cloud-details/' + id + '/deactivate', { method: 'PATCH' });
+                    if (!r.ok) throw new Error('Status ' + r.status);
+                    boxEl.style.transition = 'opacity 0.25s'; boxEl.style.opacity = '0';
+                    setTimeout(() => boxEl.remove(), 260);
+                    showToast('Cloud entry removed.', 'success');
+                } catch (e) { showToast('Remove failed: ' + e.message, 'error'); }
+            });
+        }
+
+        function deleteDbEntry(id, boxEl) {
+            _openEntryDeleteModal(async () => {
+                try {
+                    const r = await fetch('/api/database-server-details/' + id + '/deactivate', { method: 'PATCH' });
+                    if (!r.ok) throw new Error('Status ' + r.status);
+                    boxEl.style.transition = 'opacity 0.25s'; boxEl.style.opacity = '0';
+                    setTimeout(() => boxEl.remove(), 260);
+                    showToast('Database entry removed.', 'success');
+                } catch (e) { showToast('Remove failed: ' + e.message, 'error'); }
+            });
+        }
+
+        updateFooterButtons();
+
+        document.getElementById('entryDeleteModalOverlay').addEventListener('click', function (e) {
+            if (e.target === this) _closeEntryDeleteModal();
+        });
+
+        document.getElementById('saveConfirmOverlay').addEventListener('click', function (e) {
+            if (e.target === this) _closeSaveConfirm();
+        });
+    </script>
+
+    <div id="entryDeleteModalOverlay"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:2000; align-items:center; justify-content:center;">
+        <div
+            style="background:#fff; border-radius:14px; padding:32px 28px 24px; max-width:400px; width:92%; box-shadow:0 8px 32px rgba(0,0,0,0.22);">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                <div
+                    style="background:#fde8ea; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="fa-solid fa-minus" style="color:#dc3545; font-size:18px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight:700; font-size:1rem; color:#1a1a1a;">Remove Entry</div>
+                    <div style="font-size:0.82rem; color:#888; margin-top:2px;">This entry will be deactivated</div>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; color:#444; margin-bottom:24px; line-height:1.5;">
+                Are you sure you want to remove this entry?<br>
+                <span style="font-size:0.82rem; color:#888;">It will no longer appear in the application details.</span>
+            </p>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button onclick="_closeEntryDeleteModal()"
+                    style="border:1.5px solid #ccc; background:#fff; color:#555; border-radius:8px; padding:8px 22px; font-size:0.88rem; cursor:pointer; font-weight:500;">Cancel</button>
+                <button onclick="_confirmEntryDelete()"
+                    style="border:none; background:#dc3545; color:#fff; border-radius:8px; padding:8px 22px; font-size:0.88rem; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-minus"></i> Remove
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="saveConfirmOverlay"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:2000; align-items:center; justify-content:center;">
+        <div
+            style="background:#fff; border-radius:14px; padding:32px 28px 24px; max-width:400px; width:92%; box-shadow:0 8px 32px rgba(0,0,0,0.22);">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                <div
+                    style="background:#e8f4fd; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="fa-solid fa-floppy-disk" style="color:#1b98e0; font-size:18px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight:700; font-size:1rem; color:#1a1a1a;">Save Changes</div>
+                    <div style="font-size:0.82rem; color:#888; margin-top:2px;">Review before saving</div>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; color:#444; margin-bottom:24px; line-height:1.5;">
+                Are you sure you want to save the changes made to this application?
+            </p>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button onclick="_closeSaveConfirm()"
+                    style="border:1.5px solid #ccc; background:#fff; color:#555; border-radius:8px; padding:8px 22px; font-size:0.88rem; cursor:pointer; font-weight:500;">Cancel</button>
+                <button onclick="_doSaveAll()"
+                    style="border:none; background:#1b98e0; color:#fff; border-radius:8px; padding:8px 22px; font-size:0.88rem; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.toggleProfileMenu = function (event) {
+            event.preventDefault(); event.stopPropagation();
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            var open = d.classList.contains('open');
+            d.classList.toggle('open', !open); c.classList.toggle('open', !open);
+        };
+        document.addEventListener('click', function (e) {
+            var t = document.getElementById('profileTrigger');
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            if (d && !(t && t.contains(e.target))) { d.classList.remove('open'); if (c) c.classList.remove('open'); }
+        });
+    </script>
+</body>
+
+</html>

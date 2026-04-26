@@ -37,8 +37,25 @@ public class DatabaseServerDetailService {
         return repository.save(entity);
     }
 
+    public DatabaseServerDetail save(DatabaseServerDetail entity, Long basicIdentityId) {
+        if (basicIdentityId != null) {
+            basicIdentityRepository.findById(basicIdentityId)
+                    .ifPresent(entity::setBasicIdentity);
+        }
+        return repository.save(entity);
+    }
+
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public boolean deactivate(Long id) {
+        return repository.findById(id).map(e -> {
+            e.setActive(false);
+            repository.save(e);
+            return true;
+        }).orElse(false);
     }
 
     public List<DatabaseServerDetail> processBulkGridData(Map<String, Object> gridData) {

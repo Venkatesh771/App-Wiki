@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -12,11 +12,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
 
         body {
-            background: #f0f2f5;
+            background: #f2f2f7;
             font-family: "Open Sans", sans-serif;
             min-height: 100vh;
-            padding-bottom: 50px;
-        }        .navbar {
+            padding-bottom: 24px;
+        }
+
+        .navbar {
             background: #000 !important;
             padding-top: 0.25rem;
             padding-bottom: 0.25rem;
@@ -32,6 +34,7 @@
             font-weight: 400;
             font-size: 1.1rem;
             margin-left: 1.5rem;
+            line-height: 1.1;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -82,6 +85,165 @@
             line-height: 1.2;
         }
 
+        .navbar-brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(173, 216, 230, 0.22);
+            border: 1px solid rgba(173, 216, 230, 0.38);
+            padding: 0.28rem 0.85rem;
+            border-radius: 50px;
+        }
+
+        .user-icon-round {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #008080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 3px;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0;
+            font-family: "Quicksand", sans-serif;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .user-menu-trigger {
+            display: flex !important;
+            align-items: center;
+            gap: 0.4rem;
+            color: #fff !important;
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.22rem 0.7rem 0.22rem 0.3rem !important;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.18) !important;
+            transition: background 0.15s ease;
+        }
+
+        .user-menu-trigger:hover {
+            background: rgba(255, 255, 255, 0.26) !important;
+        }
+
+        .user-menu-caret {
+            font-size: 0.62rem;
+            opacity: 0.75;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            margin-left: 1px;
+        }
+
+        .user-menu-caret.open {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+            min-width: 230px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.88) translateY(-8px);
+            transform-origin: top right;
+            transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1050;
+        }
+
+        .profile-dropdown.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem 0.85rem;
+        }
+
+        .profile-avatar-lg {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: "Quicksand", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .profile-info-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 145px;
+        }
+
+        .profile-info-role {
+            display: inline-block;
+            background: #e6f7f7;
+            color: #008080;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.15rem 0.6rem;
+            border-radius: 50px;
+            margin-top: 0.22rem;
+            letter-spacing: 0.2px;
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: #f0f0f0;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
+            color: #333;
+            text-decoration: none !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .profile-dropdown-item:hover {
+            background: #f7f7f7;
+            color: #008080;
+        }
+
+        .profile-dropdown-item.logout-item {
+            color: #e74c3c;
+        }
+
+        .profile-dropdown-item.logout-item:hover {
+            background: #fff5f5;
+            color: #c0392b;
+        }
+
         .navbar-nav .nav-link {
             font-size: 0.85rem;
             padding-left: 0.75rem;
@@ -92,38 +254,51 @@
             column-gap: 0.75rem;
         }
 
+        .user-menu-wrapper {
+            padding-right: 1.2rem;
+        }
+
         .form-container {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            margin: 30px auto;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            margin: 0 auto;
             width: 95%;
         }
 
         .section-box {
-            border: 1px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            background: #fafafa;
+            border: none;
+            border-radius: 20px;
+            padding: 28px 28px 24px;
+            margin-bottom: 40px;
+            background: #fff;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
             position: relative;
-            padding-top: 35px;
+            padding-top: 52px;
+        }
+
+        .section-box:last-of-type {
+            margin-bottom: 0;
         }
 
         .section-header {
             background: #fff;
-            border: 1px solid #ddd;
-            padding: 8px 20px;
+            border: 1.5px solid #d1d1d6;
+            padding: 5px 16px;
             border-radius: 50px;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             font-weight: 600;
-            color: #333;
-            vertical-align: middle;
-            font-size: 0.9rem;
+            color: #008080;
+            font-size: 0.78rem;
+            line-height: 1.4;
             position: absolute;
-            top: -18px;
-            left: 18px;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            letter-spacing: 0.2px;
         }
 
         .section-header-wrapper {
@@ -144,8 +319,8 @@
         .field-label {
             width: 40%;
             font-weight: 500;
-            color: #444;
-            font-size: 0.85rem;
+            color: #666;
+            font-size: 0.83rem;
             text-align: right;
             padding-right: 15px;
             line-height: 1.2;
@@ -159,40 +334,50 @@
         .form-select {
             background-color: #e9ecef;
             border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 6px 12px;
+            border-radius: 10px;
+            padding: 7px 12px;
             font-size: 0.85rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            font-family: "Open Sans", sans-serif;
+            color: #333;
+            transition: background-color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            box-shadow: none;
         }
 
         .form-control:focus,
         .form-select:focus {
             background-color: #fff;
-            border-color: #b0b0b0 !important;
-            box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25);
+            border-color: #b0b0b0;
+            box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25) !important;
             outline: none !important;
         }
 
         .btn-save {
-            background: #1b98e0;
-            color: rgb(255, 255, 255);
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            background: #008080;
+            color: #fff;
+            padding: 0.55rem 1.4rem 0.55rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
             font-weight: 600;
-            border: 1px solid #1b98e0;
+            border: none;
             display: inline-flex;
             align-items: center;
-            text-transform: uppercase;
-            gap: 6px;
-            letter-spacing: 0.3px;
+            gap: 7px;
+            letter-spacing: 0.2px;
             cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.18s ease, transform 0.14s ease, box-shadow 0.18s ease;
         }
 
         .btn-save:hover {
-            background: #1585c5;
-            border-color: #1585c5;
-            color: white;
+            background: #006666;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-save:active {
+            transform: scale(0.96);
+            background: #005555;
         }
 
         textarea.form-control {
@@ -203,7 +388,6 @@
             align-items: center !important;
         }
 
-        /* Data Saving Indicator */
         .data-saving-indicator {
             position: fixed;
             top: 80px;
@@ -242,7 +426,6 @@
             }
         }
 
-        /* Toast Notifications */
         .toast-notification {
             position: fixed;
             top: 80px;
@@ -299,7 +482,6 @@
             border: 1px solid #bee5eb;
         }
 
-        /* Dynamic Option Input Styles */
         .field-input {
             position: relative;
         }
@@ -325,30 +507,29 @@
         }
 
         .btn-add-option {
-            background: #d1d5db;
-            color: #333;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 0.85rem;
+            background: #e5e5ea;
+            color: #555;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 11px;
+            font-size: 0.82rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             white-space: nowrap;
-            transition: background 0.2s ease, border-color 0.2s ease;
+            transition: background 0.18s ease, transform 0.14s ease;
+            flex-shrink: 0;
         }
 
         .btn-add-option:hover {
-            background: #b8bcc4;
-            border-color: #b8bcc4;
+            background: #d1d1d6;
         }
 
         .btn-add-option:active {
-            transform: scale(0.95);
+            transform: scale(0.94);
         }
 
-        /* Invalid Field Styling */
         .form-control.is-invalid,
         .form-select.is-invalid {
             border-color: #FF3B30 !important;
@@ -361,7 +542,6 @@
             box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important;
         }
 
-        /* Input Popup Modal */
         .input-modal-overlay {
             display: none;
             position: fixed;
@@ -439,8 +619,8 @@
 
         .input-modal-body .form-control:focus {
             background-color: #fff;
-            border-color: #1b98e0;
-            box-shadow: 0 0 0 3px rgba(27, 152, 224, 0.1);
+            border-color: transparent;
+            box-shadow: 0 0 0 2.5px rgba(0, 128, 128, 0.28);
             outline: none;
         }
 
@@ -512,7 +692,6 @@
             background: #f9f9f9;
         }
 
-        /* Read-only mode for non-Super Admin users */
         body.read-only-mode .form-control,
         body.read-only-mode .form-select,
         body.read-only-mode textarea.form-control {
@@ -525,7 +704,6 @@
             display: none !important;
         }
 
-        /* Validation - Invalid field styling */
         .form-control.is-invalid,
         .form-select.is-invalid {
             border-color: #FF3B30 !important;
@@ -539,7 +717,6 @@
             box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.2) !important;
         }
 
-        /* Remove toasts and indicators - keep everything in modals */
         .toast-notification {
             display: none !important;
         }
@@ -547,73 +724,120 @@
         .data-saving-indicator {
             display: none !important;
         }
+
+        .top-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem 1.5rem 2.2rem;
+        }
+
+        .tab-pills-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-pill {
+            border: none;
+            background: #e5e5ea;
+            color: #555;
+            border-radius: 50px;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .tab-pill:hover {
+            background: #d1d1d6;
+            color: #333;
+        }
+
+        .tab-pill.active {
+            background: #008080;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+        }
     </style>
 </head>
 
 <body>
 
-
-
-    <!-- Data Saving Indicator -->
     <div class="data-saving-indicator" id="savingIndicator">
         <div class="spinner"></div>
         <span>Saving...</span>
     </div>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid"> <a class="navbar-brand" href="/home">
-                <span class="navbar-brand-company">BAYER</span>
-                <span class="navbar-separator">|</span>
-                <span class="navbar-app-name">App Wiki</span>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">
+                <span class="navbar-brand-pill">
+                    <span class="navbar-brand-company">BAYER</span>
+                    <span class="navbar-separator">|</span>
+                    <span class="navbar-app-name">App Wiki</span>
+                </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/mainfile}">Main Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/applicationserverdetails}">App Server Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/clouddetails}">Cloud Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/databaseserverdetails}">DB Server Details</a>
-                    </li>
-                    <!-- User Profile Dropdown -->
-                    <li class="nav-item dropdown"
-                        style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false"
-                            style="color: #fff; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
-                            <span
-                                style="width: 28px; height: 28px; border-radius: 50%; background: #008080; display: flex; align-items: center; justify-content: center; margin-right: 3px;">
-                                <i class="fa-solid fa-user" style="color: #fff; font-size: 0.85rem;"></i>
-                            </span>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center user-menu-wrapper">
+
+                    <li class="nav-item user-menu" style="position:relative;">
+                        <a class="nav-link user-menu-trigger" href="#" id="profileTrigger"
+                            onclick="toggleProfileMenu(event)">
+                            <span class="user-icon-round" th:text="${session.user != null ?
+                                    #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                    (#strings.contains(session.user.username,' ') ?
+                                      #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                      : '')
+                                    : '?'}">AB</span>
                             <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
                                 User</span>
+                            <i class="fa-solid fa-chevron-down user-menu-caret" id="profileCaret"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li th:if="${session.user != null}">
-                                <span class="dropdown-item-text" style="font-size: 0.8rem; color: #999;">
-                                    <i class="fa-solid fa-badge"></i> <span th:text="${session.user.role}"></span>
-                                </span>
-                            </li>
-                            <li th:if="${session.user != null}">
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="/logout">
-                                    <i class="fa-solid fa-sign-out-alt"></i> Logout
-                                </a></li>
-                        </ul>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-dropdown-header">
+                                <div class="profile-avatar-lg" th:text="${session.user != null ?
+                                        #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                        (#strings.contains(session.user.username,' ') ?
+                                          #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                          : '')
+                                        : '?'}">AB</div>
+                                <div>
+                                    <div class="profile-info-name"
+                                        th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                        User</div>
+                                    <div class="profile-info-role"
+                                        th:text="${session.user != null ? session.user.role : ''}">Role</div>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown-divider"></div>
+                            <a href="/logout" class="profile-dropdown-item logout-item">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <div class="top-header">
+        <div class="tab-pills-container">
+            <a class="tab-pill active" th:href="@{/mainfile}">Main Details</a>
+            <a class="tab-pill" th:href="@{/applicationserverdetails}">Server Details</a>
+            <a class="tab-pill" th:href="@{/clouddetails}">Cloud Details</a>
+            <a class="tab-pill" th:href="@{/databaseserverdetails}">DB Server Details</a>
+        </div>
+    </div>
 
     <div class="container-fluid">
         <div class="form-container">
@@ -633,15 +857,11 @@
                                         data-field="applicationName"></div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">GxP</label>
-                                <div class="field-input has-dropdown"><select class="form-select" data-field="gxp">
+                                <div class="field-input"><select class="form-select" data-field="gxp">
                                         <option>Select</option>
                                         <option>Yes</option>
                                         <option>No</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option"
-                                        onclick="window.DynamicDropdown.openInput(this)">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
                                 </div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">Squad</label>
@@ -657,10 +877,23 @@
                                     </button>
                                 </div>
                             </div>
-                            <!-- New field: Business owner -->
+
                             <div class="form-group-custom"><label class="field-label">Business Owner</label>
                                 <div class="field-input"><input type="text" class="form-control"
                                         data-field="businessOwner"></div>
+                            </div>
+                            <div class="form-group-custom"><label class="field-label">Assignment Group</label>
+                                <div class="field-input has-dropdown">
+                                    <select class="form-select" data-field="assignmentGroup">
+                                        <option value="">Select</option>
+                                        <option th:each="ag : ${assignmentGroups}" th:value="${ag}" th:text="${ag}">
+                                        </option>
+                                    </select>
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -723,7 +956,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <!-- New field: System owner -->
+
                             <div class="form-group-custom"><label class="field-label">System Owner</label>
                                 <div class="field-input"><input type="text" class="form-control"
                                         data-field="systemOwner"></div>
@@ -816,16 +1049,11 @@
                                 </div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">Vendor App</label>
-                                <div class="field-input has-dropdown"><select class="form-select"
-                                        data-field="vendorApp">
+                                <div class="field-input"><select class="form-select" data-field="vendorApp">
                                         <option>Select</option>
                                         <option>Yes</option>
                                         <option>No</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option"
-                                        onclick="window.DynamicDropdown.openInput(this)">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
                                 </div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">Vendor Name</label>
@@ -835,16 +1063,11 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group-custom"><label class="field-label">App Decommissioned</label>
-                                <div class="field-input has-dropdown"><select class="form-select"
-                                        data-field="appDecommissioned">
+                                <div class="field-input"><select class="form-select" data-field="appDecommissioned">
                                         <option>Select</option>
                                         <option>Yes</option>
                                         <option>No</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option"
-                                        onclick="window.DynamicDropdown.openInput(this)">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
                                 </div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">Vendor Ticketing URL</label>
@@ -852,16 +1075,11 @@
                                         data-field="vendorTicketingUrl"></div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">Vendor Support Exist</label>
-                                <div class="field-input has-dropdown"><select class="form-select"
-                                        data-field="vendorSupportExist">
+                                <div class="field-input"><select class="form-select" data-field="vendorSupportExist">
                                         <option>Select</option>
                                         <option>Yes</option>
                                         <option>No</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option"
-                                        onclick="window.DynamicDropdown.openInput(this)">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
                                 </div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">Vendor contact details</label>
@@ -940,9 +1158,6 @@
                     </div>
                 </div>
 
-                <!-- Custom Fields Section -->
-                <!-- Removed: "Add Field" functionality has been removed -->
-
                 <div class="section-box">
                     <div class="section-header-wrapper">
                         <div class="section-header">Resource Contacts</div>
@@ -979,7 +1194,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end mt-4">
+                <div class="d-flex justify-content-end mt-3 mb-4">
                     <button type="button" class="btn-save text-decoration-none"
                         title="Save and continue to App Server Details (Keyboard: Ctrl+S)">
                         <i class="fa-solid fa-floppy-disk"></i>
@@ -992,24 +1207,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Validation Manager - Simple iPhone Popup v3.0 -->
-    <script src="/static/validation-manager-clean.js?v=3.0.0"></script>
+    <script src="/static/validation-manager-clean.js?v=4.0.0"></script>
 
-    <!-- Dynamic Dropdown Manager - Add options to dropdowns -->
-    <script src="/static/dynamic-dropdown.js"></script>
+    <script src="/static/dynamic-dropdown.js?v=5.0.1"></script>
 
-    <!-- Storage Manager V4 with Validation -->
-    <script src="/static/storage-manager-v4.js"></script>
+    <script src="/static/storage-manager-v4.js?v=5.0.0"></script>
 
-    <!-- Page-Specific Initialization -->
     <script>
         console.log('Main File page loading');
 
-        // Get user role from Thymeleaf
         const userRole = '[[${userRole}]]';
         const isSuperAdmin = userRole === 'Super Admin';
 
-        // Store in window for access by other scripts
         window.userRole = userRole;
         window.isSuperAdmin = isSuperAdmin;
 
@@ -1025,6 +1234,21 @@
             console.log('DOM already loaded');
             window.StorageManager.initMainFilePage();
         }
+    </script>
+    <script>
+        window.toggleProfileMenu = function (event) {
+            event.preventDefault(); event.stopPropagation();
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            var open = d.classList.contains('open');
+            d.classList.toggle('open', !open); c.classList.toggle('open', !open);
+        };
+        document.addEventListener('click', function (e) {
+            var t = document.getElementById('profileTrigger');
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            if (d && !(t && t.contains(e.target))) { d.classList.remove('open'); if (c) c.classList.remove('open'); }
+        });
     </script>
 
 </body>

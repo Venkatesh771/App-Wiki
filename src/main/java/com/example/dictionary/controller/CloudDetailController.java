@@ -3,6 +3,7 @@ package com.example.dictionary.controller;
 import com.example.dictionary.entity.CloudDetail;
 import com.example.dictionary.service.CloudDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,13 +27,17 @@ public class CloudDetailController {
     }
 
     @GetMapping("/{id}")
-    public Optional<CloudDetail> getById(@PathVariable Long id) {
-        return service.findById(id);
+    public ResponseEntity<CloudDetail> getById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public CloudDetail create(@RequestBody CloudDetail entity) {
-        return service.save(entity);    }    @PostMapping("/bulk")
+    public CloudDetail create(@RequestBody CloudDetail entity,
+                               @RequestParam(required = false) Long basicIdentityId) {
+        return basicIdentityId != null ? service.save(entity, basicIdentityId) : service.save(entity);
+    }    @PostMapping("/bulk")
     @SuppressWarnings("unchecked")
     public List<CloudDetail> bulkCreate(@RequestBody Map<String, Object> requestData) {
         // Extract basicIdentityId, beatId, and gridData from request
@@ -69,12 +74,36 @@ public class CloudDetailController {
 
     @PutMapping("/{id}")
     public CloudDetail update(@PathVariable Long id, @RequestBody CloudDetail entity) {
+        Optional<CloudDetail> existing = service.findById(id);
+        if (existing.isPresent()) {
+            CloudDetail e = existing.get();
+            e.setAccountId(entity.getAccountId());
+            e.setHostType(entity.getHostType());
+            e.setServiceName(entity.getServiceName());
+            e.setLambdaNames(entity.getLambdaNames());
+            e.setS3Bucket(entity.getS3Bucket());
+            e.setSqsNames(entity.getSqsNames());
+            e.setIamUser(entity.getIamUser());
+            e.setComments(entity.getComments());
+            return service.save(e);
+        }
         entity.setId(id);
         return service.save(entity);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (service.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         service.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
+        return service.deactivate(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }

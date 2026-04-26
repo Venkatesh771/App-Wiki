@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -118,24 +118,163 @@
         }
 
         .user-icon-round {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: #008080;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 3px;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0;
+            font-family: "Quicksand", sans-serif;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            line-height: 1;
         }
 
-        .user-icon-round i {
-            color: #fff;
+        .navbar-brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(173, 216, 230, 0.22);
+            border: 1px solid rgba(173, 216, 230, 0.38);
+            padding: 0.28rem 0.85rem;
+            border-radius: 50px;
+        }
+
+        .user-menu-trigger {
+            display: flex !important;
+            align-items: center;
+            gap: 0.4rem;
+            color: #fff !important;
             font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.22rem 0.7rem 0.22rem 0.3rem !important;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.18) !important;
+            transition: background 0.15s ease;
+        }
+
+        .user-menu-trigger:hover {
+            background: rgba(255, 255, 255, 0.26) !important;
+        }
+
+        .user-menu-caret {
+            font-size: 0.62rem;
+            opacity: 0.75;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            margin-left: 1px;
+        }
+
+        .user-menu-caret.open {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+            min-width: 230px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.88) translateY(-8px);
+            transform-origin: top right;
+            transition: opacity 0.22s ease,
+                transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1050;
+        }
+
+        .profile-dropdown.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem 0.85rem;
+        }
+
+        .profile-avatar-lg {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 100%;
+            flex-shrink: 0;
+            font-family: "Quicksand", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .profile-info-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 145px;
+        }
+
+        .profile-info-role {
+            display: inline-block;
+            background: #e6f7f7;
+            color: #008080;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.15rem 0.6rem;
+            border-radius: 50px;
+            margin-top: 0.22rem;
+            letter-spacing: 0.2px;
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: #f0f0f0;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
+            color: #333;
+            text-decoration: none !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .profile-dropdown-item:hover {
+            background: #f7f7f7;
+            color: #008080;
+        }
+
+        .profile-dropdown-item.logout-item {
+            color: #e74c3c;
+        }
+
+        .profile-dropdown-item.logout-item:hover {
+            background: #fff5f5;
+            color: #c0392b;
         }
 
         .hero {
@@ -234,70 +373,80 @@
             margin-top: 15px;
         }
 
-        /* Only add top margin when action icons are visible */
         .action-icons-container~.table-wrapper-with-offset {
             margin-top: 32px;
         }
 
         .add-app-btn {
-            font-family: "Quicksand", sans-serif;
+            font-family: "Open Sans", sans-serif;
             background: #008080;
-            color: #fff;
-            border-radius: 12px;
-            padding: 0.55rem 1.1rem;
-            min-width: auto;
-            border: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: background 0.25s ease, box-shadow 0.2s ease;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .add-app-btn-plus {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #ffffff;
-            color: #008080;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-            padding: 0;
-        }
-
-        .add-app-btn,
-        .add-app-btn:active,
-        .add-app-btn:focus,
-        .add-app-btn:visited {
-            background: #008080 !important;
             color: #fff !important;
-            box-shadow: none !important;
-            outline: none !important;
-            text-decoration: none;
+            border-radius: 50px;
+            padding: 0.38rem 0.42rem 0.38rem 1rem;
+            border: none;
+            font-size: 0.84rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            text-decoration: none !important;
+            cursor: pointer;
+            transition: background 0.18s ease, transform 0.14s ease,
+                box-shadow 0.18s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
         }
 
         .add-app-btn:hover {
             background: #006666 !important;
-            box-shadow: 0 2px 8px rgba(0, 128, 128, 0.2);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
             color: #fff !important;
-            text-decoration: none;
+        }
+
+        .add-app-btn:active {
+            transform: scale(0.96);
+            background: #005555 !important;
+        }
+
+        .add-app-btn:focus,
+        .add-app-btn:visited {
+            color: #fff !important;
+            outline: none !important;
+            text-decoration: none !important;
+        }
+
+        .add-app-btn-plus {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.22);
+            color: #fff;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.18s ease;
+        }
+
+        .add-app-btn:hover .add-app-btn-plus {
+            background: rgba(255, 255, 255, 0.32);
         }
 
         .search-pill {
             background: #fff;
-            border-radius: 12px;
-            padding: 0.6rem 0.7rem;
-            min-width: auto;
-            font-size: 0.9rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border-radius: 50px;
+            padding: 0.3rem 0.65rem 0.3rem 1rem;
+            font-size: 0.88rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.4rem;
             height: 38px;
+            transition: box-shadow 0.18s ease;
+        }
+
+        .search-pill:hover {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14) !important;
         }
 
         .search-pill,
@@ -305,62 +454,117 @@
         .search-pill:focus,
         .search-pill:visited {
             background: #fff !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
             outline: none !important;
-        }
-
-        .search-pill:hover {
-            background: #fafafa !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
         }
 
         .table-card {
             background: #fff;
-            border-radius: 16px;
+            border-radius: 22px;
             margin-bottom: 32px;
             max-width: 100%;
             width: 100%;
             margin-left: auto;
             margin-right: auto;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            border: 1px solid #f0f0f0;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f2f2f7;
+            overflow: hidden;
         }
 
         .table-card:first-of-type {
-            margin-top: 32px;
+            margin-top: 0;
+        }
+
+        #appCardsContainer {
+            display: flex;
+            flex-direction: column;
+            padding-top: 32px;
+        }
+
+        .dynamic-app-card {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .dynamic-app-card.card-match {
+            order: 0;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .dynamic-app-card.card-no-match {
+            order: 1;
+            opacity: 0.25;
+            transform: scale(0.985);
+        }
+
+        .search-icon-wrap {
+            position: relative;
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .search-icon-wrap .search-icon,
+        .search-icon-wrap .search-clear-btn {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            color: #008080;
+            transition: opacity 0.2s ease;
+        }
+
+        .search-icon-wrap .search-clear-btn {
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .search-icon-wrap .search-clear-btn:hover {
+            color: #005f5f;
+        }
+
+        .search-icon-wrap.has-text .search-icon {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .search-icon-wrap.has-text .search-clear-btn {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .inner-table-bg {
-            background: #fff;
+            background: #f9f9fb;
         }
 
         .section-pill {
-            background: #e8f4f8;
-            border-radius: 20px;
-            padding: 0.45rem 0.9rem;
+            background: #f0f0f0;
+            border-radius: 50px;
+            padding: 0.42rem 1rem;
             color: #008080;
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             font-weight: 600;
-            border: 1px solid #d0e8ec;
-            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            border: none;
+            transition: background 0.18s ease, color 0.18s ease;
         }
 
         .section-pill,
         .section-pill:active,
         .section-pill:focus,
         .section-pill:visited {
-            background: #e8f4f8 !important;
+            background: #f0f0f0 !important;
             color: #008080 !important;
             box-shadow: none !important;
             outline: none !important;
             font-weight: 600;
-            border: 1px solid #d0e8ec !important;
+            border: none !important;
         }
 
         .section-pill:hover {
-            background: #d0e8ec !important;
+            background: #e2e2e6 !important;
             color: #006666 !important;
-            border-color: #b8dce4 !important;
         }
 
         .search-input {
@@ -396,42 +600,45 @@
             color: #006666;
         }
 
-        .rounded-table th {
-            font-weight: 700;
-            background: #f3f3f3;
-            border-bottom: 1px solid #e0e0e0;
-            color: #555;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+        .rounded-table {
+            width: 100%;
+            table-layout: fixed;
         }
 
-        .rounded-table td {
-            background: #fafafa;
+        .rounded-table th {
+            font-weight: 600;
+            background: #e8e8ed;
+            border-bottom: 1px solid #e8e8ed;
+            color: #b0b8c1;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.55px;
+        }
+
+        .rounded-table>thead>tr>th {
+            background-color: #e8e8ed !important;
+            box-shadow: none !important;
+        }
+
+        .rounded-table tbody tr:hover {
+            background: #e8e8ee !important;
         }
 
         .rounded-table th,
         .rounded-table td {
-            width: 160px;
-            max-width: 160px;
             word-break: normal;
             white-space: nowrap;
             text-align: left;
-            color: #333;
+            color: #444;
             padding: 0.75rem 1rem;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f2f2f7;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .rounded-table tbody tr {
-            transition: background-color 0.15s ease;
-            background-color: #fafbfc;
             cursor: pointer;
-        }
-
-        .rounded-table tbody tr:hover {
-            background-color: #f0f2f5;
+            transition: background 0.22s ease;
         }
 
         .rounded-table tbody tr:last-child td {
@@ -441,59 +648,71 @@
         .rounded-table th.beat-id,
         .rounded-table td.beat-id {
             padding-left: 25px;
-            width: 200px;
-            max-width: 200px;
+            width: 160px;
+            min-width: 160px;
+            white-space: nowrap;
         }
 
         .rounded-table th.app-name,
         .rounded-table td.app-name {
-            width: 320px;
-            max-width: 320px;
+            width: 21%;
         }
 
         .rounded-table th.squad,
         .rounded-table td.squad {
             padding-left: 32px;
+            width: 10%;
         }
 
         .rounded-table th.offshore,
         .rounded-table td.offshore {
-            width: 220px;
-            max-width: 220px;
+            width: 14%;
         }
 
         .rounded-table th.onshore,
         .rounded-table td.onshore {
-            width: 220px;
-            max-width: 220px;
+            width: 14%;
         }
 
         .rounded-table th.system-owner,
         .rounded-table td.system-owner {
-            width: 220px;
-            max-width: 220px;
+            width: 14%;
         }
 
         .rounded-table th.business-owner,
         .rounded-table td.business-owner {
-            width: 220px;
-            max-width: 220px;
+            width: 14%;
         }
 
         .basic-identity-table {
-            background: #fafafa;
-            border-radius: 8px;
+            background: #f9f9fb;
+            border-radius: 16px;
             margin-top: 22px !important;
             margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            font-size: 0.9rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            font-size: 0.85rem;
             padding-top: 20px !important;
             padding-left: 24px;
-            border: 1px solid #f0f0f0;
+            border: 1px solid #f2f2f7;
         }
 
         .basic-identity-table .col-md-4 {
             padding-left: 16px;
+        }
+
+        .basic-identity-table .mb-2 {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .basic-identity-table .mb-2 .fw-semibold::after {
+            content: ':';
+        }
+
+        .basic-identity-table .mb-2 .fw-semibold {
+            font-size: inherit !important;
         }
 
         .basic-identity-table th,
@@ -504,11 +723,11 @@
         }
 
         .basic-identity-table th {
-            color: #666;
+            color: #999;
             width: 180px;
             font-weight: 600;
-            background: #f9f9f9;
-            font-size: 0.85rem;
+            background: transparent;
+            font-size: 0.82rem;
         }
 
         .basic-identity-table tr:not(:last-child) td {
@@ -517,18 +736,18 @@
 
         .section-title-header {
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: #008080;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.4rem;
             margin-top: 0.5rem;
             padding-top: 0.5rem;
-            border-bottom: 2px solid #e8f4f8;
+            border-bottom: 1px solid #ebebef;
             padding-bottom: 0.75rem;
         }
 
         .container {
-            max-width: 1250px;
+            max-width: 100%;
             padding-left: 1.5rem;
             padding-right: 1.5rem;
             margin-left: auto;
@@ -559,17 +778,28 @@
         .view-btn {
             background: #008080 !important;
             color: #fff !important;
-            border-radius: 20px;
-            padding: 0.45rem 0.9rem;
-            font-size: 0.8rem;
+            border-radius: 50px;
+            padding: 0.42rem 0.9rem;
+            font-size: 0.74rem;
             font-weight: 600;
+            width: auto;
+            height: auto;
             box-shadow: none !important;
             outline: none !important;
             border: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.4rem;
             transition: background 0.25s ease, box-shadow 0.2s ease;
+        }
+
+        .expand-all-btn {
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .view-btn:active,
@@ -584,7 +814,7 @@
         .view-btn:hover {
             background: #006666 !important;
             color: #fff !important;
-            box-shadow: 0 2px 8px rgba(0, 128, 128, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .dashboard-content {
@@ -605,7 +835,7 @@
             font-weight: 500;
             color: #222;
             margin: 0;
-            margin-left: 1.5rem;
+            margin-left: 2.5rem;
         }
 
         .header-actions {
@@ -615,9 +845,15 @@
         }
 
         .dropdown-item {
+            padding: 0.6rem 1rem;
+            font-size: 0.875rem;
+            color: #374151 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            transition: color 0.15s ease;
             background: transparent !important;
-            color: #333 !important;
-            transition: background-color 0.2s ease;
         }
 
         .dropdown-item:hover,
@@ -627,8 +863,362 @@
             color: #008080 !important;
         }
 
-        .dropdown-item-text {
-            color: #999 !important;
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1.5px solid #008080;
+            background: transparent;
+            color: #008080;
+            border-radius: 50px;
+            padding: 0.35rem 0.38rem 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.18s ease, color 0.18s ease;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: rgba(0, 128, 128, 0.07);
+        }
+
+        .filter-btn:not(.active) {
+            padding-right: 0.9rem;
+        }
+
+        .filter-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1050;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 24px;
+        }
+
+        .filter-modal-overlay.open {
+            display: flex;
+        }
+
+        .filter-modal {
+            background: rgba(242, 242, 247, 0.97);
+            border-radius: 22px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            width: 360px;
+            max-width: 95vw;
+            height: 72vh;
+            max-height: 560px;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: sheetUp 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        @keyframes sheetUp {
+            from {
+                transform: translateY(60px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .filter-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 1.2rem 0.7rem;
+        }
+
+        .filter-modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111;
+            letter-spacing: -0.2px;
+        }
+
+        .filter-modal-close {
+            background: rgba(116, 116, 128, 0.12);
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.78rem;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .filter-modal-close:hover {
+            background: rgba(116, 116, 128, 0.22);
+        }
+
+        .filter-modal-body {
+            padding: 0 0.75rem 0.75rem;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .filter-search-wrap {
+            position: relative;
+            margin-bottom: 0.6rem;
+        }
+
+        .filter-search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8e8e93;
+            font-size: 0.78rem;
+            pointer-events: none;
+        }
+
+        .filter-search-input {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: rgba(118, 118, 128, 0.12);
+            padding: 0.52rem 0.9rem 0.52rem 2.1rem;
+            font-size: 0.86rem;
+            color: #111;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .filter-search-input::placeholder {
+            color: #aaa;
+        }
+
+        .filter-clear-row {
+            padding: 0 0.2rem 0.5rem;
+        }
+
+        .filter-clear-btn {
+            background: none;
+            border: none;
+            font-size: 0.78rem;
+            color: #e63946;
+            cursor: pointer;
+            padding: 0;
+            font-weight: 500;
+        }
+
+        .filter-clear-btn:hover {
+            opacity: 0.75;
+        }
+
+        .group-list-card {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        @keyframes itemIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .group-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.72rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid rgba(60, 60, 67, 0.1);
+            position: relative;
+            animation: itemIn 0.18s ease both;
+        }
+
+        .group-item:last-child {
+            border-bottom: none;
+        }
+
+        .group-item:active {
+            background: #f5f5f5;
+        }
+
+        .group-item-count {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #8e8e93;
+            flex-shrink: 0;
+            margin-right: 0.55rem;
+            min-width: 18px;
+            text-align: right;
+        }
+
+        .group-item-name {
+            font-size: 0.88rem;
+            font-weight: 400;
+            color: #111;
+            letter-spacing: -0.1px;
+            word-break: break-word;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .group-item-check {
+            color: #008080;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .group-item.selected .group-item-check {
+            opacity: 1;
+        }
+
+        .group-item.selected .group-item-name {
+            font-weight: 500;
+            color: #111;
+        }
+
+        .group-empty {
+            text-align: center;
+            color: #8e8e93;
+            font-size: 0.84rem;
+            padding: 2.5rem 1rem;
+        }
+
+        .filter-modal-footer {
+            padding: 0.75rem 0.75rem 0.9rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-ok-btn {
+            flex: 1;
+            background: #008080;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 0.72rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: -0.1px;
+            transition: background 0.2s;
+        }
+
+        .filter-ok-btn:hover {
+            background: #006666;
+        }
+
+        .filter-ok-btn:disabled {
+            background: #b2d8d8;
+            cursor: default;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 7px);
+            right: 0;
+            min-width: 330px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+            z-index: 1040;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+
+        .search-dropdown.open {
+            display: block;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.72rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f4f4f4;
+            transition: background 0.13s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background: #f5f9f9;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .search-result-beatid {
+            font-size: 0.71rem;
+            font-weight: 600;
+            color: #008080;
+            background: #e8f4f8;
+            border: 1px solid #d0e8ec;
+            border-radius: 50px;
+            padding: 0.1rem 0.55rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .search-result-name {
+            font-size: 0.87rem;
+            color: #222;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .search-result-arrow {
+            color: #ccc;
+            font-size: 0.78rem;
+            flex-shrink: 0;
+            transition: color 0.13s;
+        }
+
+        .search-result-item:hover .search-result-arrow {
+            color: #008080;
+        }
+
+        .search-no-results {
+            padding: 1.3rem 1rem;
+            text-align: center;
+            color: #999;
+            font-size: 0.87rem;
+        }
+
+        .search-loading {
+            padding: 1.1rem 1rem;
+            text-align: center;
+            color: #bbb;
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -637,9 +1227,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/home">
-                <span class="navbar-brand-company">BAYER</span>
-                <span class="navbar-separator">|</span>
-                <span class="navbar-app-name">App Wiki</span>
+                <span class="navbar-brand-pill">
+                    <span class="navbar-brand-company">BAYER</span>
+                    <span class="navbar-separator">|</span>
+                    <span class="navbar-app-name">App Wiki</span>
+                </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homeNavbar"
                 aria-controls="homeNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -647,36 +1239,47 @@
             </button>
             <div class="collapse navbar-collapse" id="homeNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center user-menu-wrapper">
-                    <!-- Users Link - Only for Admin and Super Admin -->
+
                     <li class="nav-item"
                         th:if="${session.user != null && (session.user.role == 'Super Admin' || session.user.role == 'Admin')}">
                         <a class="nav-link text-white" href="/admindashboard">Users</a>
                     </li>
-                    <li class="nav-item dropdown user-menu">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="user-icon-round">
-                                <i class="fa-solid fa-user"></i>
-                            </span>
+                    <li class="nav-item user-menu" style="position:relative;">
+                        <a class="nav-link user-menu-trigger" href="#" id="profileTrigger"
+                            onclick="toggleProfileMenu(event)">
+                            <span class="user-icon-round" th:text="${session.user != null ?
+                                    #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                    (#strings.contains(session.user.username,' ') ?
+                                      #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                      : '')
+                                    : '?'}">AB</span>
                             <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
                                 User</span>
+                            <i class="fa-solid fa-chevron-down user-menu-caret" id="profileCaret"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li th:if="${session.user != null}">
-                                <span class="dropdown-item-text" style="font-size: 0.8rem; color: #999;">
-                                    <i class="fa-solid fa-badge"></i> <span th:text="${session.user.role}"></span>
-                                </span>
-                            </li>
-                            <li th:if="${session.user != null}">
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/logout">
-                                    <i class="fa-solid fa-sign-out-alt"></i>
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
+
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-dropdown-header">
+                                <div class="profile-avatar-lg" th:text="${session.user != null ?
+                                        #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                        (#strings.contains(session.user.username,' ') ?
+                                          #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                          : '')
+                                        : '?'}">AB</div>
+                                <div>
+                                    <div class="profile-info-name"
+                                        th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                        User</div>
+                                    <div class="profile-info-role"
+                                        th:text="${session.user != null ? session.user.role : ''}">Role</div>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown-divider"></div>
+                            <a href="/logout" class="profile-dropdown-item logout-item">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -684,36 +1287,58 @@
     </nav>
     <div class="container mt-5">
         <div class="applications-header">
-            <h5 class="applications-title"><i class="fa-solid fa-list me-2"></i>Applications</h5>
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-left:2.5rem;">
+                <h5 class="applications-title" style="margin:0;"><i class="fa-solid fa-list me-2"></i>Applications</h5>
+                <button class="filter-btn" id="filterBtn" onclick="openFilterModal()">
+                    <i class="fa-solid fa-arrow-down-wide-short"></i> Filter
+                    <span id="filterCountBadge"
+                        style="display:none; background:#008080; color:#fff; border-radius:50px; font-size:0.72rem; font-weight:700; padding:0.18rem 0.55rem; line-height:1.4; min-width:22px; text-align:center; flex-shrink:0;"></span>
+                </button>
+            </div>
             <div class="header-actions">
-                <!-- Add Application Button - Only for Admin and Super Admin -->
-                <button class="btn btn-sm d-flex align-items-center justify-content-between add-app-btn"
+
+                <button class="add-app-btn"
                     th:if="${session.user != null && (session.user.role == 'Super Admin' || session.user.role == 'Admin')}"
                     onclick="window.location.href='/mainfile'">
-                    <span class="me-2">Add Application</span>
-                    <span class="d-inline-flex align-items-center justify-content-center add-app-btn-plus">
+                    <span>Add Application</span>
+                    <span class="add-app-btn-plus">
                         <i class="fa-solid fa-plus"></i>
                     </span>
                 </button>
-                <div class="d-flex align-items-center search-pill">
-                    <input type="text" class="form-control form-control-sm border-0 bg-transparent search-input"
-                        placeholder="Search">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <div class="search-wrapper">
+                    <div class="search-pill">
+                        <input type="text" class="search-input" id="globalSearch" placeholder="Search"
+                            autocomplete="off"
+                            style="border:none; outline:none; background:transparent; font-size:0.88rem; color:#333; width:200px;">
+                        <div class="search-icon-wrap" id="searchIconWrap">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <i class="fa-solid fa-xmark search-clear-btn" id="searchClearBtn"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="p-4 position-relative table-card">
-            <!-- Action Icons - Only for Super Admin and Admin users -->
+    </div>
+    </div>
+
+    <div class="container" id="appCardsContainer">
+
+        <div class="p-4 position-relative table-card dynamic-app-card" th:each="app : ${applications}"
+            th:attr="data-group=${app.assignmentGroup ?: ''},data-beatid=${app.beatId ?: ''},data-appname=${app.applicationName ?: ''},data-squad=${app.squad ?: ''},data-owner=${app.systemOwner ?: ''},data-bizowner=${app.businessOwner ?: ''}">
             <div class="action-icons-container" th:if="${session.user != null && session.user.role == 'Super Admin'}">
-                <button class="btn btn-sm action-icon-btn edit-btn" title="Edit">
+                <button class="btn btn-sm action-icon-btn edit-btn" title="Edit"
+                    th:onclick="|event.stopPropagation(); window.location.href='/application/${app.id}?edit=true'|">
                     <i class="fa-solid fa-pen"></i>
                 </button>
-                <button class="btn btn-sm action-icon-btn delete-btn" title="Delete">
+                <button class="btn btn-sm action-icon-btn delete-btn" title="Delete"
+                    th:attr="data-id=${app.id},data-name=${app.applicationName}"
+                    onclick="event.stopPropagation(); openDeleteAppModal(this.dataset.id, this.dataset.name)">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
             <div class="action-icons-container" th:if="${session.user != null && session.user.role == 'Admin'}">
-                <button class="btn btn-sm action-icon-btn edit-btn" title="Edit">
+                <button class="btn btn-sm action-icon-btn edit-btn" title="Edit"
+                    th:onclick="|event.stopPropagation(); window.location.href='/application/${app.id}?edit=true'|">
                     <i class="fa-solid fa-pen"></i>
                 </button>
             </div>
@@ -731,14 +1356,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="beat-id">BEAT01034140</td>
-                            <td class="app-name">PICADOR</td>
-                            <td class="squad">PF</td>
-                            <td class="offshore">Ajeet</td>
-                            <td class="onshore">Joe</td>
-                            <td class="system-owner">John</td>
-                            <td class="business-owner">Jane</td>
+                        <tr th:with="rc=${!#lists.isEmpty(app.resourceContacts) ? app.resourceContacts[0] : null}"
+                            style="cursor:pointer;" th:onclick="|window.location.href='/application/${app.id}'|">
+                            <td class="beat-id" th:text="${app.beatId ?: '-'}">-</td>
+                            <td class="app-name" th:text="${app.applicationName ?: '-'}">-</td>
+                            <td class="squad" th:text="${app.squad ?: '-'}">-</td>
+                            <td class="offshore" th:text="${rc != null ? (rc.offshorePrimary ?: '-') : '-'}">-</td>
+                            <td class="onshore" th:text="${rc != null ? (rc.onshorePrimary ?: '-') : '-'}">-</td>
+                            <td class="system-owner" th:text="${app.systemOwner ?: '-'}">-</td>
+                            <td class="business-owner" th:text="${app.businessOwner ?: '-'}">-</td>
                         </tr>
                     </tbody>
                 </table>
@@ -748,1618 +1374,793 @@
                     <i class="fa-solid fa-eye"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#basicIdentity1" aria-expanded="false" aria-controls="basicIdentity1">
+                    th:attr="data-bs-target='#basicIdentity-'+${app.id},aria-controls='basicIdentity-'+${app.id}"
+                    aria-expanded="false">
                     Basic Identity <i class="fa-solid fa-plus ms-1"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#description1" aria-expanded="false" aria-controls="description1">
+                    th:attr="data-bs-target='#description-'+${app.id},aria-controls='description-'+${app.id}"
+                    aria-expanded="false">
                     Description <i class="fa-solid fa-plus ms-1"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#authentication1" aria-expanded="false" aria-controls="authentication1">
+                    th:attr="data-bs-target='#authentication-'+${app.id},aria-controls='authentication-'+${app.id}"
+                    aria-expanded="false">
                     Authentication &amp; Vendor <i class="fa-solid fa-plus ms-1"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#technical1" aria-expanded="false" aria-controls="technical1">
+                    th:attr="data-bs-target='#technical-'+${app.id},aria-controls='technical-'+${app.id}"
+                    aria-expanded="false">
                     Technical Details <i class="fa-solid fa-plus ms-1"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#resource1" aria-expanded="false" aria-controls="resource1">
+                    th:attr="data-bs-target='#resource-'+${app.id},aria-controls='resource-'+${app.id}"
+                    aria-expanded="false">
                     Resource Contacts <i class="fa-solid fa-plus ms-1"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#apphosted1" aria-expanded="false" aria-controls="apphosted1">
+                    th:attr="data-bs-target='#apphosted-'+${app.id},aria-controls='apphosted-'+${app.id}"
+                    aria-expanded="false">
                     App hosted Details <i class="fa-solid fa-plus ms-1"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#cloud1" aria-expanded="false" aria-controls="cloud1">
+                    th:attr="data-bs-target='#cloud-'+${app.id},aria-controls='cloud-'+${app.id}" aria-expanded="false">
                     Cloud Details <i class="fa-solid fa-plus ms-1"></i>
                 </button>
                 <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#dbserver1" aria-expanded="false" aria-controls="dbserver1">
+                    th:attr="data-bs-target='#dbserver-'+${app.id},aria-controls='dbserver-'+${app.id}"
+                    aria-expanded="false">
                     DB Server Details <i class="fa-solid fa-plus ms-1"></i>
                 </button>
             </div>
-            <div class="collapse stack-section" id="basicIdentity1" data-section="basic-identity">
+
+            <div class="collapse stack-section" th:id="'basicIdentity-'+${app.id}" data-section="basic-identity">
                 <div class="section-title-header">Basic Identity</div>
                 <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Beat
-                            ID</div>
-                        <div class="text-dark">BEAT01034140</div>
+                        <div class="fw-semibold text-secondary small">Beat ID</div>
+                        <div class="text-dark" th:text="${app.beatId ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Application
-                            Name</div>
-                        <div class="text-dark">PICADOR</div>
+                        <div class="fw-semibold text-secondary small">Application Name</div>
+                        <div class="text-dark" th:text="${app.applicationName ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
                         <div class="fw-semibold text-secondary small">GxP</div>
-                        <div class="text-dark">Yes</div>
+                        <div class="text-dark" th:text="${app.gxp ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
                         <div class="fw-semibold text-secondary small">Squad</div>
-                        <div class="text-dark">PF</div>
+                        <div class="text-dark" th:text="${app.squad ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Business
-                            Owner</div>
-                        <div class="text-dark">John</div>
+                        <div class="fw-semibold text-secondary small">Business Owner</div>
+                        <div class="text-dark" th:text="${app.businessOwner ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Sub
-                            Domain</div>
-                        <div class="text-dark">Global</div>
+                        <div class="fw-semibold text-secondary small">Sub Domain</div>
+                        <div class="text-dark" th:text="${app.subDomain ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">App
-                            Region</div>
-                        <div class="text-dark">Emea</div>
+                        <div class="fw-semibold text-secondary small">App Region</div>
+                        <div class="text-dark" th:text="${app.appRegion ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Service
-                            Variant</div>
-                        <div class="text-dark">Gold+</div>
+                        <div class="fw-semibold text-secondary small">Service Variant</div>
+                        <div class="text-dark" th:text="${app.serviceVariant ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Type
-                            Category</div>
-                        <div class="text-dark">Type 1</div>
+                        <div class="fw-semibold text-secondary small">Type Category</div>
+                        <div class="text-dark" th:text="${app.typeCategory ?: '-'}">-</div>
                     </div>
                     <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">System
-                            Owner</div>
-                        <div class="text-dark">Jane</div>
+                        <div class="fw-semibold text-secondary small">System Owner</div>
+                        <div class="text-dark" th:text="${app.systemOwner ?: '-'}">-</div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="fw-semibold text-secondary small">Assignment Group</div>
+                        <div class="text-dark" th:text="${app.assignmentGroup ?: '-'}">-</div>
                     </div>
                 </div>
             </div>
-            <div class="collapse stack-section" id="description1" data-section="description">
+
+            <div class="collapse stack-section" th:id="'description-'+${app.id}" data-section="description"
+                th:with="di=${!#lists.isEmpty(app.descriptionImpacts) ? app.descriptionImpacts[0] : null}">
                 <div class="section-title-header">Description</div>
                 <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
                     <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Application
-                            Description</div>
-                        <div class="text-dark">This is a sample description
-                            for PICADOR.</div>
+                        <div class="fw-semibold text-secondary small">Application Description</div>
+                        <div class="text-dark" th:text="${di != null ? (di.applicationDescription ?: '-') : '-'}">-
+                        </div>
                     </div>
                     <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Business
-                            Impact Description</div>
-                        <div class="text-dark">Critical for business
-                            operations.</div>
+                        <div class="fw-semibold text-secondary small">Business Impact Description</div>
+                        <div class="text-dark" th:text="${di != null ? (di.businessImpactDescription ?: '-') : '-'}">-
+                        </div>
                     </div>
                     <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Financial
-                            Impact ($/€)</div>
-                        <div class="text-dark">$100,000</div>
+                        <div class="fw-semibold text-secondary small">Financial Impact ($/€)</div>
+                        <div class="text-dark" th:text="${di != null ? (di.financialImpact ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">User
-                            Access Review</div>
-                        <div class="text-dark">Quarterly</div>
+                        <div class="fw-semibold text-secondary small">User Access Review</div>
+                        <div class="text-dark" th:text="${di != null ? (di.userAccessReview ?: '-') : '-'}">-</div>
                     </div>
                 </div>
             </div>
-            <div class="collapse stack-section" id="authentication1" data-section="authentication-vendor">
-                <div class="section-title-header">Authentication & Vendor</div>
+
+            <div class="collapse stack-section" th:id="'authentication-'+${app.id}" data-section="authentication-vendor"
+                th:with="av=${!#lists.isEmpty(app.authenticationVendors) ? app.authenticationVendors[0] : null}">
+                <div class="section-title-header">Authentication &amp; Vendor</div>
                 <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Authentication Type</div>
-                        <div class="text-dark">Internal Ocelot</div>
+                        <div class="text-dark" th:text="${av != null ? (av.authenticationType ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Auth Details/Routing</div>
-                        <div class="text-dark">Internal routing configured</div>
+                        <div class="text-dark" th:text="${av != null ? (av.authDetailsRouting ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Authorization Type</div>
-                        <div class="text-dark">User Roles</div>
+                        <div class="text-dark" th:text="${av != null ? (av.authorizationType ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Vendor App</div>
-                        <div class="text-dark">No</div>
+                        <div class="text-dark" th:text="${av != null ? (av.vendorApp ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Vendor Name</div>
-                        <div class="text-dark">-</div>
+                        <div class="text-dark" th:text="${av != null ? (av.vendorName ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">App Decommissioned</div>
-                        <div class="text-dark">No</div>
+                        <div class="text-dark" th:text="${av != null ? (av.appDecommissioned ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Vendor Ticketing URL</div>
-                        <div class="text-dark">-</div>
+                        <div class="text-dark" th:text="${av != null ? (av.vendorTicketingUrl ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Vendor Support Exist</div>
-                        <div class="text-dark">No</div>
+                        <div class="text-dark" th:text="${av != null ? (av.vendorSupportExist ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Vendor Contact Details</div>
-                        <div class="text-dark">-</div>
+                        <div class="text-dark" th:text="${av != null ? (av.vendorContactDetails ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">App Hosted In</div>
-                        <div class="text-dark">On Prem</div>
+                        <div class="text-dark" th:text="${av != null ? (av.appHostedIn ?: '-') : '-'}">-</div>
                     </div>
                 </div>
             </div>
-            <div class="collapse stack-section" id="technical1" data-section="technical-details">
+
+            <div class="collapse stack-section" th:id="'technical-'+${app.id}" data-section="technical-details"
+                th:with="td=${!#lists.isEmpty(app.technicalDetails) ? app.technicalDetails[0] : null}">
                 <div class="section-title-header">Technical Details</div>
                 <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">App URLs - Dev/Test</div>
-                        <div class="text-dark">https://dev.app.com</div>
+                        <div class="text-dark" th:text="${td != null ? (td.appUrlsDevTest ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">GitHub Repos</div>
-                        <div class="text-dark">https://github.com/company/repo</div>
+                        <div class="text-dark" th:text="${td != null ? (td.githubRepos ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">LB/VIP Details</div>
-                        <div class="text-dark">192.168.1.10</div>
+                        <div class="text-dark" th:text="${td != null ? (td.lbVipDetails ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">External/Internal</div>
-                        <div class="text-dark">Internal</div>
+                        <div class="text-dark" th:text="${td != null ? (td.externalInternal ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Upstream System</div>
-                        <div class="text-dark">System A</div>
+                        <div class="text-dark" th:text="${td != null ? (td.upstreamSystem ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Akana / Mulesoft</div>
-                        <div class="text-dark">Akana Gateway</div>
+                        <div class="text-dark" th:text="${td != null ? (td.akanaMulesoft ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Kafka Topic</div>
-                        <div class="text-dark">app-events</div>
+                        <div class="text-dark" th:text="${td != null ? (td.kafkaTopic ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Azure Client IDs</div>
-                        <div class="text-dark">-</div>
+                        <div class="text-dark" th:text="${td != null ? (td.azureClientIds ?: '-') : '-'}">-</div>
                     </div>
                 </div>
             </div>
-            <div class="collapse stack-section" id="resource1" data-section="resource-contacts">
+
+            <div class="collapse stack-section" th:id="'resource-'+${app.id}" data-section="resource-contacts"
+                th:with="rc=${!#lists.isEmpty(app.resourceContacts) ? app.resourceContacts[0] : null}">
                 <div class="section-title-header">Resource Contacts</div>
                 <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Offshore Primary</div>
-                        <div class="text-dark">Ajeet</div>
+                        <div class="text-dark" th:text="${rc != null ? (rc.offshorePrimary ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Offshore Secondary</div>
-                        <div class="text-dark">Raj</div>
+                        <div class="text-dark" th:text="${rc != null ? (rc.offshoreSecondary ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Offshore Tertiary</div>
-                        <div class="text-dark">Priya</div>
+                        <div class="text-dark" th:text="${rc != null ? (rc.offshoreTertiary ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Onshore Primary</div>
-                        <div class="text-dark">Joe</div>
+                        <div class="text-dark" th:text="${rc != null ? (rc.onshorePrimary ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Onshore Secondary</div>
-                        <div class="text-dark">Mike</div>
+                        <div class="text-dark" th:text="${rc != null ? (rc.onshoreSecondary ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <div class="fw-semibold text-secondary small">Onshore Tertiary</div>
-                        <div class="text-dark">Sarah</div>
+                        <div class="text-dark" th:text="${rc != null ? (rc.onshoreTertiary ?: '-') : '-'}">-</div>
                     </div>
                 </div>
             </div>
-            <div class="collapse stack-section" id="apphosted1" data-section="app-hosted-details">
+
+            <div class="collapse stack-section" th:id="'apphosted-'+${app.id}" data-section="app-hosted-details">
                 <div class="section-title-header">App Hosted Details</div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev CI</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Deployed Server</div>
-                        <div class="text-dark">Tomcat</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server Name</div>
-                        <div class="text-dark">picador-dev-01</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server OS & Version</div>
-                        <div class="text-dark">Linux RHEL 7.9</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Domain</div>
-                        <div class="text-dark">dev.internal.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Cluster</div>
-                        <div class="text-dark">app-cluster-dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">picador</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP Address</div>
-                        <div class="text-dark">192.168.1.10</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod CI</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Deployed Server</div>
-                        <div class="text-dark">Tomcat</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server Name</div>
-                        <div class="text-dark">picador-prod-01</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server OS & Version</div>
-                        <div class="text-dark">Linux RHEL 7.9</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Domain</div>
-                        <div class="text-dark">prod.internal.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Cluster</div>
-                        <div class="text-dark">app-cluster-01</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">picador</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP Address</div>
-                        <div class="text-dark">192.168.1.100</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="cloud1" data-section="cloud-details">
-                <div class="section-title-header">Cloud Details</div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Non Prod</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">111111111</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Type</div>
-                        <div class="text-dark">EC2</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">PICADOR</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Lambda Names</div>
-                        <div class="text-dark">picador-dev-lambda</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">S3 Bucket</div>
-                        <div class="text-dark">picador-data-dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">SQS Names</div>
-                        <div class="text-dark">picador-queue-dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IAM User</div>
-                        <div class="text-dark">picador-dev-user</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Comments</div>
-                        <div class="text-dark">Dev environment</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">123456789</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Type</div>
-                        <div class="text-dark">EC2</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">PICADOR</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Lambda Names</div>
-                        <div class="text-dark">picador-processor</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">S3 Bucket</div>
-                        <div class="text-dark">picador-data-prod</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">SQS Names</div>
-                        <div class="text-dark">picador-queue</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IAM User</div>
-                        <div class="text-dark">picador-app-user</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Comments</div>
-                        <div class="text-dark">Production deployment</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="dbserver1" data-section="db-server-details">
-                <div class="section-title-header">DB Server Details</div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">MySQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">5.7.32</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">On Prem</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">picador_dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">dev-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">mysql-dev.internal.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">picador</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">3306</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">Dev-12345</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.0.50</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Test</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">MySQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">5.7.32</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">AWS</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">picador_test</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">test-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">mysql-test.aws.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">picador</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">3306</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">AWS-123456</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.0.75</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">QA</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">MySQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">5.7.32</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">AWS</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">picador_qa</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">qa-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">mysql-qa.aws.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">picador</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">3306</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">AWS-789012</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.1.25</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">MySQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">5.7.32</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">RDS</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">picador_prod</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">prod-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">mysql01.internal.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">picador</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">3306</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">AWS-123456</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.1.50</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="p-4 position-relative table-card">
-            <div class="action-icons-container" th:if="${session.user != null && session.user.role == 'Super Admin'}">
-                <button class="btn btn-sm action-icon-btn edit-btn" title="Edit">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-                <button class="btn btn-sm action-icon-btn delete-btn" title="Delete">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </div>
-            <!-- Edit Only - for Admin users -->
-            <div class="action-icons-container" th:if="${session.user != null && session.user.role == 'Admin'}">
-                <button class="btn btn-sm action-icon-btn edit-btn" title="Edit">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-            </div>
-            <div class="table-responsive mb-3 table-wrapper-with-offset">
-                <table class="table mb-0 inner-table-bg rounded-table">
-                    <thead>
-                        <tr>
-                            <th class="beat-id">BEAT ID</th>
-                            <th class="app-name">Application Name</th>
-                            <th class="squad">SQUAD</th>
-                            <th class="offshore">Offshore Primary</th>
-                            <th class="onshore">Onshore Primary</th>
-                            <th class="system-owner">System owner</th>
-                            <th class="business-owner">Business Owner</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="beat-id">BEAT03215387</td>
-                            <td class="app-name">Line Coding Assignment</td>
-                            <td class="squad">PF</td>
-                            <td class="offshore">Sai</td>
-                            <td class="onshore">Joe</td>
-                            <td class="system-owner">John</td>
-                            <td class="business-owner">Jane</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="d-flex flex-wrap gap-2 mt-2">
-                <button class="btn btn-sm action-icon-btn view-btn" title="View">
-                    <i class="fa-solid fa-eye"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#basicIdentity2" aria-expanded="false" aria-controls="basicIdentity2">
-                    Basic Identity <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#description2" aria-expanded="false" aria-controls="description2">
-                    Description <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#authentication2" aria-expanded="false" aria-controls="authentication2">
-                    Authentication &amp; Vendor <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#technical2" aria-expanded="false" aria-controls="technical2">
-                    Technical Details <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#resource2" aria-expanded="false" aria-controls="resource2">
-                    Resource Contacts <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#apphosted2" aria-expanded="false" aria-controls="apphosted2">
-                    App hosted Details <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#cloud2" aria-expanded="false" aria-controls="cloud2">
-                    Cloud Details <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-                <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#dbserver2" aria-expanded="false" aria-controls="dbserver2">
-                    DB Server Details <i class="fa-solid fa-plus ms-1"></i>
-                </button>
-            </div>
-            <div class="collapse stack-section" id="basicIdentity2" data-section="basic-identity">
-                <div class="section-title-header">Basic Identity</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Beat
-                            ID</div>
-                        <div class="text-dark">BEAT03215387</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Application
-                            Name</div>
-                        <div class="text-dark">Line Coding Assignment</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">GxP</div>
-                        <div class="text-dark">No</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Squad</div>
-                        <div class="text-dark">PF</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Business
-                            Owner</div>
-                        <div class="text-dark">Jane Doe</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Sub
-                            Domain</div>
-                        <div class="text-dark">Local</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">App
-                            Region</div>
-                        <div class="text-dark">US</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Service
-                            Variant</div>
-                        <div class="text-dark">Bronze</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">Type
-                            Category</div>
-                        <div class="text-dark">Type 2</div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="fw-semibold text-secondary small">System
-                            Owner</div>
-                        <div class="text-dark">John Smith</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="description2" data-section="description">
-                <div class="section-title-header">Description</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Application
-                            Description</div>
-                        <div class="text-dark">This is a sample description
-                            for Line Coding Assignment.</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Business
-                            Impact Description</div>
-                        <div class="text-dark">Important for technical
-                            training.</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Financial
-                            Impact ($/€)</div>
-                        <div class="text-dark">$50,000</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">User
-                            Access Review</div>
-                        <div class="text-dark">Yearly</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="authentication2" data-section="authentication-vendor">
-                <div class="section-title-header">Authentication & Vendor</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Authentication Type</div>
-                        <div class="text-dark">LDAP</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Auth Details/Routing</div>
-                        <div class="text-dark">LDAP routing</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Authorization Type</div>
-                        <div class="text-dark">AD Groups</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Vendor App</div>
-                        <div class="text-dark">Yes</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Vendor Name</div>
-                        <div class="text-dark">LDAP Provider</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">App Decommissioned</div>
-                        <div class="text-dark">No</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Vendor Ticketing URL</div>
-                        <div class="text-dark">https://ldap-support.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Vendor Support Exist</div>
-                        <div class="text-dark">Yes</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Vendor Contact Details</div>
-                        <div class="text-dark">support@ldap-provider.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">App Hosted In</div>
-                        <div class="text-dark">Cloud</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="technical2" data-section="technical-details">
-                <div class="section-title-header">Technical Details</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">App URLs - Dev/Test</div>
-                        <div class="text-dark">https://dev-lca.app.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">GitHub Repos</div>
-                        <div class="text-dark">https://github.com/company/lca</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">LB/VIP Details</div>
-                        <div class="text-dark">192.168.2.20</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">External/Internal</div>
-                        <div class="text-dark">External</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Upstream System</div>
-                        <div class="text-dark">System B, System C</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Akana / Mulesoft</div>
-                        <div class="text-dark">Mulesoft ESB</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Kafka Topic</div>
-                        <div class="text-dark">lca-events, lca-logs</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Azure Client IDs</div>
-                        <div class="text-dark">azure-client-123</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="resource2" data-section="resource-contacts">
-                <div class="section-title-header">Resource Contacts</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Offshore Primary</div>
-                        <div class="text-dark">Sai</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Offshore Secondary</div>
-                        <div class="text-dark">Kumar</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Offshore Tertiary</div>
-                        <div class="text-dark">Anita</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Onshore Primary</div>
-                        <div class="text-dark">Joe</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Onshore Secondary</div>
-                        <div class="text-dark">Tom</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Onshore Tertiary</div>
-                        <div class="text-dark">Lisa</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="apphosted2" data-section="app-hosted-details">
-                <div class="section-title-header">App Hosted Details</div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev CI</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Deployed Server</div>
-                        <div class="text-dark">Weblogic</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server Name</div>
-                        <div class="text-dark">lca-dev-01</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server OS & Version</div>
-                        <div class="text-dark">Windows Server 2019</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Domain</div>
-                        <div class="text-dark">dev.cloud.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Cluster</div>
-                        <div class="text-dark">weblogic-cluster-dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">lca-service</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP Address</div>
-                        <div class="text-dark">10.20.1.50</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod CI</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Deployed Server</div>
-                        <div class="text-dark">Weblogic</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server Name</div>
-                        <div class="text-dark">lca-prod-01</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Server OS & Version</div>
-                        <div class="text-dark">Windows Server 2019</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Domain</div>
-                        <div class="text-dark">prod.cloud.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Cluster</div>
-                        <div class="text-dark">weblogic-cluster-01</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">lca-service</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP Address</div>
-                        <div class="text-dark">10.20.1.100</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="cloud2" data-section="cloud-details">
-                <div class="section-title-header">Cloud Details</div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Non Prod</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">222222222</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Type</div>
-                        <div class="text-dark">ECS</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">LCA</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Lambda Names</div>
-                        <div class="text-dark">lca-dev-lambda</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">S3 Bucket</div>
-                        <div class="text-dark">lca-storage-dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">SQS Names</div>
-                        <div class="text-dark">lca-queue-dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IAM User</div>
-                        <div class="text-dark">lca-dev-user</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Comments</div>
-                        <div class="text-dark">Dev environment</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">987654321</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Type</div>
-                        <div class="text-dark">ECS</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">LCA</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Lambda Names</div>
-                        <div class="text-dark">lca-validator, lca-processor</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">S3 Bucket</div>
-                        <div class="text-dark">lca-storage-prod</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">SQS Names</div>
-                        <div class="text-dark">lca-queue-1, lca-queue-2</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IAM User</div>
-                        <div class="text-dark">lca-app-user, lca-lambda-user</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Comments</div>
-                        <div class="text-dark">Cloud migration completed</div>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse stack-section" id="dbserver2" data-section="db-server-details">
-                <div class="section-title-header">DB Server Details</div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">PostgreSQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">12.8</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">On Prem</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">lca_dev</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">dev-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">postgres-dev.internal.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">lca</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">5432</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">Dev-67890</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.2.50</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Test</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">PostgreSQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">12.8</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">Azure</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">lca_test</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">test-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">postgres-test.azure.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">lca</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">5432</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">Azure-345678</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.2.75</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">QA</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">PostgreSQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">12.8</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">Azure</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">lca_qa</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">qa-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">postgres-qa.azure.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">lca</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">5432</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">Azure-654321</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.3.25</div>
-                    </div>
-                </div>
-                <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod</div>
-                <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Type</div>
-                        <div class="text-dark">PostgreSQL</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Version</div>
-                        <div class="text-dark">12.8</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                        <div class="text-dark">Azure</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Database Name</div>
-                        <div class="text-dark">lca_prod</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Name</div>
-                        <div class="text-dark">azure-db-account</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Host Name</div>
-                        <div class="text-dark">postgres01.azure.com</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Service Name</div>
-                        <div class="text-dark">lca</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Port</div>
-                        <div class="text-dark">5432</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">Account Id</div>
-                        <div class="text-dark">Azure-987654</div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">IP</div>
-                        <div class="text-dark">10.0.2.100</div>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 position-relative table-card">
-                <div class="action-icons-container"
-                    th:if="${session.user != null && session.user.role == 'Super Admin'}">
-                    <button class="btn btn-sm action-icon-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button class="btn btn-sm action-icon-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-                <!-- Edit Only - for Admin users -->
-                <div class="action-icons-container" th:if="${session.user != null && session.user.role == 'Admin'}">
-                    <button class="btn btn-sm action-icon-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                </div>
-                <div class="table-responsive mb-3 table-wrapper-with-offset">
-                    <table class="table mb-0 inner-table-bg rounded-table">
-                        <thead>
-                            <tr>
-                                <th class="beat-id">BEAT ID</th>
-                                <th class="app-name">Application Name</th>
-                                <th class="squad">SQUAD</th>
-                                <th class="offshore">Offshore Primary</th>
-                                <th class="onshore">Onshore Primary</th>
-                                <th class="system-owner">System owner</th>
-                                <th class="business-owner">Business Owner</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="beat-id">BEAT04059986</td>
-                                <td class="app-name">Manage Field Trials</td>
-                                <td class="squad">PF</td>
-                                <td class="offshore"></td>
-                                <td class="onshore"></td>
-                                <td class="system-owner"></td>
-                                <td class="business-owner"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex flex-wrap gap-2 mt-2">
-                    <button class="btn btn-sm action-icon-btn view-btn" title="View">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#basicIdentity3" aria-expanded="false" aria-controls="basicIdentity3">
-                        Basic Identity <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#description3" aria-expanded="false" aria-controls="description3">
-                        Description <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#authentication3" aria-expanded="false" aria-controls="authentication3">
-                        Authentication &amp; Vendor <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#technical3" aria-expanded="false" aria-controls="technical3">
-                        Technical Details <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#resource3" aria-expanded="false" aria-controls="resource3">
-                        Resource Contacts <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#apphosted3" aria-expanded="false" aria-controls="apphosted3">
-                        App hosted Details <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#cloud3" aria-expanded="false" aria-controls="cloud3">
-                        Cloud Details <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                    <button class="btn btn-sm text-white section-pill" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#dbserver3" aria-expanded="false" aria-controls="dbserver3">
-                        DB Server Details <i class="fa-solid fa-plus ms-1"></i>
-                    </button>
-                </div>
-                <div class="collapse stack-section" id="basicIdentity3" data-section="basic-identity">
-                    <div class="section-title-header">Basic Identity</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">Beat
-                                ID</div>
-                            <div class="text-dark">BEAT04059986</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">Application
-                                Name</div>
-                            <div class="text-dark">Manage Field Trials</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">GxP</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">Squad</div>
-                            <div class="text-dark">PF</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">Business
-                                Owner</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">Sub
-                                Domain</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">App
-                                Region</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">Service
-                                Variant</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">Type
-                                Category</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <div class="fw-semibold text-secondary small">System
-                                Owner</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse stack-section" id="description3" data-section="description">
-                    <div class="section-title-header">Description</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Application
-                                Description</div>
-                            <div class="text-dark">Field trial management application.</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Business
-                                Impact Description</div>
-                            <div class="text-dark">Trial execution tracking.</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Financial
-                                Impact ($/€)</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">User
-                                Access Review</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse stack-section" id="authentication3" data-section="authentication-vendor">
-                    <div class="section-title-header">Authentication & Vendor</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Authentication Type</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Auth Details/Routing</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Authorization Type</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Vendor App</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Vendor Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">App Decommissioned</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Vendor Ticketing URL</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Vendor Support Exist</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Vendor Contact Details</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">App Hosted In</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse stack-section" id="technical3" data-section="technical-details">
-                    <div class="section-title-header">Technical Details</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">App URLs - Dev/Test</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">GitHub Repos</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">LB/VIP Details</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">External/Internal</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Upstream System</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Akana / Mulesoft</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Kafka Topic</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Azure Client IDs</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse stack-section" id="resource3" data-section="resource-contacts">
-                    <div class="section-title-header">Resource Contacts</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Offshore Primary</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Offshore Secondary</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Offshore Tertiary</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Onshore Primary</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Onshore Secondary</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Onshore Tertiary</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse stack-section" id="apphosted3" data-section="app-hosted-details">
-                    <div class="section-title-header">App Hosted Details</div>
-                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Dev CI</div>
+                <div th:each="srv : ${app.applicationServerDetails}">
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;"
+                        th:text="${srv.environment}">ENV</div>
                     <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
                         <div class="col-md-6 mb-2">
                             <div class="fw-semibold text-secondary small">Deployed Server</div>
-                            <div class="text-dark">-</div>
+                            <div class="text-dark" th:text="${srv.deployedServer ?: '-'}">-</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <div class="fw-semibold text-secondary small">Server Name</div>
-                            <div class="text-dark">-</div>
+                            <div class="text-dark" th:text="${srv.serverName ?: '-'}">-</div>
                         </div>
                         <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Server OS & Version</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Domain</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Cluster</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Service Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">IP Address</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
-                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;">Prod CI</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Deployed Server</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Server Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Server OS & Version</div>
-                            <div class="text-dark">-</div>
+                            <div class="fw-semibold text-secondary small">Server OS &amp; Version</div>
+                            <div class="text-dark" th:text="${srv.serverOsVersion ?: '-'}">-</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <div class="fw-semibold text-secondary small">Domain</div>
-                            <div class="text-dark">-</div>
+                            <div class="text-dark" th:text="${srv.domain ?: '-'}">-</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <div class="fw-semibold text-secondary small">Cluster</div>
-                            <div class="text-dark">-</div>
+                            <div class="text-dark" th:text="${srv.cluster ?: '-'}">-</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <div class="fw-semibold text-secondary small">Service Name</div>
-                            <div class="text-dark">-</div>
+                            <div class="text-dark" th:text="${srv.serviceName ?: '-'}">-</div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <div class="fw-semibold text-secondary small">IP Address</div>
-                            <div class="text-dark">-</div>
+                            <div class="text-dark" th:text="${srv.ipAddress ?: '-'}">-</div>
                         </div>
                     </div>
                 </div>
-                <div class="collapse stack-section" id="cloud3" data-section="cloud-details">
-                    <div class="section-title-header">Cloud Details</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Account Id</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Host Type</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Service Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Lambda Names</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">S3 Bucket</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">SQS Names</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">IAM User</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Comments</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="collapse stack-section" id="dbserver3" data-section="db-server-details">
-                    <div class="section-title-header">DB Server Details</div>
-                    <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Database Type</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Database Version</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Database Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Account Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Host Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Service Name</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Port</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">Account Id</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <div class="fw-semibold text-secondary small">IP</div>
-                            <div class="text-dark">-</div>
-                        </div>
-                    </div>
+                <div th:if="${#lists.isEmpty(app.applicationServerDetails)}"
+                    class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                    <div class="col-12 text-secondary small">No server data available.</div>
                 </div>
             </div>
 
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            <script>
-                document.querySelectorAll('.table-card').forEach(function (card) {
-                    card.querySelectorAll('.section-pill[data-bs-toggle="collapse"]').forEach(function (btn) {
-                        var targetId = btn.getAttribute('data-bs-target');
-                        if (targetId && targetId.startsWith('#')) {
-                            var collapseElem = card.querySelector(targetId);
-                            var icon = btn.querySelector('i');
-                            if (icon) {
-                                icon.style.transition = 'transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s';
-                            }
-                            if (collapseElem) {
-                                collapseElem.addEventListener('show.bs.collapse', function () {
-                                    if (icon) {
-                                        icon.classList.remove('fa-plus');
-                                        icon.classList.add('fa-minus');
-                                        icon.style.transform = 'rotate(180deg) scale(1.2)';
-                                        icon.style.opacity = '0.7';
-                                        setTimeout(function () {
-                                            icon.style.opacity = '1';
-                                        }, 150);
-                                    }
-                                    var allSections = Array.from(card.querySelectorAll('.collapse.stack-section'));
-                                    var pillsRow = btn.closest('.d-flex.flex-wrap');
-                                    if (pillsRow && pillsRow.nextElementSibling) {
-                                        pillsRow.parentNode.insertBefore(collapseElem, pillsRow.nextElementSibling);
-                                    }
-                                });
-                                collapseElem.addEventListener('hide.bs.collapse', function () {
-                                    if (icon) {
-                                        icon.classList.remove('fa-minus');
-                                        icon.classList.add('fa-plus');
-                                        icon.style.transform = 'rotate(0deg) scale(1)';
-                                        icon.style.opacity = '0.7';
-                                        setTimeout(function () {
-                                            icon.style.opacity = '1';
-                                        }, 150);
-                                    }
-                                });
-                            }
-                        }
-                    });
-                });
+            <div class="collapse stack-section" th:id="'cloud-'+${app.id}" data-section="cloud-details">
+                <div class="section-title-header">Cloud Details</div>
+                <div th:each="cloud : ${app.cloudDetails}">
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;"
+                        th:text="${cloud.environment}">ENV</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark" th:text="${cloud.accountId ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Host Type</div>
+                            <div class="text-dark" th:text="${cloud.hostType ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark" th:text="${cloud.serviceName ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Lambda Names</div>
+                            <div class="text-dark" th:text="${cloud.lambdaNames ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">S3 Bucket</div>
+                            <div class="text-dark" th:text="${cloud.s3Bucket ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">SQS Names</div>
+                            <div class="text-dark" th:text="${cloud.sqsNames ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">IAM User</div>
+                            <div class="text-dark" th:text="${cloud.iamUser ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Comments</div>
+                            <div class="text-dark" th:text="${cloud.comments ?: '-'}">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(app.cloudDetails)}" class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                    <div class="col-12 text-secondary small">No cloud data available.</div>
+                </div>
+            </div>
 
-                document.querySelectorAll('.table-card').forEach(function (card) {
-                    var expandBtn = card.querySelector('.expand-all-btn');
-                    if (!expandBtn) return;
-                    var icon = expandBtn.querySelector('i');
-                    var collapses = Array.from(card.querySelectorAll('.collapse.stack-section'));
-                    expandBtn.addEventListener('click', function () {
-                        var anyClosed = collapses.some(function (sec) {
-                            return !sec.classList.contains('show');
+            <div class="collapse stack-section" th:id="'dbserver-'+${app.id}" data-section="db-server-details">
+                <div class="section-title-header">DB Server Details</div>
+                <div th:each="db : ${app.databaseServerDetails}">
+                    <div class="fw-semibold text-secondary small mb-4 mt-4" style="font-size: 0.9rem;"
+                        th:text="${db.environment}">ENV</div>
+                    <div class="row basic-identity-table mx-0 mt-2 mb-3 py-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Type</div>
+                            <div class="text-dark" th:text="${db.databaseType ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Version</div>
+                            <div class="text-dark" th:text="${db.databaseVersion ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Hosting Type</div>
+                            <div class="text-dark" th:text="${db.databaseHostingType ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Database Name</div>
+                            <div class="text-dark" th:text="${db.databaseName ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Name</div>
+                            <div class="text-dark" th:text="${db.accountName ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Host Name</div>
+                            <div class="text-dark" th:text="${db.hostName ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Service Name</div>
+                            <div class="text-dark" th:text="${db.serviceName ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Port</div>
+                            <div class="text-dark" th:text="${db.port ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">Account Id</div>
+                            <div class="text-dark" th:text="${db.accountId ?: '-'}">-</div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="fw-semibold text-secondary small">IP</div>
+                            <div class="text-dark" th:text="${db.ip ?: '-'}">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(app.databaseServerDetails)}"
+                    class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
+                    <div class="col-12 text-secondary small">No database data available.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-modal-overlay" id="filterModalOverlay" onclick="handleOverlayClick(event)">
+        <div class="filter-modal">
+            <div class="filter-modal-header">
+                <div class="filter-modal-title">Select Groups</div>
+                <button class="filter-modal-close" onclick="closeFilterModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="filter-modal-body">
+                <div class="filter-clear-row" id="filterClearRow" style="display:none;">
+                    <button class="filter-clear-btn" onclick="clearFilter()">Clear filter</button>
+                </div>
+                <div class="filter-search-wrap">
+                    <i class="fa-solid fa-magnifying-glass filter-search-icon"></i>
+                    <input type="text" class="filter-search-input" id="groupSearchInput" placeholder="Search groups"
+                        oninput="onGroupSearch(this.value)">
+                </div>
+                <div class="group-list-card" id="groupList"></div>
+            </div>
+            <div class="filter-modal-footer">
+                <button class="filter-ok-btn" id="filterOkBtn" onclick="applyAndClose()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.table-card').forEach(function (card) {
+            card.querySelectorAll('.section-pill[data-bs-toggle="collapse"]').forEach(function (btn) {
+                var targetId = btn.getAttribute('data-bs-target');
+                if (targetId && targetId.startsWith('#')) {
+                    var collapseElem = card.querySelector(targetId);
+                    var icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.style.transition = 'transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s';
+                    }
+                    if (collapseElem) {
+                        collapseElem.addEventListener('show.bs.collapse', function () {
+                            if (icon) {
+                                icon.classList.remove('fa-plus');
+                                icon.classList.add('fa-minus');
+                                icon.style.transform = 'rotate(180deg) scale(1.2)';
+                                icon.style.opacity = '0.7';
+                                setTimeout(function () {
+                                    icon.style.opacity = '1';
+                                }, 150);
+                            }
+                            var allSections = Array.from(card.querySelectorAll('.collapse.stack-section'));
+                            var pillsRow = btn.closest('.d-flex.flex-wrap');
+                            if (pillsRow && pillsRow.nextElementSibling) {
+                                pillsRow.parentNode.insertBefore(collapseElem, pillsRow.nextElementSibling);
+                            }
                         });
-                        if (anyClosed) {
-                            // Expand in reverse DOM order (bottom to top)
-                            collapses.slice().reverse().forEach(function (sec) {
-                                var bsCollapse = bootstrap.Collapse.getOrCreateInstance(sec);
-                                bsCollapse.show();
-                            });
-                        } else {
-                            // Collapse in DOM order (top to bottom)
-                            collapses.forEach(function (sec) {
-                                var bsCollapse = bootstrap.Collapse.getOrCreateInstance(sec);
-                                bsCollapse.hide();
-                            });
-                        }
-                        if (anyClosed) {
-                            icon.classList.remove('fa-eye');
-                            icon.classList.add('fa-eye-slash');
-                        } else {
-                            icon.classList.remove('fa-eye-slash');
-                            icon.classList.add('fa-eye');
-                        }
+                        collapseElem.addEventListener('hide.bs.collapse', function () {
+                            if (icon) {
+                                icon.classList.remove('fa-minus');
+                                icon.classList.add('fa-plus');
+                                icon.style.transform = 'rotate(0deg) scale(1)';
+                                icon.style.opacity = '0.7';
+                                setTimeout(function () {
+                                    icon.style.opacity = '1';
+                                }, 150);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.table-card').forEach(function (card) {
+            var expandBtn = card.querySelector('.expand-all-btn');
+            if (!expandBtn) return;
+            var icon = expandBtn.querySelector('i');
+            var collapses = Array.from(card.querySelectorAll('.collapse.stack-section'));
+            expandBtn.addEventListener('click', function () {
+                var anyClosed = collapses.some(function (sec) {
+                    return !sec.classList.contains('show');
+                });
+                if (anyClosed) {
+
+                    collapses.slice().reverse().forEach(function (sec) {
+                        var bsCollapse = bootstrap.Collapse.getOrCreateInstance(sec);
+                        bsCollapse.show();
+                    });
+                } else {
+
+                    collapses.forEach(function (sec) {
+                        var bsCollapse = bootstrap.Collapse.getOrCreateInstance(sec);
+                        bsCollapse.hide();
+                    });
+                }
+                if (anyClosed) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
+
+    <span id="userMeta" th:attr="data-uid=${session.user != null ? session.user.cwid : 'guest'}"
+        style="display:none;"></span>
+
+    <script>
+
+        function toggleProfileMenu(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const dropdown = document.getElementById('profileDropdown');
+            const caret = document.getElementById('profileCaret');
+            const isOpen = dropdown.classList.contains('open');
+            dropdown.classList.toggle('open', !isOpen);
+            caret.classList.toggle('open', !isOpen);
+        }
+
+        document.addEventListener('click', function (e) {
+            const trigger = document.getElementById('profileTrigger');
+            const dropdown = document.getElementById('profileDropdown');
+            const caret = document.getElementById('profileCaret');
+            if (dropdown && !dropdown.contains(e.target) && e.target !== trigger && !trigger?.contains(e.target)) {
+                dropdown.classList.remove('open');
+                caret?.classList.remove('open');
+            }
+        });
+
+        const _uid = document.getElementById('userMeta')?.getAttribute('data-uid') || 'guest';
+        const FILTER_STORAGE_KEY = 'appwiki_filter_groups_' + _uid;
+
+        let pendingGroups = new Set();
+        let activeGroups = new Set(JSON.parse(localStorage.getItem(FILTER_STORAGE_KEY) || '[]'));
+        let groupSearchQuery = '';
+
+        function getGroupCounts() {
+            const counts = {};
+            document.querySelectorAll('.dynamic-app-card').forEach(function (card) {
+                const g = (card.getAttribute('data-group') || '').trim();
+                if (g) counts[g] = (counts[g] || 0) + 1;
+            });
+            return counts;
+        }
+
+        function openFilterModal() {
+            pendingGroups = new Set(activeGroups);
+            groupSearchQuery = '';
+            const inp = document.getElementById('groupSearchInput');
+            if (inp) inp.value = '';
+
+            const overlay = document.getElementById('filterModalOverlay');
+            const clearRow = document.getElementById('filterClearRow');
+            clearRow.style.display = activeGroups.size > 0 ? 'block' : 'none';
+
+            renderGroupList();
+            overlay.classList.add('open');
+            setTimeout(function () { if (inp) inp.focus(); }, 200);
+        }
+
+        function onGroupSearch(val) {
+            groupSearchQuery = val;
+            renderGroupList();
+        }
+
+        function renderGroupList() {
+            const counts = getGroupCounts();
+            let groups = Object.keys(counts).sort();
+            const listEl = document.getElementById('groupList');
+
+            if (groupSearchQuery.length >= 4) {
+                const q = groupSearchQuery.toLowerCase();
+                groups = groups.filter(function (g) { return g.toLowerCase().includes(q); });
+            }
+
+            groups.sort(function (a, b) {
+                const asel = pendingGroups.has(a) ? 0 : 1;
+                const bsel = pendingGroups.has(b) ? 0 : 1;
+                if (asel !== bsel) return asel - bsel;
+                return a.localeCompare(b);
+            });
+
+            if (groups.length === 0) {
+                listEl.innerHTML = '<div class="group-empty">No assignment groups found.</div>';
+            } else {
+                listEl.innerHTML = groups.map(function (g, i) {
+                    const sel = pendingGroups.has(g) ? ' selected' : '';
+                    const delay = Math.min(i * 30, 180);
+                    return '<div class="group-item' + sel + '" data-gname="' + escHtml(g) + '" onclick="toggleGroup(this.getAttribute(\'data-gname\'))" style="animation-delay:' + delay + 'ms">'
+                        + '<span class="group-item-count">' + counts[g] + '</span>'
+                        + '<span class="group-item-name">' + escHtml(g) + '</span>'
+                        + '<i class="fa-solid fa-check group-item-check"></i>'
+                        + '</div>';
+                }).join('');
+            }
+        }
+
+        function toggleGroup(group) {
+            if (pendingGroups.has(group)) {
+                pendingGroups.delete(group);
+            } else {
+                pendingGroups.add(group);
+            }
+            renderGroupList();
+        }
+
+        function applyAndClose() {
+            activeGroups = new Set(pendingGroups);
+
+            localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify([...activeGroups]));
+            applyFilter();
+            updateFilterBtn();
+            closeFilterModal();
+        }
+
+        function clearFilter() {
+            pendingGroups.clear();
+            activeGroups.clear();
+            localStorage.removeItem(FILTER_STORAGE_KEY);
+            applyFilter();
+            updateFilterBtn();
+            closeFilterModal();
+        }
+
+        function closeFilterModal() {
+            document.getElementById('filterModalOverlay').classList.remove('open');
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target === document.getElementById('filterModalOverlay')) closeFilterModal();
+        }
+
+        function applyFilter() {
+            document.querySelectorAll('.dynamic-app-card').forEach(function (card) {
+                if (activeGroups.size === 0) {
+                    card.style.display = '';
+                } else {
+                    const g = (card.getAttribute('data-group') || '').trim();
+                    card.style.display = activeGroups.has(g) ? '' : 'none';
+                }
+            });
+        }
+
+        function updateFilterBtn() {
+            const btn = document.getElementById('filterBtn');
+            const badge = document.getElementById('filterCountBadge');
+            const isActive = activeGroups.size > 0;
+            btn.classList.toggle('active', isActive);
+            if (isActive) {
+                const count = [...document.querySelectorAll('.dynamic-app-card')]
+                    .filter(c => c.style.display !== 'none').length;
+                badge.textContent = count;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function escHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (activeGroups.size > 0) {
+                applyFilter();
+                updateFilterBtn();
+            }
+        });
+
+        function applyCardSearch(q) {
+            const cards = document.querySelectorAll('.dynamic-app-card');
+            if (!q || q.length < 2) {
+                cards.forEach(function (card) {
+                    card.classList.remove('card-match', 'card-no-match');
+                });
+                return;
+            }
+            const ql = q.toLowerCase();
+            cards.forEach(function (card) {
+                const haystack = [
+                    card.getAttribute('data-beatid') || '',
+                    card.getAttribute('data-appname') || '',
+                    card.getAttribute('data-squad') || '',
+                    card.getAttribute('data-group') || '',
+                    card.getAttribute('data-owner') || '',
+                    card.getAttribute('data-bizowner') || ''
+                ].join(' ').toLowerCase();
+                const hit = haystack.includes(ql);
+                card.classList.toggle('card-match', hit);
+                card.classList.toggle('card-no-match', !hit);
+            });
+        }
+
+        (function () {
+            const input = document.getElementById('globalSearch');
+            const clearBtn = document.getElementById('searchClearBtn');
+            const wrap = document.getElementById('searchIconWrap');
+
+            function resetSearch() {
+                input.value = '';
+                applyCardSearch('');
+                wrap.classList.remove('has-text');
+                input.focus();
+            }
+
+            input.addEventListener('input', function () {
+                const q = this.value.trim();
+                applyCardSearch(q);
+                wrap.classList.toggle('has-text', q.length > 0);
+            });
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') resetSearch();
+            });
+
+            clearBtn.addEventListener('click', resetSearch);
+        })();
+    </script>
+
+    <div id="deleteAppModalOverlay"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:2000; align-items:center; justify-content:center;">
+        <div
+            style="background:#fff; border-radius:14px; padding:32px 28px 24px; max-width:420px; width:92%; box-shadow:0 8px 32px rgba(0,0,0,0.22); position:relative;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                <div
+                    style="background:#fde8ea; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="fa-solid fa-trash" style="color:#dc3545; font-size:18px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight:700; font-size:1rem; color:#1a1a1a;">Delete Application</div>
+                    <div style="font-size:0.82rem; color:#888; margin-top:2px;">This action cannot be undone</div>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; color:#444; margin-bottom:24px; line-height:1.5;">
+                Are you sure you want to delete <strong id="deleteAppModalName" style="color:#dc3545;"></strong>?<br>
+                <span style="font-size:0.82rem; color:#888;">The application will be deactivated and removed from the
+                    list.</span>
+            </p>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button onclick="closeDeleteAppModal()"
+                    style="border:1.5px solid #ccc; background:#fff; color:#555; border-radius:8px; padding:8px 22px; font-size:0.88rem; cursor:pointer; font-weight:500;">Cancel</button>
+                <button onclick="confirmDeleteApp()"
+                    style="border:none; background:#dc3545; color:#fff; border-radius:8px; padding:8px 22px; font-size:0.88rem; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let _deleteAppId = null;
+        let _deleteAppCard = null;
+
+        function openDeleteAppModal(id, name) {
+            _deleteAppId = id;
+            _deleteAppCard = document.querySelector('[data-id="' + id + '"]') ?
+                document.querySelector('[data-id="' + id + '"]').closest('.dynamic-app-card') : null;
+            document.getElementById('deleteAppModalName').textContent = name || 'this application';
+            const overlay = document.getElementById('deleteAppModalOverlay');
+            overlay.style.display = 'flex';
+        }
+
+        function closeDeleteAppModal() {
+            document.getElementById('deleteAppModalOverlay').style.display = 'none';
+            _deleteAppId = null;
+            _deleteAppCard = null;
+        }
+
+        async function confirmDeleteApp() {
+            if (!_deleteAppId) return;
+            try {
+                const r = await fetch('/api/basic-identity/' + _deleteAppId + '/deactivate', { method: 'PATCH' });
+                if (!r.ok) throw new Error('Status ' + r.status);
+                if (_deleteAppCard) {
+                    _deleteAppCard.style.transition = 'opacity 0.3s, transform 0.3s';
+                    _deleteAppCard.style.opacity = '0';
+                    _deleteAppCard.style.transform = 'scale(0.97)';
+                    setTimeout(() => _deleteAppCard.remove(), 320);
+                }
+                closeDeleteAppModal();
+            } catch (e) {
+                alert('Failed to delete application: ' + e.message);
+            }
+        }
+
+        document.getElementById('deleteAppModalOverlay').addEventListener('click', function (e) {
+            if (e.target === this) closeDeleteAppModal();
+        });
+
+        function applyTableRowStyles() {
+            document.querySelectorAll('.rounded-table tbody tr').forEach(function (tr) {
+                tr.querySelectorAll('td').forEach(function (td) {
+                    td.style.setProperty('background-color', '#f5f5fa', 'important');
+                    td.style.setProperty('box-shadow', 'none', 'important');
+                });
+                tr.addEventListener('mouseenter', function () {
+                    this.querySelectorAll('td').forEach(function (td) {
+                        td.style.setProperty('background-color', '#eeeef3', 'important');
                     });
                 });
-            </script>
+                tr.addEventListener('mouseleave', function () {
+                    this.querySelectorAll('td').forEach(function (td) {
+                        td.style.setProperty('background-color', '#f5f5fa', 'important');
+                    });
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', applyTableRowStyles);
+        const tableObserver = new MutationObserver(applyTableRowStyles);
+        document.querySelectorAll('.rounded-table tbody').forEach(function (tbody) {
+            tableObserver.observe(tbody, { childList: true });
+        });
+    </script>
 </body>
 
 </html>

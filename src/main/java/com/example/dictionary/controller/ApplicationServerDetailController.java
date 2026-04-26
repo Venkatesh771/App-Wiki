@@ -3,6 +3,7 @@ package com.example.dictionary.controller;
 import com.example.dictionary.entity.ApplicationServerDetail;
 import com.example.dictionary.service.ApplicationServerDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,13 +27,17 @@ public class ApplicationServerDetailController {
     }
 
     @GetMapping("/{id}")
-    public Optional<ApplicationServerDetail> getById(@PathVariable Long id) {
-        return service.findById(id);
+    public ResponseEntity<ApplicationServerDetail> getById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ApplicationServerDetail create(@RequestBody ApplicationServerDetail entity) {
-        return service.save(entity);    }    @PostMapping("/bulk")
+    public ApplicationServerDetail create(@RequestBody ApplicationServerDetail entity,
+                                           @RequestParam(required = false) Long basicIdentityId) {
+        return basicIdentityId != null ? service.save(entity, basicIdentityId) : service.save(entity);
+    }    @PostMapping("/bulk")
     @SuppressWarnings("unchecked")
     public List<ApplicationServerDetail> bulkCreate(@RequestBody Map<String, Object> requestData) {
         // Extract basicIdentityId, beatId, and gridData from request
@@ -69,12 +74,35 @@ public class ApplicationServerDetailController {
 
     @PutMapping("/{id}")
     public ApplicationServerDetail update(@PathVariable Long id, @RequestBody ApplicationServerDetail entity) {
+        Optional<ApplicationServerDetail> existing = service.findById(id);
+        if (existing.isPresent()) {
+            ApplicationServerDetail e = existing.get();
+            e.setDeployedServer(entity.getDeployedServer());
+            e.setServerName(entity.getServerName());
+            e.setServerOsVersion(entity.getServerOsVersion());
+            e.setDomain(entity.getDomain());
+            e.setCluster(entity.getCluster());
+            e.setServiceName(entity.getServiceName());
+            e.setIpAddress(entity.getIpAddress());
+            return service.save(e);
+        }
         entity.setId(id);
         return service.save(entity);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (service.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         service.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
+        return service.deactivate(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }

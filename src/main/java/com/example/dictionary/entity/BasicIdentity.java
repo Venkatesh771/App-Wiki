@@ -5,19 +5,31 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
 
 @Entity
+@Table(uniqueConstraints = {
+    @UniqueConstraint(name = "uc_basic_identity_beat_id", columnNames = {"beat_id"}),
+    @UniqueConstraint(name = "uc_basic_identity_app_name", columnNames = {"application_name"})
+})
 public class BasicIdentity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "beat_id")
     private String beatId;
+
+    @Column(name = "application_name")
     private String applicationName;
     private String gxp;
     private String squad;
     private String businessOwner;
     private String subDomain;
     private String appRegion;
-    private String serviceVariant;    private String typeCategory;
+    private String serviceVariant;
+    private String typeCategory;
     private String systemOwner;
+    private String assignmentGroup;
+
+    private Boolean active = true;
 
     // Relationships to detail entities
     @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -129,8 +141,26 @@ public class BasicIdentity {
         this.typeCategory = typeCategory;
     }    public String getSystemOwner() {
         return systemOwner;
-    }    public void setSystemOwner(String systemOwner) {
+    }
+
+    public void setSystemOwner(String systemOwner) {
         this.systemOwner = systemOwner;
+    }
+
+    public String getAssignmentGroup() {
+        return assignmentGroup;
+    }
+
+    public void setAssignmentGroup(String assignmentGroup) {
+        this.assignmentGroup = assignmentGroup;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     // Getters and Setters for relationships

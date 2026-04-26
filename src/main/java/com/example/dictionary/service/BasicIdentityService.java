@@ -2,7 +2,9 @@ package com.example.dictionary.service;
 
 import com.example.dictionary.entity.BasicIdentity;
 import com.example.dictionary.repository.BasicIdentityRepository;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +18,51 @@ public class BasicIdentityService {
     }
 
     public List<BasicIdentity> getAll() {
-        return repository.findAll();
+        return repository.findAllActive();
+    }
+
+    @Transactional
+    public boolean deactivate(Long id) {
+        return repository.findById(id).map(app -> {
+            app.setActive(false);
+            repository.save(app);
+            return true;
+        }).orElse(false);
     }
 
     public Optional<BasicIdentity> getById(Long id) {
         return repository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<BasicIdentity> getByIdWithDetails(Long id) {
+        Optional<BasicIdentity> appOpt = repository.findById(id);
+        appOpt.ifPresent(app -> {
+            Hibernate.initialize(app.getDescriptionImpacts());
+            Hibernate.initialize(app.getAuthenticationVendors());
+            Hibernate.initialize(app.getTechnicalDetails());
+            Hibernate.initialize(app.getResourceContacts());
+            Hibernate.initialize(app.getApplicationServerDetails());
+            Hibernate.initialize(app.getCloudDetails());
+            Hibernate.initialize(app.getDatabaseServerDetails());
+        });
+        return appOpt;
+    }
+
+    public boolean existsByBeatId(String beatId) {
+        return repository.findByBeatIdIgnoreCase(beatId.trim()).isPresent();
+    }
+
+    public boolean existsByApplicationName(String applicationName) {
+        return repository.findByApplicationNameIgnoreCase(applicationName.trim()).isPresent();
+    }
+
+    public boolean existsByBeatIdExcludingId(String beatId, Long excludeId) {
+        return repository.findByBeatIdIgnoreCaseAndIdNot(beatId.trim(), excludeId).isPresent();
+    }
+
+    public boolean existsByApplicationNameExcludingId(String applicationName, Long excludeId) {
+        return repository.findByApplicationNameIgnoreCaseAndIdNot(applicationName.trim(), excludeId).isPresent();
     }
 
     public BasicIdentity save(BasicIdentity entity) {
@@ -31,6 +73,14 @@ public class BasicIdentityService {
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<BasicIdentity> search(String q) {
+        return repository.searchByBeatIdOrApplicationName(q);
+    }
+
+    public List<String> getDistinctAssignmentGroups() {
+        return repository.findDistinctAssignmentGroups();
     }
 
     /**
@@ -67,6 +117,9 @@ public class BasicIdentityService {
         }
         if (entity.getSystemOwner() != null && (entity.getSystemOwner().trim().isEmpty() || entity.getSystemOwner().trim().equals("Select"))) {
             entity.setSystemOwner(null);
+        }
+        if (entity.getAssignmentGroup() != null && (entity.getAssignmentGroup().trim().isEmpty() || entity.getAssignmentGroup().trim().equals("Select"))) {
+            entity.setAssignmentGroup(null);
         }
     }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -12,11 +12,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
 
         body {
-            background: #f0f2f5;
+            background: #f2f2f7;
             font-family: "Open Sans", sans-serif;
             min-height: 100vh;
-            padding-bottom: 50px;
-        }        .navbar {
+            padding-bottom: 24px;
+        }
+
+        .navbar {
             background: #000 !important;
             padding-top: 0.25rem;
             padding-bottom: 0.25rem;
@@ -25,11 +27,14 @@
             position: sticky;
             top: 0;
             z-index: 1030;
-        }.navbar-brand {
+        }
+
+        .navbar-brand {
             font-family: "Quicksand", sans-serif;
             font-weight: 400;
             font-size: 1.1rem;
             margin-left: 1.5rem;
+            line-height: 1.1;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -80,6 +85,165 @@
             line-height: 1.2;
         }
 
+        .navbar-brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(173, 216, 230, 0.22);
+            border: 1px solid rgba(173, 216, 230, 0.38);
+            padding: 0.28rem 0.85rem;
+            border-radius: 50px;
+        }
+
+        .user-icon-round {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0;
+            margin-right: 3px;
+            font-family: "Quicksand", sans-serif;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .user-menu-trigger {
+            display: flex !important;
+            align-items: center;
+            gap: 0.4rem;
+            color: #fff !important;
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.22rem 0.7rem 0.22rem 0.3rem !important;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.18) !important;
+            transition: background 0.15s ease;
+        }
+
+        .user-menu-trigger:hover {
+            background: rgba(255, 255, 255, 0.26) !important;
+        }
+
+        .user-menu-caret {
+            font-size: 0.62rem;
+            opacity: 0.75;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            margin-left: 1px;
+        }
+
+        .user-menu-caret.open {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+            min-width: 230px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.88) translateY(-8px);
+            transform-origin: top right;
+            transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1050;
+        }
+
+        .profile-dropdown.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem 0.85rem;
+        }
+
+        .profile-avatar-lg {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: "Quicksand", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .profile-info-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 145px;
+        }
+
+        .profile-info-role {
+            display: inline-block;
+            background: #e6f7f7;
+            color: #008080;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.15rem 0.6rem;
+            border-radius: 50px;
+            margin-top: 0.22rem;
+            letter-spacing: 0.2px;
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: #f0f0f0;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
+            color: #333;
+            text-decoration: none !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .profile-dropdown-item:hover {
+            background: #f7f7f7;
+            color: #008080;
+        }
+
+        .profile-dropdown-item.logout-item {
+            color: #e74c3c;
+        }
+
+        .profile-dropdown-item.logout-item:hover {
+            background: #fff5f5;
+            color: #c0392b;
+        }
+
         .navbar-nav .nav-link {
             font-size: 0.85rem;
             padding-left: 0.75rem;
@@ -91,35 +255,69 @@
         }
 
         .form-container {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            margin: 30px auto;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            margin: 0 auto;
             width: 95%;
         }
 
         .db-section {
-            background: #fafafa;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
+            background: #fff;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            padding: 30px 25px;
             margin-bottom: 40px;
             position: relative;
+            padding-top: 38px;
+        }
+
+        .db-section:last-of-type {
+            margin-bottom: 0;
         }
 
         .section-label {
             position: absolute;
-            top: -15px;
-            left: 20px;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
             background: #fff;
-            border: 1px solid #ddd;
-            color: #333;
-            padding: 3px 18px;
+            border: 1.5px solid #d1d1d6;
+            color: #008080;
+            padding: 5px 16px;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.2px;
+            line-height: 1.4;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-add-section-row {
+            background: #355E3B;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.58rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+
+        .btn-add-section-row:hover {
+            background: #27472c;
         }
 
         .row-container-grid {
@@ -200,11 +398,9 @@
         }
 
         .field-item label {
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+            font-weight: 500;
+            font-size: 0.83rem;
+            color: #666;
             margin: 0;
         }
 
@@ -223,16 +419,18 @@
         .field-item input:not([type="checkbox"]),
         .field-item select,
         .field-item textarea {
-            border-radius: 6px;
+            border-radius: 10px;
             border: 1px solid #d1d5db;
-            padding: 8px 12px;
+            padding: 7px 12px;
             width: 100%;
             min-height: 36px;
             height: 36px;
             box-sizing: border-box;
             box-shadow: none !important;
             background-color: #e9ecef;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
+            font-family: "Open Sans", sans-serif;
+            color: #333;
             line-height: 1.4;
         }
 
@@ -322,12 +520,12 @@
         .btn-delete:hover {
             background-color: #b94a4a;
             border-color: #b94a4a;
-        }        /* Custom fields container for database rows */
+        }
+
         .custom-fields-in-grid {
             display: contents;
         }
 
-        /* Single custom field item in grid */
         .custom-field-in-grid {
             display: flex;
             flex-direction: column;
@@ -562,7 +760,6 @@
             box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25);
         }
 
-        /* Input Modal Styles */
         .input-modal-overlay {
             display: none;
             position: fixed;
@@ -679,7 +876,6 @@
             background: #e0e0e0;
         }
 
-        /* Field Modal Styles */
         .field-modal-overlay {
             display: none;
             position: fixed;
@@ -852,7 +1048,6 @@
             background: #e0e0e0;
         }
 
-        /* Delete Button for Fields */
         .btn-delete-field {
             background: #ff6b6b;
             color: white;
@@ -877,7 +1072,6 @@
             transform: scale(0.95);
         }
 
-        /* Confirmation Modal - Delete Field */
         .confirmation-modal-overlay {
             display: none;
             position: fixed;
@@ -986,7 +1180,6 @@
             background: #e0e0e0;
         }
 
-        /* Confirmation Modal Styles */
         .confirmation-modal-overlay {
             display: none;
             position: fixed;
@@ -1091,56 +1284,60 @@
         }
 
         .btn-save-db {
-            background: #1b98e0;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            background: #008080;
+            color: #fff;
+            padding: 0.55rem 1.4rem 0.55rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
             font-weight: 600;
-            border: 1px solid #1b98e0;
-            text-transform: uppercase;
+            border: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
+            gap: 7px;
             cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.18s ease, transform 0.14s ease, box-shadow 0.18s ease;
         }
 
         .btn-save-db:hover {
-            background: #1585c5;
-            border-color: #1585c5;
-            color: white;
+            background: #006666;
+            color: #fff;
+        }
+
+        .btn-save-db:active {
+            transform: scale(0.96);
+            background: #005555;
         }
 
         .btn-back {
-            background: #6c757d;
-            color: white;
-            border: 1px solid #6c757d;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            background: #e5e5ea;
+            color: #444;
+            border: none;
+            padding: 0.55rem 1.4rem 0.55rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
             font-weight: 600;
-            text-transform: uppercase;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
+            gap: 7px;
             cursor: pointer;
             text-decoration: none !important;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.18s ease, transform 0.14s ease;
         }
 
         .btn-back:hover {
-            background: #5a6268;
-            border-color: #5a6268;
-            color: white;
+            background: #d1d1d6;
+            color: #333;
             text-decoration: none;
         }
 
         .save-container {
             text-align: right;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #e8eaef;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f2f2f7;
             display: flex;
             justify-content: flex-end;
             gap: 15px;
@@ -1164,6 +1361,7 @@
 
             .db-section {
                 padding: 20px 15px;
+                padding-top: 32px;
             }
 
             .field-item input:not([type="checkbox"]),
@@ -1218,6 +1416,7 @@
 
             .db-section {
                 padding: 15px 12px;
+                padding-top: 28px;
             }
 
             .save-container {
@@ -1237,7 +1436,6 @@
             }
         }
 
-        /* Data Saving Indicator */
         .data-saving-indicator {
             position: fixed;
             top: 80px;
@@ -1276,7 +1474,6 @@
             }
         }
 
-        /* Toast Notifications */
         .toast-notification {
             position: fixed;
             top: 80px;
@@ -1351,14 +1548,13 @@
             }
         }
 
-        /* Add Option Button Styles */
         .btn-add-option {
-            background: #d1d5db;
-            color: #333;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 0.85rem;
+            background: #e5e5ea;
+            color: #555;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 11px;
+            font-size: 0.82rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1373,11 +1569,12 @@
         .btn-add-option:hover {
             background: #b8bcc4;
             border-color: #b8bcc4;
-        }        .btn-add-option:active {
+        }
+
+        .btn-add-option:active {
             transform: scale(0.95);
         }
 
-        /* Dropdown with Add Option Button */
         .field-input.has-dropdown {
             display: flex;
             gap: 8px;
@@ -1391,58 +1588,120 @@
         .field-input .form-control {
             flex: 1;
         }
+
+        .top-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem 1.5rem 2.2rem;
+        }
+
+        .tab-pills-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-pill {
+            border: none;
+            background: #e5e5ea;
+            color: #555;
+            border-radius: 50px;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .tab-pill:hover {
+            background: #d1d1d6;
+            color: #333;
+        }
+
+        .tab-pill.active {
+            background: #008080;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- Data Saving Indicator -->
     <div class="data-saving-indicator" id="savingIndicator">
         <div class="spinner"></div>
         <span>Saving...</span>
-    </div>    <nav class="navbar navbar-expand-lg navbar-dark">
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/home">
-                <span class="navbar-brand-company">BAYER</span>
-                <span class="navbar-separator">|</span>
-                <span class="navbar-app-name">App Wiki</span>
+                <span class="navbar-brand-pill">
+                    <span class="navbar-brand-company">BAYER</span>
+                    <span class="navbar-separator">|</span>
+                    <span class="navbar-app-name">App Wiki</span>
+                </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button>            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
+            </button>
+            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/mainfile}">Main Details</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/applicationserverdetails}">App Server
-                            Details</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/clouddetails}">Cloud Details</a></li>
-                    <li class="nav-item"><a class="nav-link active" th:href="@{/databaseserverdetails}">DB Server
-                            Details</a></li>
-                    <!-- User Profile Dropdown -->
-                    <li class="nav-item dropdown" style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false" style="color: #fff; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
-                            <span style="width: 28px; height: 28px; border-radius: 50%; background: #008080; display: flex; align-items: center; justify-content: center; margin-right: 3px;">
-                                <i class="fa-solid fa-user" style="color: #fff; font-size: 0.85rem;"></i>
-                            </span>
-                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample User</span>
+
+                    <li class="nav-item user-menu" style="position:relative;">
+                        <a class="nav-link user-menu-trigger" href="#" id="profileTrigger"
+                            onclick="toggleProfileMenu(event)">
+                            <span class="user-icon-round" th:text="${session.user != null ?
+                                    #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                    (#strings.contains(session.user.username,' ') ?
+                                      #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                      : '')
+                                    : '?'}">AB</span>
+                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                User</span>
+                            <i class="fa-solid fa-chevron-down user-menu-caret" id="profileCaret"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li th:if="${session.user != null}">
-                                <span class="dropdown-item-text" style="font-size: 0.8rem; color: #999;">
-                                    <i class="fa-solid fa-badge"></i> <span th:text="${session.user.role}"></span>
-                                </span>
-                            </li>
-                            <li th:if="${session.user != null}"><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">
-                                <i class="fa-solid fa-sign-out-alt"></i> Logout
-                            </a></li>
-                        </ul>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-dropdown-header">
+                                <div class="profile-avatar-lg" th:text="${session.user != null ?
+                                        #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                        (#strings.contains(session.user.username,' ') ?
+                                          #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                          : '')
+                                        : '?'}">AB</div>
+                                <div>
+                                    <div class="profile-info-name"
+                                        th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                        User</div>
+                                    <div class="profile-info-role"
+                                        th:text="${session.user != null ? session.user.role : ''}">Role</div>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown-divider"></div>
+                            <a href="/logout" class="profile-dropdown-item logout-item">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <div class="top-header">
+        <div class="tab-pills-container">
+            <a class="tab-pill" th:href="@{/mainfile}">Main Details</a>
+            <a class="tab-pill" th:href="@{/applicationserverdetails}">Server Details</a>
+            <a class="tab-pill" th:href="@{/clouddetails}">Cloud Details</a>
+            <a class="tab-pill active" th:href="@{/databaseserverdetails}">DB Server Details</a>
+        </div>
+    </div>
 
     <div class="container-fluid">
         <div class="form-container">
@@ -1460,7 +1719,7 @@
                             <div class="field-item db-type-field">
                                 <label>Database Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseType">
                                         <option value="">Select</option>
                                         <option>Oracle</option>
                                         <option>PostgreSQL</option>
@@ -1469,7 +1728,8 @@
                                         <option>Couch DB</option>
                                         <option>RDS</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1481,7 +1741,7 @@
                             <div class="field-item db-hosting-field">
                                 <label>Database Hosting Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseHostingType">
                                         <option value="">Select</option>
                                         <option>EXCC</option>
                                         <option>EXCS</option>
@@ -1489,7 +1749,8 @@
                                         <option>AWS</option>
                                         <option>Azure</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1523,7 +1784,8 @@
                                 <input type="text" placeholder="IP">
                             </div>
                         </div>
-                    </div>                    <div class="custom-fields-in-grid" data-section="dev-section"></div>
+                    </div>
+                    <div class="custom-fields-in-grid" data-section="dev-section"></div>
                     <button type="button" class="btn-add" onclick="addRow('dev-section')">Add Row</button>
                     <button type="button" class="btn-delete" onclick="deleteRow('dev-section')">Delete Row</button>
                 </div>
@@ -1541,7 +1803,7 @@
                             <div class="field-item db-type-field">
                                 <label>Database Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseType">
                                         <option value="">Select</option>
                                         <option>Oracle</option>
                                         <option>PostgreSQL</option>
@@ -1550,7 +1812,8 @@
                                         <option>Couch DB</option>
                                         <option>RDS</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1562,7 +1825,7 @@
                             <div class="field-item db-hosting-field">
                                 <label>Database Hosting Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseHostingType">
                                         <option value="">Select</option>
                                         <option>EXCC</option>
                                         <option>EXCS</option>
@@ -1570,7 +1833,8 @@
                                         <option>AWS</option>
                                         <option>Azure</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1604,7 +1868,8 @@
                                 <input type="text" placeholder="IP">
                             </div>
                         </div>
-                    </div>                    <div class="custom-fields-in-grid" data-section="test-section"></div>
+                    </div>
+                    <div class="custom-fields-in-grid" data-section="test-section"></div>
                     <button type="button" class="btn-add" onclick="addRow('test-section')">Add Row</button>
                     <button type="button" class="btn-delete" onclick="deleteRow('test-section')">Delete Row</button>
                 </div>
@@ -1622,7 +1887,7 @@
                             <div class="field-item db-type-field">
                                 <label>Database Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseType">
                                         <option value="">Select</option>
                                         <option>Oracle</option>
                                         <option>PostgreSQL</option>
@@ -1631,7 +1896,8 @@
                                         <option>Couch DB</option>
                                         <option>RDS</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1643,7 +1909,7 @@
                             <div class="field-item db-hosting-field">
                                 <label>Database Hosting Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseHostingType">
                                         <option value="">Select</option>
                                         <option>EXCC</option>
                                         <option>EXCS</option>
@@ -1651,7 +1917,8 @@
                                         <option>AWS</option>
                                         <option>Azure</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1685,7 +1952,8 @@
                                 <input type="text" placeholder="IP">
                             </div>
                         </div>
-                    </div>                    <div class="custom-fields-in-grid" data-section="qa-section"></div>
+                    </div>
+                    <div class="custom-fields-in-grid" data-section="qa-section"></div>
                     <button type="button" class="btn-add" onclick="addRow('qa-section')">Add Row</button>
                     <button type="button" class="btn-delete" onclick="deleteRow('qa-section')">Delete Row</button>
                 </div>
@@ -1703,7 +1971,7 @@
                             <div class="field-item db-type-field">
                                 <label>Database Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseType">
                                         <option value="">Select</option>
                                         <option>Oracle</option>
                                         <option>PostgreSQL</option>
@@ -1712,7 +1980,8 @@
                                         <option>Couch DB</option>
                                         <option>RDS</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1724,7 +1993,7 @@
                             <div class="field-item db-hosting-field">
                                 <label>Database Hosting Type</label>
                                 <div class="field-input has-dropdown">
-                                    <select class="form-select">
+                                    <select class="form-select" data-field="databaseHostingType">
                                         <option value="">Select</option>
                                         <option>EXCC</option>
                                         <option>EXCS</option>
@@ -1732,7 +2001,8 @@
                                         <option>AWS</option>
                                         <option>Azure</option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
+                                    <button type="button" class="btn-add-option" title="Add new option"
+                                        onclick="window.DynamicDropdown.openInput(this)">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -1766,12 +2036,13 @@
                                 <input type="text" placeholder="IP">
                             </div>
                         </div>
-                    </div>                    <div class="custom-fields-in-grid" data-section="prod-section"></div>
+                    </div>
+                    <div class="custom-fields-in-grid" data-section="prod-section"></div>
                     <button type="button" class="btn-add" onclick="addRow('prod-section')">Add Row</button>
                     <button type="button" class="btn-delete" onclick="deleteRow('prod-section')">Delete Row</button>
                 </div>
 
-                <div class="save-container">
+                <div class="save-container mb-4">
                     <a th:href="@{/clouddetails}" class="btn-back text-decoration-none"
                         title="Go back to Cloud Details (Keyboard: Esc)">
                         <i class="fa-solid fa-arrow-left"></i>
@@ -1787,7 +2058,6 @@
         </div>
     </div>
 
-    <!-- Input Modal for Adding Dropdown Options -->
     <div class="input-modal-overlay" id="inputModal">
         <div class="input-modal-content">
             <div class="input-modal-header">
@@ -1797,16 +2067,18 @@
                 </button>
             </div>
             <div class="input-modal-body">
-                <input type="text" class="form-control" id="inputModalInput" placeholder="Enter new value..." autocomplete="off">
+                <input type="text" class="form-control" id="inputModalInput" placeholder="Enter new value..."
+                    autocomplete="off">
             </div>
             <div class="input-modal-footer">
-                <button class="btn-secondary" onclick="window.DynamicDropdown.cancelInput()">Cancel</button>                <button class="btn-primary" onclick="window.DynamicDropdown.confirmInput()">Add</button>
+                <button class="btn-secondary" onclick="window.DynamicDropdown.cancelInput()">Cancel</button> <button
+                    class="btn-primary" onclick="window.DynamicDropdown.confirmInput()">Add</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Add/Delete row functionality
+
         function addRow(sectionId) {
             createRow(sectionId);
         }
@@ -1816,21 +2088,18 @@
             const firstSelectField = container.querySelector('.field-item.select-field');
             const firstFieldsGrid = container.querySelector('.fields-grid');
 
-            // Clone the SELECT field
             const newSelectField = firstSelectField.cloneNode(true);
             newSelectField.querySelectorAll('input, select, textarea').forEach(el => {
                 if (el.type === 'checkbox') el.checked = false;
                 else el.value = '';
             });
 
-            // Clone the fields-grid
             const newFieldsGrid = firstFieldsGrid.cloneNode(true);
             newFieldsGrid.querySelectorAll('input, select, textarea').forEach(el => {
                 if (el.type === 'checkbox') el.checked = false;
                 else el.value = '';
             });
 
-            // Append both to container
             container.appendChild(newSelectField);
             container.appendChild(newFieldsGrid);
         }
@@ -1852,18 +2121,15 @@
                     nextFieldsGrid.remove();
                 }
             });
-        }    </script>    <!-- Validation Manager with Simple iPhone Popups v3.0 -->
-    <script src="/static/validation-manager-clean.js?v=3.0.0"></script>
-    <!-- Storage Manager V4 -->
-    <script src="/static/storage-manager-v4.js"></script>
-    
-    <!-- Dynamic Dropdown Manager -->
-    <script src="/static/dynamic-dropdown.js"></script>
+        }    </script>
+    <script src="/static/validation-manager-clean.js?v=4.0.0"></script>
 
-    <!-- Dynamic Fields Manager for Database Server Details -->
+    <script src="/static/storage-manager-v4.js?v=5.0.0"></script>
+
+    <script src="/static/dynamic-dropdown.js?v=5.0.1"></script>
+
     <script src="/static/dynamic-fields-db.js"></script>
 
-    <!-- Page-Specific Initialization -->
     <script>
         console.log('DB Server Details page loading - FINAL SAVE PAGE');
 
@@ -1879,18 +2145,13 @@
     </script>
 
     <script>
-        /**
-         * OLD Database Server Storage Manager - DEPRECATED (Kept for reference only)
-         */
+
         class DBServerStorageManager {
             constructor() {
                 this.STORAGE_KEY = 'dbServerDetailsForm';
                 this.SECTIONS = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
             }
 
-            /**
-             * Collect all database data from form
-             */
             collectFormData() {
                 const data = {};
 
@@ -1900,15 +2161,15 @@
                         data[sectionId] = [];
                         tbody.querySelectorAll('tr').forEach(row => {
                             const inputs = row.querySelectorAll('input, select, textarea');
-                            // Skip if no meaningful data in the row
-                            const dbName = inputs[4]?.value?.trim() || ''; // Database Name field
-                            if (!dbName) return; // Skip empty rows
+
+                            const dbName = inputs[4]?.value?.trim() || '';
+                            if (!dbName) return;
 
                             const rowData = {};
                             const environment = sectionId.split('-')[0].toUpperCase();
                             rowData['environment'] = environment;
                             rowData['dbName'] = dbName;
-                            rowData['serverName'] = inputs[5]?.value?.trim() || ''; // Account Name field
+                            rowData['serverName'] = inputs[5]?.value?.trim() || '';
                             rowData['hostName'] = inputs[6]?.value?.trim() || '';
                             rowData['portNumber'] = inputs[8]?.value?.trim() || '';
                             rowData['userName'] = inputs[5]?.value?.trim() || '';
@@ -1922,9 +2183,6 @@
                 return data;
             }
 
-            /**
-             * Save to browser storage
-             */
             saveToLocalStorage() {
                 try {
                     const data = this.collectFormData();
@@ -1944,9 +2202,6 @@
                 }
             }
 
-            /**
-             * Restore from browser storage
-             */
             restoreFromLocalStorage() {
                 try {
                     const raw = localStorage.getItem(this.STORAGE_KEY);
@@ -1964,7 +2219,7 @@
                         if (data[sectionId] && data[sectionId].length > 0) {
                             const tbody = document.querySelector(`#${sectionId} .row-container`);
                             if (tbody) {
-                                // Get template BEFORE clearing
+
                                 const templateRow = tbody.querySelector('tr');
                                 if (!templateRow) return;
 
@@ -1991,9 +2246,7 @@
                 } catch (e) {
                     console.error('Ã¢Å“â€” Error restoring from LocalStorage:', e);
                 }
-            }            /**
-             * Send data to backend using bulk endpoint with basicIdentityId
-             */
+            }
             async sendToBackend() {
                 const data = this.collectFormData();
                 const submitButton = document.querySelector('.btn-save-db');
@@ -2004,7 +2257,6 @@
                         submitButton.textContent = 'Saving...';
                     }
 
-                    // Get basicIdentityId from localStorage (saved from main file page)
                     const mainDetailsData = localStorage.getItem('app_mainDetails_form');
                     let basicIdentityId = null;
                     if (mainDetailsData) {
@@ -2012,7 +2264,6 @@
                         basicIdentityId = parsed.basicIdentityId;
                     }
 
-                    // Prepare bulk request data
                     const bulkRequestData = {
                         basicIdentityId: basicIdentityId,
                         gridData: data
@@ -2020,7 +2271,6 @@
 
                     console.log('Sending bulk data:', bulkRequestData);
 
-                    // Send all data to the bulk endpoint
                     const response = await fetch('/api/database-server-details/bulk', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -2032,7 +2282,6 @@
                     if (allSuccess) {
                         localStorage.setItem(this.STORAGE_KEY + '_lastSync', new Date().toISOString());
 
-                        // Get application name and show success popup
                         const appName = this.getApplicationName();
                         this.showSuccessPopup(appName);
 
@@ -2056,9 +2305,6 @@
                 }
             }
 
-            /**
-             * Show saving indicator
-             */
             showSavingIndicator() {
                 const indicator = document.getElementById('savingIndicator');
                 if (indicator) {
@@ -2070,9 +2316,6 @@
                 }
             }
 
-            /**
-             * Show notification (Toast)
-             */
             showNotification(message, type = 'info') {
                 const notificationDiv = document.createElement('div');
                 notificationDiv.className = `toast-notification ${type}`;
@@ -2085,9 +2328,6 @@
                 }, 5000);
             }
 
-            /**
-             * Get application name from localStorage (saved from mainfile.html)
-             */
             getApplicationName() {
                 try {
                     const mainDetailsData = localStorage.getItem('mainDetailsForm');
@@ -2103,11 +2343,8 @@
                 return 'Application';
             }
 
-            /**
-             * Show success popup with application name
-             */
             showSuccessPopup(applicationName) {
-                // Create overlay
+
                 const overlay = document.createElement('div');
                 overlay.className = 'modal-overlay';
                 overlay.style.cssText = `
@@ -2123,7 +2360,6 @@
                     z-index: 9999;
                 `;
 
-                // Create modal
                 const modal = document.createElement('div');
                 modal.className = 'success-modal';
                 modal.style.cssText = `
@@ -2138,7 +2374,6 @@
                     border: 1px solid rgba(0, 0, 0, 0.05);
                 `;
 
-                // Add application name
                 const appNameDiv = document.createElement('div');
                 appNameDiv.style.cssText = `
                     font-size: 17px;
@@ -2150,7 +2385,6 @@
                 `;
                 appNameDiv.textContent = applicationName;
 
-                // Add success message
                 const message = document.createElement('p');
                 message.style.cssText = `
                     color: #666;
@@ -2161,7 +2395,6 @@
                 `;
                 message.textContent = 'Added Successfully';
 
-                // Add button container
                 const buttonContainer = document.createElement('div');
                 buttonContainer.style.cssText = `
                     margin-top: 24px;
@@ -2171,7 +2404,6 @@
                     justify-content: center;
                 `;
 
-                // Add OK button
                 const okButton = document.createElement('button');
                 okButton.textContent = 'OK';
                 okButton.style.cssText = `
@@ -2203,12 +2435,11 @@
 
                 okButton.addEventListener('click', () => {
                     overlay.remove();
-                    // Reset forms and redirect to home immediately when OK is clicked
+
                     this.resetAllForms();
                     window.location.href = '/home';
                 });
 
-                // Assemble modal
                 modal.appendChild(appNameDiv);
                 modal.appendChild(message);
                 buttonContainer.appendChild(okButton);
@@ -2217,70 +2448,61 @@
                 overlay.appendChild(modal);
                 document.body.appendChild(overlay);
 
-                // Auto-close and redirect after 10 seconds if user doesn't click OK
                 setTimeout(() => {
                     if (overlay.parentElement) {
                         overlay.remove();
-                        // Auto-reset and redirect after 10 seconds
+
                         this.resetAllForms();
                         window.location.href = '/home';
                     }
                 }, 10000);
             }
 
-            /**
-             * Reset all form fields and localStorage for ALL forms
-             */
             resetAllForms() {
                 try {
-                    // Clear all form tables in DB Server Details
+
                     this.SECTIONS.forEach(sectionId => {
                         const tbody = document.querySelector(`#${sectionId} .row-container`);
                         if (tbody) {
-                            // Keep only the first empty row
+
                             const firstRow = tbody.querySelector('tr');
                             if (firstRow) {
-                                // Clear all inputs in first row
+
                                 firstRow.querySelectorAll('input, select, textarea').forEach(el => {
                                     if (el.type === 'checkbox') el.checked = false;
                                     else el.value = '';
                                 });
-                                // Remove all other rows
+
                                 while (tbody.rows.length > 1) {
                                     tbody.deleteRow(1);
                                 }
                             }
                         }
-                        // Clear row count from localStorage
+
                         localStorage.removeItem(sectionId + '-rowCount');
                     });
 
-                    // Clear ALL form storage keys across all pages
                     const allStorageKeys = [
-                        'mainDetailsForm',           // Main File form
-                        'mainDetailsLastSync',       // Main File sync
-                        'appServerDetailsForm',      // App Server Details form
-                        'appServerDetailsLastSync',  // App Server Details sync
-                        'cloudDetailsForm',          // Cloud Details form
-                        'cloudDetailsLastSync',      // Cloud Details sync
-                        'dbServerDetailsForm',       // DB Server Details form
-                        'dbServerDetailsLastSync'    // DB Server Details sync
+                        'mainDetailsForm',
+                        'mainDetailsLastSync',
+                        'appServerDetailsForm',
+                        'appServerDetailsLastSync',
+                        'cloudDetailsForm',
+                        'cloudDetailsLastSync',
+                        'dbServerDetailsForm',
+                        'dbServerDetailsLastSync'
                     ];
 
-                    // Also clear app-specific row counts for all sections
                     const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
 
-                    // Clear app server row counts
                     sections.forEach(section => {
                         localStorage.removeItem('app-' + section + '-rowCount');
                     });
 
-                    // Clear cloud details row counts
                     sections.forEach(section => {
                         localStorage.removeItem('cloud-' + section + '-rowCount');
                     });
 
-                    // Remove all storage keys
                     allStorageKeys.forEach(key => {
                         localStorage.removeItem(key);
                     });
@@ -2291,11 +2513,8 @@
                 }
             }
 
-            /**
-             * Initialize
-             */
             init() {
-                // Restore data immediately on init
+
                 this.restoreFromLocalStorage();
 
                 document.addEventListener('change', (e) => {
@@ -2329,10 +2548,23 @@
             }
         }
 
-        // OLD initialization removed - now using single init at top of file
+    </script>
+    <script>
+        window.toggleProfileMenu = function (event) {
+            event.preventDefault(); event.stopPropagation();
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            var open = d.classList.contains('open');
+            d.classList.toggle('open', !open); c.classList.toggle('open', !open);
+        };
+        document.addEventListener('click', function (e) {
+            var t = document.getElementById('profileTrigger');
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            if (d && !(t && t.contains(e.target))) { d.classList.remove('open'); if (c) c.classList.remove('open'); }
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
-

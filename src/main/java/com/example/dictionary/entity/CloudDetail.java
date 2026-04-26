@@ -26,6 +26,7 @@ public class CloudDetail {
     private String iamUser;
     @Column(length = 2000)
     private String comments;
+    private Boolean active = true;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -46,6 +47,9 @@ public class CloudDetail {
     public String getIamUser() { return iamUser; }
     public void setIamUser(String iamUser) { this.iamUser = iamUser; }    public String getComments() { return comments; }
     public void setComments(String comments) { this.comments = comments; }
+
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
     public BasicIdentity getBasicIdentity() { return basicIdentity; }
     public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }

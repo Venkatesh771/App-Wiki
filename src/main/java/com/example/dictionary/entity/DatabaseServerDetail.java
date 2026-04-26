@@ -23,6 +23,7 @@ public class DatabaseServerDetail {
     private String port;
     private String accountId;
     private String ip;
+    private Boolean active = true;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -47,6 +48,9 @@ public class DatabaseServerDetail {
     public String getAccountId() { return accountId; }
     public void setAccountId(String accountId) { this.accountId = accountId; }    public String getIp() { return ip; }
     public void setIp(String ip) { this.ip = ip; }
+
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
     public BasicIdentity getBasicIdentity() { return basicIdentity; }
     public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }

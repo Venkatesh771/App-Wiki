@@ -1,21 +1,4 @@
-<!-- Shared Storage Manager Utility Script -->
-<!-- Include this script in all form templates for consistent browser storage -->
-
-<script>
-    /**
-     * Universal Form Storage Manager
-     * Handles LocalStorage persistence and backend sync for any form
-     * 
-     * Usage:
-     * const manager = new UniversalFormStorageManager('storageKeyName', {
-     *     section1: { field1: '[data-field="field1"]', field2: '[data-field="field2"]' },
-     *     section2: { field3: '[data-field="field3"]' }
-     * }, {
-     *     section1: '/api/section1',
-     *     section2: '/api/section2'
-     * });
-     * manager.init();
-     */
+﻿<script>
 
     class UniversalFormStorageManager {
         constructor(storageKey, fieldSelectors, apiEndpoints) {
@@ -23,16 +6,13 @@
             this.LAST_SYNC_KEY = storageKey + '_lastSync';
             this.fieldSelectors = fieldSelectors;
             this.apiEndpoints = apiEndpoints;
-            this.AUTO_SAVE_INTERVAL = 10000; // 10 seconds
+            this.AUTO_SAVE_INTERVAL = 10000;
         }
 
-        /**
-         * Get field value from DOM
-         */
         getFieldValue(selector) {
             const element = document.querySelector(selector);
             if (!element) return '';
-            
+
             if (element.type === 'checkbox') {
                 return element.checked ? 'yes' : 'no';
             } else if (element.type === 'radio') {
@@ -41,9 +21,6 @@
             return element.value || '';
         }
 
-        /**
-         * Set field value in DOM
-         */
         setFieldValue(selector, value) {
             const element = document.querySelector(selector);
             if (!element) return;
@@ -60,9 +37,6 @@
             }
         }
 
-        /**
-         * Collect all form data from DOM
-         */
         collectFormData() {
             const data = {};
 
@@ -76,9 +50,6 @@
             return data;
         }
 
-        /**
-         * Save form data to LocalStorage with timestamp
-         */
         saveToLocalStorage() {
             try {
                 const data = this.collectFormData();
@@ -98,9 +69,6 @@
             }
         }
 
-        /**
-         * Restore form data from LocalStorage
-         */
         restoreFromLocalStorage() {
             try {
                 const raw = localStorage.getItem(this.STORAGE_KEY);
@@ -114,7 +82,6 @@
 
                 if (!data) return;
 
-                // Restore all sections
                 for (const [section, fields] of Object.entries(this.fieldSelectors)) {
                     if (data[section]) {
                         for (const [fieldName, selector] of Object.entries(fields)) {
@@ -130,9 +97,6 @@
             }
         }
 
-        /**
-         * Send form data to backend
-         */
         async sendToBackend(submitButtonSelector = '.btn-save') {
             const data = this.collectFormData();
             const submitButton = document.querySelector(submitButtonSelector);
@@ -145,7 +109,6 @@
 
                 const requests = [];
 
-                // Send data to each API endpoint
                 for (const [section, sectionData] of Object.entries(data)) {
                     if (this.apiEndpoints[section]) {
                         const endpoint = this.apiEndpoints[section];
@@ -163,7 +126,7 @@
                 const allSuccess = responses.every(r => r.ok);
 
                 if (allSuccess) {
-                    // Update last sync time
+
                     localStorage.setItem(this.LAST_SYNC_KEY, new Date().toISOString());
 
                     this.showNotification('Data saved successfully to database!', 'success');
@@ -187,9 +150,6 @@
             }
         }
 
-        /**
-         * Show notification to user
-         */
         showNotification(message, type = 'info') {
             const alertClass = {
                 'success': 'alert-success',
@@ -208,15 +168,11 @@
 
             document.body.appendChild(alertDiv);
 
-            // Auto-dismiss after 4 seconds
             setTimeout(() => {
                 alertDiv.remove();
             }, 4000);
         }
 
-        /**
-         * Get stored data from LocalStorage
-         */
         getStoredData() {
             const raw = localStorage.getItem(this.STORAGE_KEY);
             if (!raw) return null;
@@ -228,9 +184,6 @@
             }
         }
 
-        /**
-         * Clear stored data from LocalStorage
-         */
         clearStorage() {
             try {
                 localStorage.removeItem(this.STORAGE_KEY);
@@ -244,38 +197,29 @@
             }
         }
 
-        /**
-         * Get last sync timestamp
-         */
         getLastSyncTime() {
             const timestamp = localStorage.getItem(this.LAST_SYNC_KEY);
             return timestamp ? new Date(timestamp) : null;
         }
 
-        /**
-         * Initialize the manager
-         */
         init() {
-            // Restore data on page load
+
             document.addEventListener('DOMContentLoaded', () => {
                 this.restoreFromLocalStorage();
             });
 
-            // Auto-save on field changes
             document.addEventListener('input', (e) => {
                 if (e.target.closest('form')) {
                     this.saveToLocalStorage();
                 }
             });
 
-            // Also listen for change events (for select/checkbox/radio)
             document.addEventListener('change', (e) => {
                 if (e.target.closest('form')) {
                     this.saveToLocalStorage();
                 }
             });
 
-            // Save before leaving page
             window.addEventListener('beforeunload', () => {
                 this.saveToLocalStorage();
             });
@@ -283,9 +227,6 @@
             console.log(`✓ Universal Form Storage Manager initialized for ${this.STORAGE_KEY}`);
         }
 
-        /**
-         * Export data as JSON (for debugging/backup)
-         */
         exportData() {
             const data = this.getStoredData();
             if (!data) {
@@ -297,9 +238,6 @@
             return json;
         }
 
-        /**
-         * Import data from JSON (for restore/migration)
-         */
         importData(jsonData) {
             try {
                 const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;

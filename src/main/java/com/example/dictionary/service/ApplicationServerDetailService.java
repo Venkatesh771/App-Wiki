@@ -4,6 +4,8 @@ import com.example.dictionary.entity.ApplicationServerDetail;
 import com.example.dictionary.entity.BasicIdentity;
 import com.example.dictionary.repository.ApplicationServerDetailRepository;
 import com.example.dictionary.repository.BasicIdentityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ import java.util.ArrayList;
 
 @Service
 public class ApplicationServerDetailService {
+
+    private static final Logger log = LoggerFactory.getLogger(ApplicationServerDetailService.class);
+
     @Autowired
     private ApplicationServerDetailRepository repository;
 
@@ -37,8 +42,25 @@ public class ApplicationServerDetailService {
         return repository.save(entity);
     }
 
+    public ApplicationServerDetail save(ApplicationServerDetail entity, Long basicIdentityId) {
+        if (basicIdentityId != null) {
+            basicIdentityRepository.findById(basicIdentityId)
+                    .ifPresent(entity::setBasicIdentity);
+        }
+        return repository.save(entity);
+    }
+
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public boolean deactivate(Long id) {
+        return repository.findById(id).map(e -> {
+            e.setActive(false);
+            repository.save(e);
+            return true;
+        }).orElse(false);
     }    public List<ApplicationServerDetail> processBulkGridData(Map<String, Object> gridData) {
         return processBulkGridData(gridData, null, null);
     }
@@ -63,14 +85,14 @@ public class ApplicationServerDetailService {
             basicIdentity = basicIdentityRepository.findByBeatId(beatId).orElse(null);
             if (basicIdentity != null) {
                 basicIdentityId = basicIdentity.getId();
-                System.out.println("✅ Found BasicIdentity by beatId: " + beatId + " -> ID: " + basicIdentityId);
+                log.info("Found BasicIdentity by beatId: {} -> ID: {}", beatId, basicIdentityId);
             }
         }
-        
-        System.out.println("=== APP SERVER: Received GridData ===");
-        System.out.println("GridData: " + gridData);
-        System.out.println("BasicIdentityId: " + basicIdentityId);
-        System.out.println("BeatId: " + beatId);
+
+        log.info("=== APP SERVER: Received GridData ===");
+        log.debug("GridData: {}", gridData);
+        log.debug("BasicIdentityId: {}", basicIdentityId);
+        log.debug("BeatId: {}", beatId);
         
         try {
             // Process each section (dev-section, test-section, qa-section, prod-section)
@@ -78,7 +100,7 @@ public class ApplicationServerDetailService {
                 String sectionId = entry.getKey();
                 Object sectionData = entry.getValue();
                 
-                System.out.println("Processing section: " + sectionId + " with data: " + sectionData);
+                log.debug("Processing section: {} with data: {}", sectionId, sectionData);
                 
                 // Determine environment from section ID
                 String environment = null;
@@ -94,7 +116,7 @@ public class ApplicationServerDetailService {
                   // If sectionData is a list of rows
                 if (sectionData instanceof List) {
                     List<?> rows = (List<?>) sectionData;
-                    System.out.println("Found " + rows.size() + " rows in " + sectionId);
+                    log.debug("Found {} rows in {}", rows.size(), sectionId);
                     for (Object rowObj : rows) {
                         if (rowObj instanceof Map) {
                             Map<?, ?> rowData = (Map<?, ?>) rowObj;
@@ -112,12 +134,12 @@ public class ApplicationServerDetailService {
                             detail.setServiceName(getNamedValue(rowData, "serviceName"));
                             detail.setIpAddress(getNamedValue(rowData, "ipAddress"));
                             
-                            System.out.println("Detail: env=" + detail.getEnvironment() + ", serverName=" + detail.getServerName());
+                            log.debug("Detail: env={}, serverName={}", detail.getEnvironment(), detail.getServerName());
                             
                             // Only save if at least one field has data
                             if (hasData(detail)) {
                                 ApplicationServerDetail saved = repository.save(detail);
-                                System.out.println("Saved: " + saved.getId());
+                                log.debug("Saved ApplicationServerDetail ID: {}", saved.getId());
                                 savedRecords.add(saved);
                             }
                         }
@@ -125,27 +147,13 @@ public class ApplicationServerDetailService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("ERROR in ApplicationServerDetailService.processBulkGridData: " + e.getMessage());
-            e.printStackTrace();
+            log.error("ERROR in ApplicationServerDetailService.processBulkGridData: {}", e.getMessage(), e);
         }
-        
-        System.out.println("=== APP SERVER: Total saved records: " + savedRecords.size() + " ===");
+
+        log.info("=== APP SERVER: Total saved records: {} ===", savedRecords.size());
         return savedRecords;
     }    private String getNamedValue(Map<?, ?> rowData, String fieldName) {
         Object value = rowData.get(fieldName);
-        if (value != null) {
-            String strValue = value.toString().trim();
-            // Filter out placeholder/empty values
-            if (strValue.isEmpty() || strValue.equals("Select") || strValue.equals("--") || strValue.equals("N/A")) {
-                return null;
-            }
-            return strValue;
-        }
-        return null;
-    }
-
-    private String getValueAtIndex(Map<?, ?> rowData, int index) {
-        Object value = rowData.get("col_" + index);
         if (value != null) {
             String strValue = value.toString().trim();
             // Filter out placeholder/empty values

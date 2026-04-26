@@ -20,6 +20,7 @@ public class ApplicationServerDetail {
     private String cluster;
     private String serviceName;
     private String ipAddress;
+    private Boolean active = true;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -38,6 +39,9 @@ public class ApplicationServerDetail {
     public String getServiceName() { return serviceName; }
     public void setServiceName(String serviceName) { this.serviceName = serviceName; }    public String getIpAddress() { return ipAddress; }
     public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
     public BasicIdentity getBasicIdentity() { return basicIdentity; }
     public void setBasicIdentity(BasicIdentity basicIdentity) { this.basicIdentity = basicIdentity; }

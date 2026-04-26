@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -12,11 +12,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&display=swap');
 
         body {
-            background: #f0f2f5;
+            background: #f2f2f7;
             font-family: "Open Sans", sans-serif;
             min-height: 100vh;
-            padding-bottom: 50px;
-        }        .navbar {
+            padding-bottom: 24px;
+        }
+
+        .navbar {
             background: #000 !important;
             padding-top: 0.25rem;
             padding-bottom: 0.25rem;
@@ -25,11 +27,14 @@
             position: sticky;
             top: 0;
             z-index: 1030;
-        }.navbar-brand {
+        }
+
+        .navbar-brand {
             font-family: "Quicksand", sans-serif;
             font-weight: 400;
             font-size: 1.1rem;
             margin-left: 1.5rem;
+            line-height: 1.1;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -80,6 +85,165 @@
             line-height: 1.2;
         }
 
+        .navbar-brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(173, 216, 230, 0.22);
+            border: 1px solid rgba(173, 216, 230, 0.38);
+            padding: 0.28rem 0.85rem;
+            border-radius: 50px;
+        }
+
+        .user-icon-round {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0;
+            margin-right: 3px;
+            font-family: "Quicksand", sans-serif;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .user-menu-trigger {
+            display: flex !important;
+            align-items: center;
+            gap: 0.4rem;
+            color: #fff !important;
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.22rem 0.7rem 0.22rem 0.3rem !important;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.18) !important;
+            transition: background 0.15s ease;
+        }
+
+        .user-menu-trigger:hover {
+            background: rgba(255, 255, 255, 0.26) !important;
+        }
+
+        .user-menu-caret {
+            font-size: 0.62rem;
+            opacity: 0.75;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            margin-left: 1px;
+        }
+
+        .user-menu-caret.open {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+            min-width: 230px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.88) translateY(-8px);
+            transform-origin: top right;
+            transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1050;
+        }
+
+        .profile-dropdown.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem 0.85rem;
+        }
+
+        .profile-avatar-lg {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #008080;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: "Quicksand", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .profile-info-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 145px;
+        }
+
+        .profile-info-role {
+            display: inline-block;
+            background: #e6f7f7;
+            color: #008080;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.15rem 0.6rem;
+            border-radius: 50px;
+            margin-top: 0.22rem;
+            letter-spacing: 0.2px;
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: #f0f0f0;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.1rem;
+            color: #333;
+            text-decoration: none !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .profile-dropdown-item:hover {
+            background: #f7f7f7;
+            color: #008080;
+        }
+
+        .profile-dropdown-item.logout-item {
+            color: #e74c3c;
+        }
+
+        .profile-dropdown-item.logout-item:hover {
+            background: #fff5f5;
+            color: #c0392b;
+        }
+
         .navbar-nav .nav-link {
             font-size: 0.85rem;
             padding-left: 0.75rem;
@@ -90,47 +254,79 @@
             column-gap: 0.75rem;
         }
 
-        /* Page-specific layout */        .sidebar-left {
+        .sidebar-left {
             display: none;
         }
 
         .main-content {
             margin-left: 0;
-            padding: 30px;
-            padding-bottom: 100px;
+            padding: 0 30px 24px;
         }
 
         .form-container {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            margin: 20px auto;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            margin: 0 auto;
             width: 100%;
         }
 
         .section-box {
-            background: #fafafa;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
+            background: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 28px 28px 24px;
             margin-bottom: 40px;
             position: relative;
+            padding-top: 52px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-box:last-of-type {
+            margin-bottom: 0;
         }
 
         .section-label {
             background: #fff;
-            border: 1px solid #ddd;
-            padding: 3px 18px;
+            border: 1.5px solid #d1d1d6;
+            padding: 5px 16px;
             border-radius: 50px;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             position: absolute;
-            top: -15px;
-            left: 20px;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
             font-weight: 600;
-            color: #333;
-            font-size: 0.85rem;
-            text-transform: uppercase;
+            color: #008080;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-add-section-row {
+            background: #355E3B;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.58rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+
+        .btn-add-section-row:hover {
+            background: #27472c;
         }
 
         .row-check {
@@ -158,7 +354,6 @@
             align-items: stretch;
         }
 
-        /* SELECT field - stays in first row by itself */
         .field-item.select-field {
             flex-direction: row;
             align-items: center;
@@ -175,7 +370,6 @@
             font-size: 14px !important;
         }
 
-        /* New container for all fields except select */
         .fields-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -212,11 +406,9 @@
         }
 
         .field-item label {
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+            font-weight: 500;
+            font-size: 0.83rem;
+            color: #666;
             margin: 0;
         }
 
@@ -235,16 +427,18 @@
         .field-item input:not([type="checkbox"]),
         .field-item select,
         .field-item textarea {
-            border-radius: 6px;
+            border-radius: 10px;
             border: 1px solid #d1d5db;
-            padding: 8px 12px;
+            padding: 7px 12px;
             width: 100%;
             min-height: 36px;
             height: 36px;
             box-sizing: border-box;
             box-shadow: none !important;
             background-color: #e9ecef;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
+            font-family: "Open Sans", sans-serif;
+            color: #333;
             line-height: 1.4;
         }
 
@@ -257,10 +451,10 @@
         .field-item input:focus,
         .field-item select:focus,
         .field-item textarea:focus {
-            border-color: #b0b0b0 !important;
-            outline: none !important;
-            box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25) !important;
             background-color: #fff;
+            border-color: #b0b0b0 !important;
+            box-shadow: 0 0 0 2px rgba(176, 176, 176, 0.25) !important;
+            outline: none !important;
         }
 
         .row-select-checkbox {
@@ -306,51 +500,63 @@
         }
 
         .btn-save-final {
-            background: #1b98e0;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            background: #008080;
+            color: #fff;
+            padding: 0.55rem 1.4rem 0.55rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
             font-weight: 600;
-            border: 1px solid #1b98e0;
-            text-transform: uppercase;
+            border: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
+            gap: 7px;
+            letter-spacing: 0.2px;
             cursor: pointer;
-        }        .btn-save-final:hover {
-            background: #1585c5;
-            border-color: #1585c5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.18s ease, transform 0.14s ease, box-shadow 0.18s ease;
+        }
+
+        .btn-save-final:hover {
+            background: #006666;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
         }
 
         .btn-save-app-server {
-            background: #1b98e0;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            background: #008080;
+            color: #fff;
+            padding: 0.55rem 1.4rem 0.55rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
             font-weight: 600;
-            border: 1px solid #1b98e0;
-            text-transform: uppercase;
+            border: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
+            gap: 7px;
+            letter-spacing: 0.2px;
             cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.18s ease, transform 0.14s ease, box-shadow 0.18s ease;
         }
 
         .btn-save-app-server:hover {
-            background: #1585c5;
-            border-color: #1585c5;
-            color: white;
+            background: #006666;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-save-app-server:active {
+            transform: scale(0.96);
+            background: #005555;
         }
 
         .save-container {
             text-align: right;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #e8eaef;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f2f2f7;
             display: flex;
             justify-content: flex-end;
             gap: 15px;
@@ -366,30 +572,33 @@
         }
 
         .btn-back {
-            background: #6c757d;
-            color: white;
-            border: 1px solid #6c757d;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            background: #e5e5ea;
+            color: #444;
+            border: none;
+            padding: 0.55rem 1.4rem 0.55rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
             font-weight: 600;
-            text-transform: uppercase;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
+            gap: 7px;
+            letter-spacing: 0.2px;
             cursor: pointer;
             text-decoration: none !important;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.18s ease, transform 0.14s ease;
         }
 
         .btn-back:hover {
-            background: #5a6268;
-            border-color: #5a6268;
-            color: white;
+            background: #d1d1d6;
+            color: #333;
             text-decoration: none;
         }
 
-        /* Responsive button styling */
+        .btn-back:active {
+            transform: scale(0.96);
+        }
+
         @media (max-width: 1200px) {
             .fields-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -407,6 +616,7 @@
 
             .section-box {
                 padding: 20px 15px;
+                padding-top: 32px;
             }
 
             .field-item input,
@@ -466,6 +676,7 @@
 
             .section-box {
                 padding: 15px 12px;
+                padding-top: 28px;
             }
 
             .save-container {
@@ -490,14 +701,11 @@
             }
         }
 
-        /* Focus states for accessibility */
         .btn-save-final:focus,
         .btn-back:focus {
-            outline: 2px solid #1b98e0;
-            outline-offset: 2px;
+            outline: none;
         }
 
-        /* Loading state for save button */
         .btn-save-final.loading {
             opacity: 0.8;
             pointer-events: none;
@@ -517,19 +725,18 @@
             }
         }
 
-        /* Success state for save button */
         .btn-save-final.success {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border-color: #28a745;
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
 
-        /* Error state for save button */
         .btn-save-final.error {
             background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
             border-color: #dc3545;
             box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-        }        /* Toast Notifications */
+        }
+
         .toast-notification {
             position: fixed;
             top: 80px;
@@ -592,14 +799,13 @@
             border: 1px solid #bee5eb;
         }
 
-        /* Add Option Button Styles */
         .btn-add-option {
-            background: #d1d5db;
-            color: #333;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 0.85rem;
+            background: #e5e5ea;
+            color: #555;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 11px;
+            font-size: 0.82rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -620,7 +826,6 @@
             transform: scale(0.95);
         }
 
-        /* Dropdown with Add Option Button */
         .field-input.has-dropdown {
             display: flex;
             gap: 8px;
@@ -629,11 +834,12 @@
 
         .field-input.has-dropdown .form-select {
             flex: 1;
-        }        .field-input .form-control {
+        }
+
+        .field-input .form-control {
             flex: 1;
         }
 
-        /* Input Modal Styles */
         .input-modal-overlay {
             display: none;
             position: fixed;
@@ -739,7 +945,9 @@
 
         .input-modal-footer .btn-primary:hover {
             background: #1585c5;
-        }        .input-modal-footer .btn-secondary {
+        }
+
+        .input-modal-footer .btn-secondary {
             background: #f0f0f0;
             color: #333;
         }
@@ -748,7 +956,6 @@
             background: #e0e0e0;
         }
 
-        /* Data Saving Indicator Styles */
         .data-saving-indicator {
             position: fixed;
             top: 20px;
@@ -785,6 +992,7 @@
             from {
                 transform: rotate(0deg);
             }
+
             to {
                 transform: rotate(360deg);
             }
@@ -795,15 +1003,56 @@
                 transform: translateX(400px);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
             }
         }
+
+        .top-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem 1.5rem 2.2rem;
+        }
+
+        .tab-pills-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-pill {
+            border: none;
+            background: #e5e5ea;
+            color: #555;
+            border-radius: 50px;
+            padding: 0.4rem 1.1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .tab-pill:hover {
+            background: #d1d1d6;
+            color: #333;
+        }
+
+        .tab-pill.active {
+            background: #008080;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+        }
     </style>
 </head>
 
-<body>    <!-- Input Modal for Adding Dropdown Options -->
+<body>
     <div class="input-modal-overlay" id="inputModal">
         <div class="input-modal-content">
             <div class="input-modal-header">
@@ -821,57 +1070,77 @@
                 <button class="btn-primary" onclick="window.DynamicDropdown.confirmInput()">Add</button>
             </div>
         </div>
-    </div>    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">            <a class="navbar-brand" href="/home">
-                <span class="navbar-brand-company">BAYER</span>
-                <span class="navbar-separator">|</span>
-                <span class="navbar-app-name">App Wiki</span>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">
+                <span class="navbar-brand-pill">
+                    <span class="navbar-brand-company">BAYER</span>
+                    <span class="navbar-separator">|</span>
+                    <span class="navbar-app-name">App Wiki</span>
+                </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                 aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button>            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
+            </button>
+            <div class="collapse navbar-collapse pe-4" id="mainNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/mainfile}">Main Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/applicationserverdetails}">App Server Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/clouddetails}">Cloud Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/databaseserverdetails}">DB Server Details</a>
-                    </li>
-                    <!-- User Profile Dropdown -->
-                    <li class="nav-item dropdown" style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false" style="color: #fff; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
-                            <span style="width: 28px; height: 28px; border-radius: 50%; background: #008080; display: flex; align-items: center; justify-content: center; margin-right: 3px;">
-                                <i class="fa-solid fa-user" style="color: #fff; font-size: 0.85rem;"></i>
-                            </span>
-                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample User</span>
+
+                    <li class="nav-item user-menu" style="position:relative;">
+                        <a class="nav-link user-menu-trigger" href="#" id="profileTrigger"
+                            onclick="toggleProfileMenu(event)">
+                            <span class="user-icon-round" th:text="${session.user != null ?
+                                    #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                    (#strings.contains(session.user.username,' ') ?
+                                      #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                      : '')
+                                    : '?'}">AB</span>
+                            <span th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                User</span>
+                            <i class="fa-solid fa-chevron-down user-menu-caret" id="profileCaret"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li th:if="${session.user != null}">
-                                <span class="dropdown-item-text" style="font-size: 0.8rem; color: #999;">
-                                    <i class="fa-solid fa-badge"></i> <span th:text="${session.user.role}"></span>
-                                </span>
-                            </li>
-                            <li th:if="${session.user != null}"><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">
-                                <i class="fa-solid fa-sign-out-alt"></i> Logout
-                            </a></li>
-                        </ul>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-dropdown-header">
+                                <div class="profile-avatar-lg" th:text="${session.user != null ?
+                                        #strings.toUpperCase(#strings.substring(session.user.username,0,1)) +
+                                        (#strings.contains(session.user.username,' ') ?
+                                          #strings.toUpperCase(#strings.substring(session.user.username,#strings.indexOf(session.user.username,' ')+1,#strings.indexOf(session.user.username,' ')+2))
+                                          : '')
+                                        : '?'}">AB</div>
+                                <div>
+                                    <div class="profile-info-name"
+                                        th:text="${session.user != null ? session.user.username : 'Sample User'}">Sample
+                                        User</div>
+                                    <div class="profile-info-role"
+                                        th:text="${session.user != null ? session.user.role : ''}">Role</div>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown-divider"></div>
+                            <a href="/logout" class="profile-dropdown-item logout-item">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>
         </div>
-    </nav>    <div class="main-content">
+    </nav>
+
+    <div class="top-header">
+        <div class="tab-pills-container">
+            <a class="tab-pill" th:href="@{/mainfile}">Main Details</a>
+            <a class="tab-pill active" th:href="@{/applicationserverdetails}">Server Details</a>
+            <a class="tab-pill" th:href="@{/clouddetails}">Cloud Details</a>
+            <a class="tab-pill" th:href="@{/databaseserverdetails}">DB Server Details</a>
+        </div>
+    </div>
+
+    <div class="main-content">
         <div class="form-container">
             <div class="section-box" id="dev-section">
-                <div class="section-label">Dev Ci</div>
+                <div class="section-label">Dev</div>
                 <div class="row-container-grid" data-section="dev-section">
                     <div class="field-item select-field">
                         <label>Select</label>
@@ -883,7 +1152,7 @@
                         <div class="field-item deployed-server-field">
                             <label>Deployed Server</label>
                             <div class="field-input has-dropdown">
-                                <select class="deployed-server form-select">
+                                <select class="deployed-server form-select" data-field="deployedServer">
                                     <option value="">Select</option>
                                     <option>Tomcat</option>
                                     <option>Weblogic</option>
@@ -919,12 +1188,12 @@
                             <input type="text" placeholder="IP Address">
                         </div>
                     </div>
-                </div>                <button type="button" class="btn-add" onclick="addRow('dev-section')">Add Row</button>
+                </div> <button type="button" class="btn-add" onclick="addRow('dev-section')">Add Row</button>
                 <button type="button" class="btn-delete" onclick="deleteRow('dev-section')">Delete Row</button>
             </div>
 
             <div class="section-box" id="test-section">
-                <div class="section-label">Test Ci</div>
+                <div class="section-label">Test</div>
                 <div class="row-container-grid" data-section="test-section">
                     <div class="field-item select-field">
                         <label>Select</label>
@@ -936,7 +1205,7 @@
                         <div class="field-item deployed-server-field">
                             <label>Deployed Server</label>
                             <div class="field-input has-dropdown">
-                                <select class="deployed-server form-select">
+                                <select class="deployed-server form-select" data-field="deployedServer">
                                     <option value="">Select</option>
                                     <option>Tomcat</option>
                                     <option>Weblogic</option>
@@ -972,12 +1241,12 @@
                             <input type="text" placeholder="IP Address">
                         </div>
                     </div>
-                </div>                <button type="button" class="btn-add" onclick="addRow('test-section')">Add Row</button>
+                </div> <button type="button" class="btn-add" onclick="addRow('test-section')">Add Row</button>
                 <button type="button" class="btn-delete" onclick="deleteRow('test-section')">Delete Row</button>
             </div>
 
             <div class="section-box" id="qa-section">
-                <div class="section-label">Qa Ci</div>
+                <div class="section-label">QA</div>
                 <div class="row-container-grid" data-section="qa-section">
                     <div class="field-item select-field">
                         <label>Select</label>
@@ -989,7 +1258,7 @@
                         <div class="field-item deployed-server-field">
                             <label>Deployed Server</label>
                             <div class="field-input has-dropdown">
-                                <select class="deployed-server form-select">
+                                <select class="deployed-server form-select" data-field="deployedServer">
                                     <option value="">Select</option>
                                     <option>Tomcat</option>
                                     <option>Weblogic</option>
@@ -1025,12 +1294,12 @@
                             <input type="text" placeholder="IP Address">
                         </div>
                     </div>
-                </div>                <button type="button" class="btn-add" onclick="addRow('qa-section')">Add Row</button>
+                </div> <button type="button" class="btn-add" onclick="addRow('qa-section')">Add Row</button>
                 <button type="button" class="btn-delete" onclick="deleteRow('qa-section')">Delete Row</button>
             </div>
 
             <div class="section-box" id="prod-section">
-                <div class="section-label">Prod Ci</div>
+                <div class="section-label">Prod</div>
                 <div class="row-container-grid" data-section="prod-section">
                     <div class="field-item select-field">
                         <label>Select</label>
@@ -1042,7 +1311,7 @@
                         <div class="field-item deployed-server-field">
                             <label>Deployed Server</label>
                             <div class="field-input has-dropdown">
-                                <select class="deployed-server form-select">
+                                <select class="deployed-server form-select" data-field="deployedServer">
                                     <option value="">Select</option>
                                     <option>Tomcat</option>
                                     <option>Weblogic</option>
@@ -1078,9 +1347,10 @@
                             <input type="text" placeholder="IP Address">
                         </div>
                     </div>
-                </div>                <button type="button" class="btn-add" onclick="addRow('prod-section')">Add Row</button>
+                </div> <button type="button" class="btn-add" onclick="addRow('prod-section')">Add Row</button>
                 <button type="button" class="btn-delete" onclick="deleteRow('prod-section')">Delete Row</button>
-            </div>            <div class="save-container">
+            </div>
+            <div class="save-container">
                 <a th:href="@{/mainfile}" class="btn-back" title="Go back to Main Details (Keyboard: Esc)">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span>Back</span>
@@ -1091,15 +1361,16 @@
                     <span>Save & Continue</span>
                 </button>
             </div>
-        </div>    </div>    <!-- Validation Manager with Simple iPhone Popups v3.0 -->
-    <script src="/static/validation-manager-clean.js?v=3.0.0"></script>
-    <!-- Storage Manager V4 -->
-    <script src="/static/storage-manager-v4.js"></script>
-    <!-- Dynamic Dropdown Manager -->
-    <script src="/static/dynamic-dropdown.js"></script>
+        </div>
+    </div>
+    <script src="/static/validation-manager-clean.js?v=4.0.0"></script>
+
+    <script src="/static/storage-manager-v4.js?v=5.0.0"></script>
+
+    <script src="/static/dynamic-dropdown.js?v=5.0.1"></script>
 
     <script>
-        // Add/Delete row functionality for grid layout
+
         function addRow(id) {
             createRow(id);
         }
@@ -1108,19 +1379,15 @@
             let container = document.querySelector(`#${id} .row-container-grid`);
             if (!container) return;
 
-            // Get the first complete row structure (select-field + fields-grid)
             let selectField = container.querySelector('.field-item.select-field');
             let fieldsGrid = container.querySelector('.fields-grid');
 
             if (!selectField || !fieldsGrid) return;
 
-            // Clone the SELECT field
             let newSelectField = selectField.cloneNode(true);
 
-            // Clone the fields grid with all its children
             let newFieldsGrid = fieldsGrid.cloneNode(true);
 
-            // Clear all input values in new select field
             const selectInputs = newSelectField.querySelectorAll('input, select, textarea');
             selectInputs.forEach(input => {
                 if (input.type === 'checkbox') {
@@ -1130,7 +1397,6 @@
                 }
             });
 
-            // Clear all input values in new fields grid
             const gridInputs = newFieldsGrid.querySelectorAll('input, select, textarea');
             gridInputs.forEach(input => {
                 if (input.type === 'checkbox') {
@@ -1140,7 +1406,6 @@
                 }
             });
 
-            // Add both new elements to container
             container.appendChild(newSelectField);
             container.appendChild(newFieldsGrid);
         }
@@ -1149,7 +1414,6 @@
             let container = document.querySelector(`#${id} .row-container-grid`);
             if (!container) return;
 
-            // Find checked items (every 8th items form a row)
             let allItems = Array.from(container.querySelectorAll('.field-item'));
             let rowCount = allItems.length / 8;
             let checkedRows = [];
@@ -1161,7 +1425,6 @@
                 }
             }
 
-            // Delete from last to first to avoid index issues
             for (let i = checkedRows.length - 1; i >= 0; i--) {
                 let rowIndex = checkedRows[i];
                 for (let j = 0; j < 8; j++) {
@@ -1172,7 +1435,6 @@
                 }
             }
 
-            // Re-index server names
             let currentRows = Math.ceil(container.querySelectorAll('.field-item').length / 8);
             allItems = Array.from(container.querySelectorAll('.field-item'));
             for (let i = 0; i < currentRows; i++) {
@@ -1183,18 +1445,12 @@
             }
         }
 
-        /**
-         * Application Server Storage & Backend Integration
-         */
         class AppServerStorageManager {
             constructor() {
                 this.STORAGE_KEY = 'appServerDetailsForm';
                 this.SECTIONS = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
             }
 
-            /**
-             * Collect all server data from form
-             */
             collectFormData() {
                 const data = {};
 
@@ -1206,11 +1462,11 @@
                         const rowCount = Math.floor(items.length / 8);
 
                         for (let i = 0; i < rowCount; i++) {
-                            // New field order: checkbox(0), deployed-server(1), server-name(2), os-version(3), domain(4), cluster(5), service-name(6), ip-address(7)
+
                             const serverNameInput = items[i * 8 + 2].querySelector('input');
                             const serverName = serverNameInput?.value?.trim() || '';
 
-                            if (!serverName) continue; // Skip empty rows
+                            if (!serverName) continue;
 
                             const rowData = {};
                             const environment = sectionId.split('-')[0].toUpperCase();
@@ -1231,16 +1487,14 @@
                 return data;
             }
 
-            /**
-             * Save to browser storage
-             */
             saveToLocalStorage() {
                 try {
                     const data = this.collectFormData();
                     const storageData = {
                         data,
                         savedAt: new Date().toISOString(),
-                        version: 1                };                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(storageData));
+                        version: 1
+                    }; localStorage.setItem(this.STORAGE_KEY, JSON.stringify(storageData));
                     console.log('App Server details saved to LocalStorage');
                     return true;
                 } catch (e) {
@@ -1250,9 +1504,6 @@
                 }
             }
 
-            /**
-             * Restore from browser storage
-             */
             restoreFromLocalStorage() {
                 try {
                     const raw = localStorage.getItem(this.STORAGE_KEY);
@@ -1270,18 +1521,16 @@
                         if (data[sectionId] && data[sectionId].length > 0) {
                             const container = document.querySelector(`#${sectionId} .row-container-grid`);
                             if (container) {
-                                // Clear existing rows except template
+
                                 const items = Array.from(container.querySelectorAll('.field-item'));
                                 for (let i = 8; i < items.length; i++) {
                                     items[i].remove();
                                 }
 
-                                // Restore data
                                 data[sectionId].forEach((rowData) => {
                                     let templateItems = Array.from(container.querySelectorAll('.field-item')).slice(0, 8);
                                     let newRowItems = templateItems.map(item => item.cloneNode(true));
 
-                                    // New field order: checkbox(0), deployed-server(1), server-name(2), os-version(3), domain(4), cluster(5), service-name(6), ip-address(7)
                                     newRowItems[1].querySelector('select').value = rowData.deployedServer || '';
                                     newRowItems[2].querySelector('input').value = rowData.serverName || '';
                                     newRowItems[3].querySelector('input').value = rowData.serverOsVersion || '';
@@ -1302,16 +1551,13 @@
                 }
             }
 
-            /**
-             * Send data to backend
-             */            async sendToBackend() {
+            async sendToBackend() {
                 const data = this.collectFormData();
 
                 try {
                     const requests = [];
                     let totalRecords = 0;
 
-                    // Send each environment's data
                     this.SECTIONS.forEach(sectionId => {
                         if (data[sectionId] && data[sectionId].length > 0) {
                             data[sectionId].forEach(rowData => {
@@ -1354,16 +1600,14 @@
                         this.showNotification(`✗ Failed: ${failedCount} record(s) failed`, 'error');
                         console.error('✗ Some requests failed:', responses.map(r => r.status));
                         return false;
-                    }                } catch (error) {
+                    }
+                } catch (error) {
                     console.error('✗ Error sending to backend:', error);
                     this.showNotification('✗ Error: ' + error.message, 'error');
                     return false;
                 }
             }
 
-            /**
-             * Show notification (Toast)
-             */
             showNotification(message, type = 'info') {
                 const notificationDiv = document.createElement('div');
                 notificationDiv.className = `toast-notification ${type}`;
@@ -1376,11 +1620,8 @@
                 }, 5000);
             }
 
-            /**
-             * Initialize
-             */
             init() {
-                // Restore data immediately on init
+
                 this.restoreFromLocalStorage();
 
                 document.addEventListener('change', (e) => {
@@ -1393,32 +1634,29 @@
                     if (e.target.closest('table')) {
                         this.saveToLocalStorage();
                     }
-                });                window.addEventListener('beforeunload', () => {
+                }); window.addEventListener('beforeunload', () => {
                     this.saveToLocalStorage();
                 });
 
                 console.log('✓ App Server Storage Manager initialized');
             }
-        }        /**
-         * Collect form data from App Server Details page
-         * Handles grid-based layout with multiple rows per section
-         */
+        }
         function collectAppServerFormData() {
             const data = {};
             const sections = ['dev-section', 'test-section', 'qa-section', 'prod-section'];
-            
+
             sections.forEach(sectionId => {
                 const section = document.getElementById(sectionId);
                 if (section) {
                     const rows = [];
                     const container = section.querySelector('.row-container-grid');
-                    
+
                     if (container) {
-                        // Get all field grids (each represents a row of data)
+
                         const fieldGrids = container.querySelectorAll('.fields-grid');
-                        
+
                         fieldGrids.forEach(fieldsGrid => {
-                            // Collect data from all inputs in this grid
+
                             const rowData = {};
                             fieldsGrid.querySelectorAll('input, select, textarea').forEach((field, idx) => {
                                 if (field.type === 'checkbox') {
@@ -1427,28 +1665,27 @@
                                     rowData['col_' + idx] = field.value || '';
                                 }
                             });
-                            
-                            // Only include row if it has data
+
                             if (Object.values(rowData).some(v => v && v !== false)) {
                                 rows.push(rowData);
                             }
                         });
                     }
-                    
+
                     data[sectionId] = rows;
                 }
             });
-            
+
             console.log('Collected App Server Form Data:', data);
             return data;
-        }        // Initialize with centralized storage manager
+        }
         console.log('App Server Details page loading');
 
         function initializePage() {
             console.log('=== INITIALIZING APP SERVER PAGE ===');
             console.log('StorageManager exists:', !!window.StorageManager);
             console.log('ValidationManager exists:', !!window.ValidationManager);
-            
+
             if (window.StorageManager) {
                 console.log('Calling initAppServerPage()');
                 window.StorageManager.initAppServerPage();
@@ -1457,7 +1694,7 @@
                 setTimeout(initializePage, 500);
                 return;
             }
-            
+
             initializeButtonEnhancements();
             initializeKeyboardShortcuts();
             console.log('✅ App Server Page Initialized');
@@ -1467,14 +1704,11 @@
             document.addEventListener('DOMContentLoaded', initializePage);
         } else {
             initializePage();
-        }/**
-         * Enhanced Button Interactions
-         */
+        }
         function initializeButtonEnhancements() {
             const saveBtn = document.querySelector('.btn-save-app-server');
             const backBtn = document.querySelector('.btn-back');
 
-            // Back button hover effect
             if (backBtn) {
                 backBtn.addEventListener('mouseenter', function () {
                     this.style.textDecoration = 'none';
@@ -1486,12 +1720,9 @@
             }
         }
 
-        /**
-         * Keyboard Shortcuts
-         */
         function initializeKeyboardShortcuts() {
             document.addEventListener('keydown', function (e) {
-                // Ctrl+S or Cmd+S to save
+
                 if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                     e.preventDefault();
                     const saveBtn = document.querySelector('.btn-save-app-server');
@@ -1500,7 +1731,6 @@
                     }
                 }
 
-                // Escape to go back
                 if (e.key === 'Escape') {
                     e.preventDefault();
                     const backBtn = document.querySelector('.btn-back');
@@ -1511,7 +1741,6 @@
             });
         }
 
-        // Remove ripple CSS animation
         const style = document.createElement('style');
         style.textContent = `
             .btn-save-app-server {
@@ -1524,6 +1753,22 @@
         `;
         document.head.appendChild(style);
     </script>
+    <script>
+        window.toggleProfileMenu = function (event) {
+            event.preventDefault(); event.stopPropagation();
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            var open = d.classList.contains('open');
+            d.classList.toggle('open', !open); c.classList.toggle('open', !open);
+        };
+        document.addEventListener('click', function (e) {
+            var t = document.getElementById('profileTrigger');
+            var d = document.getElementById('profileDropdown');
+            var c = document.getElementById('profileCaret');
+            if (d && !(t && t.contains(e.target))) { d.classList.remove('open'); if (c) c.classList.remove('open'); }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

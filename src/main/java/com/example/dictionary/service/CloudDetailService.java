@@ -4,6 +4,8 @@ import com.example.dictionary.entity.CloudDetail;
 import com.example.dictionary.entity.BasicIdentity;
 import com.example.dictionary.repository.CloudDetailRepository;
 import com.example.dictionary.repository.BasicIdentityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ import java.util.ArrayList;
 
 @Service
 public class CloudDetailService {
+
+    private static final Logger log = LoggerFactory.getLogger(CloudDetailService.class);
+
     @Autowired
     private CloudDetailRepository repository;
 
@@ -35,9 +40,28 @@ public class CloudDetailService {
 
     public CloudDetail save(CloudDetail entity) {
         return repository.save(entity);
+    }
+
+    public CloudDetail save(CloudDetail entity, Long basicIdentityId) {
+        if (basicIdentityId != null) {
+            basicIdentityRepository.findById(basicIdentityId)
+                    .ifPresent(entity::setBasicIdentity);
+        }
+        return repository.save(entity);
     }    public void deleteById(Long id) {
         repository.deleteById(id);
-    }    public List<CloudDetail> processBulkGridData(Map<String, Object> gridData) {
+    }
+
+    @Transactional
+    public boolean deactivate(Long id) {
+        return repository.findById(id).map(e -> {
+            e.setActive(false);
+            repository.save(e);
+            return true;
+        }).orElse(false);
+    }
+
+    public List<CloudDetail> processBulkGridData(Map<String, Object> gridData) {
         return processBulkGridData(gridData, null, null);
     }
 
@@ -60,14 +84,14 @@ public class CloudDetailService {
             basicIdentity = basicIdentityRepository.findByBeatId(beatId).orElse(null);
             if (basicIdentity != null) {
                 basicIdentityId = basicIdentity.getId();
-                System.out.println("✅ Found BasicIdentity by beatId: " + beatId + " -> ID: " + basicIdentityId);
+                log.info("Found BasicIdentity by beatId: {} -> ID: {}", beatId, basicIdentityId);
             }
         }
-        
-        System.out.println("=== CLOUD DETAIL: Received GridData ===");
-        System.out.println("GridData: " + gridData);
-        System.out.println("BasicIdentityId: " + basicIdentityId);
-        System.out.println("BeatId: " + beatId);
+
+        log.info("=== CLOUD DETAIL: Received GridData ===");
+        log.debug("GridData: {}", gridData);
+        log.debug("BasicIdentityId: {}", basicIdentityId);
+        log.debug("BeatId: {}", beatId);
         
         try {
             // Process each section (non-prod, prod)
@@ -75,7 +99,7 @@ public class CloudDetailService {
                 String sectionId = entry.getKey();
                 Object sectionData = entry.getValue();
                 
-                System.out.println("Processing section: " + sectionId + " with data: " + sectionData);
+                log.debug("Processing section: {} with data: {}", sectionId, sectionData);
                 
                 // Determine environment from section ID
                 String environment = null;
@@ -88,7 +112,7 @@ public class CloudDetailService {
                 // If sectionData is a list of rows
                 if (sectionData instanceof List) {
                     List<?> rows = (List<?>) sectionData;
-                    System.out.println("Found " + rows.size() + " rows in " + sectionId);                    for (Object rowObj : rows) {
+                    log.debug("Found {} rows in {}", rows.size(), sectionId);                    for (Object rowObj : rows) {
                         if (rowObj instanceof Map) {
                             Map<?, ?> rowData = (Map<?, ?>) rowObj;
                             CloudDetail detail = new CloudDetail();
@@ -106,12 +130,12 @@ public class CloudDetailService {
                             detail.setIamUser(getNamedValue(rowData, "iamUser"));
                             detail.setComments(getNamedValue(rowData, "comments"));
                             
-                            System.out.println("Detail: env=" + detail.getEnvironment() + ", accountId=" + detail.getAccountId());
+                            log.debug("Detail: env={}, accountId={}", detail.getEnvironment(), detail.getAccountId());
                             
                             // Only save if at least one field has data
                             if (hasData(detail)) {
                                 CloudDetail saved = repository.save(detail);
-                                System.out.println("Saved: " + saved.getId());
+                                log.debug("Saved CloudDetail ID: {}", saved.getId());
                                 savedRecords.add(saved);
                             }
                         }
@@ -119,27 +143,13 @@ public class CloudDetailService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("ERROR in CloudDetailService.processBulkGridData: " + e.getMessage());
-            e.printStackTrace();
+            log.error("ERROR in CloudDetailService.processBulkGridData: {}", e.getMessage(), e);
         }
-        
-        System.out.println("=== CLOUD DETAIL: Total saved records: " + savedRecords.size() + " ===");
+
+        log.info("=== CLOUD DETAIL: Total saved records: {} ===", savedRecords.size());
         return savedRecords;
     }    private String getNamedValue(Map<?, ?> rowData, String fieldName) {
         Object value = rowData.get(fieldName);
-        if (value != null) {
-            String strValue = value.toString().trim();
-            // Filter out placeholder/empty values
-            if (strValue.isEmpty() || strValue.equals("Select") || strValue.equals("--") || strValue.equals("N/A")) {
-                return null;
-            }
-            return strValue;
-        }
-        return null;
-    }
-
-    private String getValueAtIndex(Map<?, ?> rowData, int index) {
-        Object value = rowData.get("col_" + index);
         if (value != null) {
             String strValue = value.toString().trim();
             // Filter out placeholder/empty values

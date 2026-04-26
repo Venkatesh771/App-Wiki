@@ -3,6 +3,7 @@ package com.example.dictionary.controller;
 import com.example.dictionary.entity.DatabaseServerDetail;
 import com.example.dictionary.service.DatabaseServerDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,13 +27,16 @@ public class DatabaseServerDetailController {
     }
 
     @GetMapping("/{id}")
-    public Optional<DatabaseServerDetail> getById(@PathVariable Long id) {
-        return service.findById(id);
+    public ResponseEntity<DatabaseServerDetail> getById(@PathVariable Long id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public DatabaseServerDetail create(@RequestBody DatabaseServerDetail entity) {
-        return service.save(entity);
+    public DatabaseServerDetail create(@RequestBody DatabaseServerDetail entity,
+                                        @RequestParam(required = false) Long basicIdentityId) {
+        return basicIdentityId != null ? service.save(entity, basicIdentityId) : service.save(entity);
     }
 
     @PostMapping("/bulk")
@@ -72,12 +76,38 @@ public class DatabaseServerDetailController {
 
     @PutMapping("/{id}")
     public DatabaseServerDetail update(@PathVariable Long id, @RequestBody DatabaseServerDetail entity) {
+        Optional<DatabaseServerDetail> existing = service.findById(id);
+        if (existing.isPresent()) {
+            DatabaseServerDetail e = existing.get();
+            e.setDatabaseType(entity.getDatabaseType());
+            e.setDatabaseVersion(entity.getDatabaseVersion());
+            e.setDatabaseHostingType(entity.getDatabaseHostingType());
+            e.setDatabaseName(entity.getDatabaseName());
+            e.setAccountName(entity.getAccountName());
+            e.setHostName(entity.getHostName());
+            e.setServiceName(entity.getServiceName());
+            e.setPort(entity.getPort());
+            e.setAccountId(entity.getAccountId());
+            e.setIp(entity.getIp());
+            return service.save(e);
+        }
         entity.setId(id);
         return service.save(entity);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (service.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         service.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
+        return service.deactivate(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
