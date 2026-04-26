@@ -1332,7 +1332,7 @@
                 </button>
                 <button class="btn btn-sm action-icon-btn delete-btn" title="Delete"
                     th:attr="data-id=${app.id},data-name=${app.applicationName}"
-                    onclick="event.stopPropagation(); openDeleteAppModal(this.dataset.id, this.dataset.name)">
+                    onclick="event.stopPropagation(); openDeleteAppModal(this.dataset.id, this.dataset.name, this)">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -2100,13 +2100,11 @@
         let _deleteAppId = null;
         let _deleteAppCard = null;
 
-        function openDeleteAppModal(id, name) {
+        function openDeleteAppModal(id, name, btnEl) {
             _deleteAppId = id;
-            _deleteAppCard = document.querySelector('[data-id="' + id + '"]') ?
-                document.querySelector('[data-id="' + id + '"]').closest('.dynamic-app-card') : null;
+            _deleteAppCard = btnEl ? btnEl.closest('.dynamic-app-card') : null;
             document.getElementById('deleteAppModalName').textContent = name || 'this application';
-            const overlay = document.getElementById('deleteAppModalOverlay');
-            overlay.style.display = 'flex';
+            document.getElementById('deleteAppModalOverlay').style.display = 'flex';
         }
 
         function closeDeleteAppModal() {
@@ -2117,16 +2115,30 @@
 
         async function confirmDeleteApp() {
             if (!_deleteAppId) return;
+            const card = _deleteAppCard;   // capture before closeDeleteAppModal nulls it
             try {
                 const r = await fetch('/api/basic-identity/' + _deleteAppId + '/deactivate', { method: 'PATCH' });
                 if (!r.ok) throw new Error('Status ' + r.status);
-                if (_deleteAppCard) {
-                    _deleteAppCard.style.transition = 'opacity 0.3s, transform 0.3s';
-                    _deleteAppCard.style.opacity = '0';
-                    _deleteAppCard.style.transform = 'scale(0.97)';
-                    setTimeout(() => _deleteAppCard.remove(), 320);
-                }
                 closeDeleteAppModal();
+                if (card) {
+                    // Step 1: fade + shrink
+                    card.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.97)';
+                    setTimeout(() => {
+                        // Step 2: collapse height so gap closes
+                        const h = card.offsetHeight;
+                        card.style.overflow = 'hidden';
+                        card.style.maxHeight = h + 'px';
+                        card.style.transition = 'max-height 0.28s ease, margin-bottom 0.28s ease, padding-top 0.28s ease, padding-bottom 0.28s ease';
+                        card.offsetHeight; // force reflow
+                        card.style.maxHeight = '0';
+                        card.style.marginBottom = '0';
+                        card.style.paddingTop = '0';
+                        card.style.paddingBottom = '0';
+                        setTimeout(() => { card.remove(); updateFilterBtn(); }, 300);
+                    }, 220);
+                }
             } catch (e) {
                 alert('Failed to delete application: ' + e.message);
             }
