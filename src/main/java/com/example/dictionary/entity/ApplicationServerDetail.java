@@ -17,6 +17,7 @@ public class ApplicationServerDetail {
     private String serverOsVersion;
     private String deployedServer;
     private String domain;
+    @Column(name = "\"CLUSTER\"")
     private String cluster;
     private String serviceName;
     private String ipAddress;
