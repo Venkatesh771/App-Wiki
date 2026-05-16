@@ -63,13 +63,6 @@ public class AuthenticationService {
                     new User("CW002", "Sarah Anderson", "sarah.anderson@example.com", seed, "Admin", true));
             userRepository
                     .save(new User("CW003", "Michael Chen", "michael.chen@example.com", seed, "User", true));
-        if (userRepository.count() == 0) {
-            userRepository.save(
-                    new User("CW001", "James Wilson", "james.wilson@example.com", "password123", "Super Admin", true));
-            userRepository.save(
-                    new User("CW002", "Sarah Anderson", "sarah.anderson@example.com", "password123", "Admin", true));
-            userRepository
-                    .save(new User("CW003", "Michael Chen", "michael.chen@example.com", "password123", "User", true));
         }
 
         for (User u : userRepository.findAll()) {
@@ -80,8 +73,6 @@ public class AuthenticationService {
                 logger.info("Migrated plaintext password to BCrypt for: " + u.getCwid());
             }
         }
-    }
-
     }
 
     /**
@@ -153,9 +144,6 @@ public class AuthenticationService {
                     return null;
                 }
 
-                logger.info("User login successful: " + cwid + " with role: " + user.getRole()
-                        + " - Granting access based on role");
-
                 // Step 3: Grant access based on user role from database
                 logger.info("User login successful: " + cwid + " with role: " + user.getRole()
                         + " - Granting access based on role");
@@ -204,8 +192,6 @@ public class AuthenticationService {
      */
     public User getUserByCwid(String cwid) {
         return userRepository.findByCwid(cwid).orElse(null);
-    }
-
     }
 
     /**
@@ -266,8 +252,6 @@ public class AuthenticationService {
             return true;
         }
         return false;
-    }
-
     }
 
     /**
