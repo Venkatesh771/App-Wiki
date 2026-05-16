@@ -12,7 +12,7 @@ public class DatabaseServerDetail {
     @JsonBackReference
     private BasicIdentity basicIdentity;
 
-    private String environment; // DEV, TEST, QA, PROD
+    private String environment;
     private String databaseType;
     private String databaseVersion;
     private String databaseHostingType;

@@ -42,7 +42,7 @@ public class DatabaseServerDetailController {
     @PostMapping("/bulk")
     @SuppressWarnings("unchecked")
     public List<DatabaseServerDetail> bulkCreate(@RequestBody Map<String, Object> requestData) {
-        // Extract basicIdentityId, beatId, and gridData from request
+
         Long basicIdentityId = null;
         String beatId = null;
         Map<String, Object> gridData = null;
@@ -65,7 +65,7 @@ public class DatabaseServerDetailController {
                 gridData = new java.util.HashMap<>();
             }
         } else {
-            // If gridData is not nested, use the entire requestData
+
             gridData = new java.util.HashMap<>(requestData);
             gridData.remove("basicIdentityId");
             gridData.remove("beatId");

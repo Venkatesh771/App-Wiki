@@ -70,14 +70,12 @@ public class DatabaseServerDetailService {
     @Transactional
     public List<DatabaseServerDetail> processBulkGridData(Map<String, Object> gridData, Long basicIdentityId, String beatId) {
         List<DatabaseServerDetail> savedRecords = new ArrayList<>();
-        
-        // Fetch BasicIdentity if provided
+
         BasicIdentity basicIdentity = null;
         if (basicIdentityId != null) {
             basicIdentity = basicIdentityRepository.findById(basicIdentityId).orElse(null);
         }
-        
-        // Fallback: Find by beatId if basicIdentityId is null
+
         if (basicIdentity == null && beatId != null && !beatId.isEmpty()) {
             basicIdentity = basicIdentityRepository.findByBeatId(beatId).orElse(null);
             if (basicIdentity != null) {
@@ -85,21 +83,20 @@ public class DatabaseServerDetailService {
                 System.out.println("✅ Found BasicIdentity by beatId: " + beatId + " -> ID: " + basicIdentityId);
             }
         }
-        
+
         System.out.println("=== DATABASE SERVER: Received GridData ===");
         System.out.println("GridData: " + gridData);
         System.out.println("BasicIdentityId: " + basicIdentityId);
         System.out.println("BeatId: " + beatId);
-        
+
         try {
-            // Process each section (dev-section, test-section, qa-section, prod-section)
+
             for (Map.Entry<String, Object> entry : gridData.entrySet()) {
                 String sectionId = entry.getKey();
                 Object sectionData = entry.getValue();
-                
+
                 System.out.println("Processing section: " + sectionId + " with data: " + sectionData);
-                
-                // Determine environment from section ID
+
                 String environment = null;
                 if (sectionId.equals("dev-section")) {
                     environment = "DEV";
@@ -110,8 +107,7 @@ public class DatabaseServerDetailService {
                 } else if (sectionId.equals("prod-section")) {
                     environment = "PROD";
                 }
-                
-                // If sectionData is a list of rows
+
                 if (sectionData instanceof List) {
                     List<?> rows = (List<?>) sectionData;
                     System.out.println("Found " + rows.size() + " rows in " + sectionId);
@@ -121,8 +117,7 @@ public class DatabaseServerDetailService {
                             DatabaseServerDetail detail = new DatabaseServerDetail();
                             detail.setEnvironment(environment);
                             detail.setBasicIdentity(basicIdentity);
-                            
-                            // Map NAMED fields from frontend to entity fields
+
                             detail.setDatabaseType(getNamedValue(rowData, "databaseType"));
                             detail.setDatabaseVersion(getNamedValue(rowData, "databaseVersion"));
                             detail.setDatabaseHostingType(getNamedValue(rowData, "databaseHostingType"));
@@ -133,10 +128,9 @@ public class DatabaseServerDetailService {
                             detail.setPort(getNamedValue(rowData, "port"));
                             detail.setAccountId(getNamedValue(rowData, "accountId"));
                             detail.setIp(getNamedValue(rowData, "ip"));
-                            
+
                             System.out.println("Detail: env=" + detail.getEnvironment() + ", dbType=" + detail.getDatabaseType());
-                            
-                            // Only save if at least one field has data
+
                             if (hasData(detail)) {
                                 DatabaseServerDetail saved = repository.save(detail);
                                 System.out.println("Saved: " + saved.getId());
@@ -150,7 +144,7 @@ public class DatabaseServerDetailService {
             System.err.println("ERROR in DatabaseServerDetailService.processBulkGridData: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         System.out.println("=== DATABASE SERVER: Total saved records: " + savedRecords.size() + " ===");
         return savedRecords;
     }
@@ -159,7 +153,7 @@ public class DatabaseServerDetailService {
         Object value = rowData.get(fieldName);
         if (value != null) {
             String strValue = value.toString().trim();
-            // Filter out placeholder/empty values
+
             if (strValue.isEmpty() || strValue.equals("Select") || strValue.equals("--") || strValue.equals("N/A")) {
                 return null;
             }

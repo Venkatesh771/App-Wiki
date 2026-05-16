@@ -165,6 +165,122 @@
             transform: scale(1) translateY(0);
         }
 
+        .admin-menu { position: relative; }
+
+        .admin-menu:hover .admin-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .admin-menu:hover .admin-menu-caret {
+            transform: rotate(180deg);
+        }
+
+        .user-menu:hover .profile-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .user-menu:hover .user-menu-caret {
+            transform: rotate(180deg);
+        }
+
+        /* Invisible hover bridge on the <li> — fills the gap so the dropdown doesn't close mid-traversal.
+           Placed on .admin-menu / .user-menu so it isn't clipped by the dropdown's overflow: hidden. */
+        .admin-menu::after,
+        .user-menu::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 240px;
+            height: 14px;
+        }
+
+        .admin-menu-trigger {
+            color: #fff !important;
+            font-size: 0.88rem;
+            padding: 0.2rem 0.75rem !important;
+            cursor: pointer;
+            display: inline-flex !important;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none !important;
+            transition: opacity 0.15s ease;
+        }
+
+        .admin-menu-trigger:hover {
+            opacity: 0.85;
+            color: #fff !important;
+        }
+
+        .admin-menu-caret {
+            font-size: 0.62rem;
+            opacity: 0.85;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        .admin-menu-caret.open { transform: rotate(180deg); }
+
+        .admin-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+            min-width: 190px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.92) translateY(-6px);
+            transform-origin: top right;
+            transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+            z-index: 1050;
+        }
+
+        .admin-dropdown.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .admin-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 1rem;
+            color: #333;
+            text-decoration: none !important;
+            font-size: 0.86rem;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .admin-dropdown-item i {
+            width: 16px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .admin-dropdown-item:hover {
+            background: #f5f5f7;
+            color: #008080;
+        }
+
+        .admin-dropdown-item:hover i { color: #008080; }
+
+        .admin-dropdown-item.active {
+            background: rgba(0, 128, 128, 0.08);
+            color: #008080;
+        }
+
+        .admin-dropdown-item.active i { color: #008080; }
+
         .profile-dropdown-header {
             display: flex;
             align-items: center;
@@ -490,8 +606,26 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/home">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/admindashboard">Users</a>
+                    <li class="nav-item admin-menu"
+                        th:if="${session.user != null && (session.user.role == 'Super Admin' || session.user.role == 'Admin')}">
+                        <a class="nav-link admin-menu-trigger" href="#" id="adminTrigger" onclick="toggleAdminMenu(event)">
+                            <span>Admin</span>
+                            <i class="fa-solid fa-chevron-down admin-menu-caret" id="adminCaret"></i>
+                        </a>
+                        <div class="admin-dropdown" id="adminDropdown">
+                            <a href="/admindashboard" class="admin-dropdown-item">
+                                <i class="fa-solid fa-user-group"></i><span>Users</span>
+                            </a>
+                            <a href="/admin-apps" class="admin-dropdown-item active">
+                                <i class="fa-solid fa-cube"></i><span>Apps</span>
+                            </a>
+                            <a href="/admin-groups" class="admin-dropdown-item">
+                                <i class="fa-solid fa-layer-group"></i><span>Groups</span>
+                            </a>
+                            <a href="/admin-logs" class="admin-dropdown-item">
+                                <i class="fa-solid fa-clipboard-list"></i><span>Logs</span>
+                            </a>
+                        </div>
                     </li>
                     <li class="nav-item user-menu" style="position:relative;">
                         <a class="nav-link user-menu-trigger" href="#" id="profileTrigger"
@@ -625,6 +759,17 @@
             caret.classList.toggle('open');
         }
 
+        function toggleAdminMenu(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const dd = document.getElementById('adminDropdown');
+            const caret = document.getElementById('adminCaret');
+            if (!dd) return;
+            const isOpen = dd.classList.contains('open');
+            dd.classList.toggle('open', !isOpen);
+            if (caret) caret.classList.toggle('open', !isOpen);
+        }
+
         document.addEventListener('click', function (e) {
             const trigger = document.getElementById('profileTrigger');
             const dropdown = document.getElementById('profileDropdown');
@@ -632,6 +777,14 @@
             if (trigger && !trigger.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
                 dropdown.classList.remove('open');
                 caret.classList.remove('open');
+            }
+            const adminTrigger = document.getElementById('adminTrigger');
+            const adminDropdown = document.getElementById('adminDropdown');
+            const adminCaret = document.getElementById('adminCaret');
+            if (adminDropdown && !adminDropdown.contains(e.target)
+                    && e.target !== adminTrigger && !adminTrigger?.contains(e.target)) {
+                adminDropdown.classList.remove('open');
+                adminCaret?.classList.remove('open');
             }
         });
 

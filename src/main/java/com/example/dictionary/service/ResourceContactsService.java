@@ -22,7 +22,7 @@ public class ResourceContactsService {
     }
 
     public ResourceContacts save(ResourceContacts entity) {
-        // Clean up empty and placeholder values
+
         cleanupEntity(entity);
         return repository.save(entity);
     }
@@ -31,10 +31,6 @@ public class ResourceContactsService {
         repository.deleteById(id);
     }
 
-    /**
-     * Convert empty strings and placeholder values to null
-     * This ensures dropdowns that weren't selected don't store "Select" text
-     */
     private void cleanupEntity(ResourceContacts entity) {
         if (entity.getOffshorePrimary() != null && (entity.getOffshorePrimary().trim().isEmpty() || entity.getOffshorePrimary().trim().equals("Select"))) {
             entity.setOffshorePrimary(null);

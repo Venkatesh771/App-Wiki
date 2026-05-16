@@ -72,14 +72,12 @@ public class CloudDetailService {
     @Transactional
     public List<CloudDetail> processBulkGridData(Map<String, Object> gridData, Long basicIdentityId, String beatId) {
         List<CloudDetail> savedRecords = new ArrayList<>();
-        
-        // Fetch BasicIdentity if provided
+
         BasicIdentity basicIdentity = null;
         if (basicIdentityId != null) {
             basicIdentity = basicIdentityRepository.findById(basicIdentityId).orElse(null);
         }
-        
-        // Fallback: Find by beatId if basicIdentityId is null
+
         if (basicIdentity == null && beatId != null && !beatId.isEmpty()) {
             basicIdentity = basicIdentityRepository.findByBeatId(beatId).orElse(null);
             if (basicIdentity != null) {
@@ -92,24 +90,22 @@ public class CloudDetailService {
         log.debug("GridData: {}", gridData);
         log.debug("BasicIdentityId: {}", basicIdentityId);
         log.debug("BeatId: {}", beatId);
-        
+
         try {
-            // Process each section (non-prod, prod)
+
             for (Map.Entry<String, Object> entry : gridData.entrySet()) {
                 String sectionId = entry.getKey();
                 Object sectionData = entry.getValue();
-                
+
                 log.debug("Processing section: {} with data: {}", sectionId, sectionData);
-                
-                // Determine environment from section ID
+
                 String environment = null;
                 if (sectionId.equals("non-prod")) {
                     environment = "NON_PROD";
                 } else if (sectionId.equals("prod")) {
                     environment = "PROD";
                 }
-                
-                // If sectionData is a list of rows
+
                 if (sectionData instanceof List) {
                     List<?> rows = (List<?>) sectionData;
                     log.debug("Found {} rows in {}", rows.size(), sectionId);                    for (Object rowObj : rows) {
@@ -118,9 +114,7 @@ public class CloudDetailService {
                             CloudDetail detail = new CloudDetail();
                             detail.setEnvironment(environment);
                             detail.setBasicIdentity(basicIdentity);
-                            
-                            // Map NAMED fields from frontend to entity fields
-                            // Frontend sends: accountId, hostType, serviceName, lambdaNames, s3Bucket, sqsNames, iamUser, comments
+
                             detail.setAccountId(getNamedValue(rowData, "accountId"));
                             detail.setHostType(getNamedValue(rowData, "hostType"));
                             detail.setServiceName(getNamedValue(rowData, "serviceName"));
@@ -129,10 +123,9 @@ public class CloudDetailService {
                             detail.setSqsNames(getNamedValue(rowData, "sqsNames"));
                             detail.setIamUser(getNamedValue(rowData, "iamUser"));
                             detail.setComments(getNamedValue(rowData, "comments"));
-                            
+
                             log.debug("Detail: env={}, accountId={}", detail.getEnvironment(), detail.getAccountId());
-                            
-                            // Only save if at least one field has data
+
                             if (hasData(detail)) {
                                 CloudDetail saved = repository.save(detail);
                                 log.debug("Saved CloudDetail ID: {}", saved.getId());
@@ -152,7 +145,7 @@ public class CloudDetailService {
         Object value = rowData.get(fieldName);
         if (value != null) {
             String strValue = value.toString().trim();
-            // Filter out placeholder/empty values
+
             if (strValue.isEmpty() || strValue.equals("Select") || strValue.equals("--") || strValue.equals("N/A")) {
                 return null;
             }
@@ -162,13 +155,13 @@ public class CloudDetailService {
     }
 
     private boolean hasData(CloudDetail detail) {
-        return detail.getAccountId() != null || 
-               detail.getHostType() != null || 
-               detail.getServiceName() != null || 
-               detail.getLambdaNames() != null || 
-               detail.getS3Bucket() != null || 
-               detail.getSqsNames() != null || 
-               detail.getIamUser() != null || 
+        return detail.getAccountId() != null ||
+               detail.getHostType() != null ||
+               detail.getServiceName() != null ||
+               detail.getLambdaNames() != null ||
+               detail.getS3Bucket() != null ||
+               detail.getSqsNames() != null ||
+               detail.getIamUser() != null ||
                detail.getComments() != null;
     }
 }

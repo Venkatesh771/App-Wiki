@@ -16,7 +16,7 @@ import java.util.Optional;
 public class DescriptionImpactController {
     @Autowired
     private DescriptionImpactService service;
-    
+
     @Autowired
     private BasicIdentityRepository basicIdentityRepository;
 
@@ -33,14 +33,13 @@ public class DescriptionImpactController {
         System.out.println("=== DescriptionImpact Controller ===");
         System.out.println("Received DTO basicIdentityId: " + dto.getBasicIdentityId());
         System.out.println("Received DTO applicationDescription: " + dto.getApplicationDescription());
-        
+
         DescriptionImpact entity = new DescriptionImpact();
         entity.setApplicationDescription(dto.getApplicationDescription());
         entity.setBusinessImpactDescription(dto.getBusinessImpactDescription());
         entity.setFinancialImpact(dto.getFinancialImpact());
         entity.setUserAccessReview(dto.getUserAccessReview());
-        
-        // Set the relationship
+
         if (dto.getBasicIdentityId() != null) {
             System.out.println("Looking up BasicIdentity with ID: " + dto.getBasicIdentityId());
             Optional<BasicIdentity> basicIdentity = basicIdentityRepository.findById(dto.getBasicIdentityId());
@@ -53,7 +52,7 @@ public class DescriptionImpactController {
         } else {
             System.out.println("❌ basicIdentityId is NULL in DTO");
         }
-        
+
         return service.save(entity);
     }
 
@@ -66,14 +65,14 @@ public class DescriptionImpactController {
             entity.setBusinessImpactDescription(dto.getBusinessImpactDescription());
             entity.setFinancialImpact(dto.getFinancialImpact());
             entity.setUserAccessReview(dto.getUserAccessReview());
-            
+
             if (dto.getBasicIdentityId() != null) {
                 Optional<BasicIdentity> basicIdentity = basicIdentityRepository.findById(dto.getBasicIdentityId());
                 if (basicIdentity.isPresent()) {
                     entity.setBasicIdentity(basicIdentity.get());
                 }
             }
-            
+
             return service.save(entity);
         }
         return null;

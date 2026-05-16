@@ -20,7 +20,6 @@ public class DropdownOptionService {
                 .collect(Collectors.toList());
     }
 
-    /** Returns true if saved, false if a duplicate already exists. */
     public boolean save(String fieldName, String value) {
         if (repo.existsByFieldNameAndValueIgnoreCase(fieldName, value)) {
             return false;

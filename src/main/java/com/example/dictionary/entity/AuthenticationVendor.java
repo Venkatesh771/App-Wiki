@@ -29,7 +29,6 @@ public class AuthenticationVendor {
     private String vendorContactDetails;
     private String appHostedIn;
 
-    // Getters and setters
     public Long getId() {
         return id;
     }

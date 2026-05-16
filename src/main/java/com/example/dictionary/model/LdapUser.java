@@ -1,8 +1,5 @@
 package com.example.dictionary.model;
 
-/**
- * Represents an LDAP user from Bayer Active Directory
- */
 public class LdapUser {
     private String username;
     private String email;

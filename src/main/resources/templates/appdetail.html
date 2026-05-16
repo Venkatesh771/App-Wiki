@@ -533,8 +533,10 @@
         }
 
         textarea.form-control {
-            min-height: 65px;
+            min-height: 38px;
             resize: vertical;
+            overflow: hidden;
+            line-height: 1.5;
         }
 
         textarea.form-control[readonly] {
@@ -970,7 +972,7 @@
                             </div>
                             <div class="form-group-custom">
                                 <label class="field-label">Assignment Group</label>
-                                <div class="field-input" th:classappend="${editMode} ? ' has-dropdown' : ''">
+                                <div class="field-input">
                                     <input th:if="${!editMode}" type="text" class="form-control"
                                         th:value="${app.assignmentGroup}" readonly>
                                     <select th:if="${editMode}" class="form-select" id="assignmentGroup">
@@ -979,10 +981,6 @@
                                             th:selected="${app.assignmentGroup != null and app.assignmentGroup == ag}">
                                         </option>
                                     </select>
-                                    <button th:if="${editMode}" type="button" class="btn-add-option"
-                                        title="Add new option" onclick="window.DynamicDropdown.openInput(this)">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1170,9 +1168,8 @@
                             <div class="form-group-custom textarea-row">
                                 <label class="field-label">Auth Details / Routing</label>
                                 <div class="field-input">
-                                    <input th:if="${!editMode}" type="text" class="form-control"
-                                        th:value="${av != null ? av.authDetailsRouting : ''}" readonly>
-                                    <textarea th:if="${editMode}" class="form-control" id="authDetailsRouting"
+                                    <textarea class="form-control" id="authDetailsRouting"
+                                        th:readonly="${!editMode}"
                                         th:text="${av != null ? av.authDetailsRouting : ''}"></textarea>
                                 </div>
                             </div>
@@ -1299,19 +1296,19 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group-custom textarea-row">
-                                <label class="field-label">App URLs - Dev/Test</label>
+                                <label class="field-label">App URLs</label>
                                 <div class="field-input">
-                                    <input th:if="${!editMode}" type="text" class="form-control"
-                                        th:value="${td != null ? td.appUrlsDevTest : ''}" readonly>
-                                    <textarea th:if="${editMode}" class="form-control" id="appUrlsDevTest"
+                                    <textarea class="form-control" id="appUrlsDevTest"
+                                        th:readonly="${!editMode}"
                                         th:text="${td != null ? td.appUrlsDevTest : ''}"></textarea>
                                 </div>
                             </div>
-                            <div class="form-group-custom">
+                            <div class="form-group-custom textarea-row">
                                 <label class="field-label">GitHub Repos</label>
                                 <div class="field-input">
-                                    <input type="text" class="form-control" id="githubRepos"
-                                        th:value="${td != null ? td.githubRepos : ''}" th:readonly="${!editMode}">
+                                    <textarea class="form-control" id="githubRepos"
+                                        th:readonly="${!editMode}"
+                                        th:text="${td != null ? td.githubRepos : ''}"></textarea>
                                 </div>
                             </div>
                             <div class="form-group-custom">
@@ -1342,36 +1339,32 @@
                             <div class="form-group-custom textarea-row">
                                 <label class="field-label">Upstream System</label>
                                 <div class="field-input">
-                                    <input th:if="${!editMode}" type="text" class="form-control"
-                                        th:value="${td != null ? td.upstreamSystem : ''}" readonly>
-                                    <textarea th:if="${editMode}" class="form-control" id="upstreamSystem"
+                                    <textarea class="form-control" id="upstreamSystem"
+                                        th:readonly="${!editMode}"
                                         th:text="${td != null ? td.upstreamSystem : ''}"></textarea>
                                 </div>
                             </div>
                             <div class="form-group-custom textarea-row">
                                 <label class="field-label">Akana / Mulesoft</label>
                                 <div class="field-input">
-                                    <input th:if="${!editMode}" type="text" class="form-control"
-                                        th:value="${td != null ? td.akanaMulesoft : ''}" readonly>
-                                    <textarea th:if="${editMode}" class="form-control" id="akanaMulesoft"
+                                    <textarea class="form-control" id="akanaMulesoft"
+                                        th:readonly="${!editMode}"
                                         th:text="${td != null ? td.akanaMulesoft : ''}"></textarea>
                                 </div>
                             </div>
                             <div class="form-group-custom textarea-row">
                                 <label class="field-label">Kafka Topic</label>
                                 <div class="field-input">
-                                    <input th:if="${!editMode}" type="text" class="form-control"
-                                        th:value="${td != null ? td.kafkaTopic : ''}" readonly>
-                                    <textarea th:if="${editMode}" class="form-control" id="kafkaTopic"
+                                    <textarea class="form-control" id="kafkaTopic"
+                                        th:readonly="${!editMode}"
                                         th:text="${td != null ? td.kafkaTopic : ''}"></textarea>
                                 </div>
                             </div>
                             <div class="form-group-custom textarea-row">
                                 <label class="field-label">Azure Client IDs</label>
                                 <div class="field-input">
-                                    <input th:if="${!editMode}" type="text" class="form-control"
-                                        th:value="${td != null ? td.azureClientIds : ''}" readonly>
-                                    <textarea th:if="${editMode}" class="form-control" id="azureClientIds"
+                                    <textarea class="form-control" id="azureClientIds"
+                                        th:readonly="${!editMode}"
                                         th:text="${td != null ? td.azureClientIds : ''}"></textarea>
                                 </div>
                             </div>
@@ -1435,7 +1428,8 @@
 
             </div>
 
-            <div id="tab-server-details" class="tab-pane">
+            <div id="tab-server-details" class="tab-pane"
+                th:with="srvEnvs=${app.applicationServerDetails.?[active == null or active].![environment]}">
                 <div th:if="${#lists.isEmpty(app.applicationServerDetails)}" class="empty-state">
                     <i class="fa-solid fa-server me-2"></i> No server data available.
                     <div th:if="${editMode}" class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
@@ -1533,9 +1527,21 @@
                         </div>
                     </div>
                 </div>
+                <div th:if="${editMode and not #lists.isEmpty(app.applicationServerDetails)}"
+                    class="env-add-footer mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                    <button th:if="${!#lists.contains(srvEnvs, 'DEV')}" type="button" class="btn-add-env"
+                        onclick="addNewServerEntry('DEV'); this.style.display='none';">+ DEV</button>
+                    <button th:if="${!#lists.contains(srvEnvs, 'TEST')}" type="button" class="btn-add-env"
+                        onclick="addNewServerEntry('TEST'); this.style.display='none';">+ TEST</button>
+                    <button th:if="${!#lists.contains(srvEnvs, 'QA')}" type="button" class="btn-add-env"
+                        onclick="addNewServerEntry('QA'); this.style.display='none';">+ QA</button>
+                    <button th:if="${!#lists.contains(srvEnvs, 'PROD')}" type="button" class="btn-add-env"
+                        onclick="addNewServerEntry('PROD'); this.style.display='none';">+ PROD</button>
+                </div>
             </div>
 
-            <div id="tab-cloud-details" class="tab-pane">
+            <div id="tab-cloud-details" class="tab-pane"
+                th:with="cloudEnvs=${app.cloudDetails.?[active == null or active].![environment]}">
                 <div th:if="${#lists.isEmpty(app.cloudDetails)}" class="empty-state">
                     <i class="fa-solid fa-cloud me-2"></i> No cloud data available.
                     <div th:if="${editMode}" class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
@@ -1640,9 +1646,17 @@
                         </div>
                     </div>
                 </div>
+                <div th:if="${editMode and not #lists.isEmpty(app.cloudDetails)}"
+                    class="env-add-footer mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                    <button th:if="${!#lists.contains(cloudEnvs, 'NON_PROD')}" type="button" class="btn-add-env"
+                        onclick="addNewCloudEntry('NON_PROD'); this.style.display='none';">+ Non-Prod</button>
+                    <button th:if="${!#lists.contains(cloudEnvs, 'PROD')}" type="button" class="btn-add-env"
+                        onclick="addNewCloudEntry('PROD'); this.style.display='none';">+ Prod</button>
+                </div>
             </div>
 
-            <div id="tab-db-details" class="tab-pane">
+            <div id="tab-db-details" class="tab-pane"
+                th:with="dbEnvs=${app.databaseServerDetails.?[active == null or active].![environment]}">
                 <div th:if="${#lists.isEmpty(app.databaseServerDetails)}" class="empty-state">
                     <i class="fa-solid fa-database me-2"></i> No database data available.
                     <div th:if="${editMode}" class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
@@ -1783,6 +1797,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div th:if="${editMode and not #lists.isEmpty(app.databaseServerDetails)}"
+                    class="env-add-footer mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                    <button th:if="${!#lists.contains(dbEnvs, 'DEV')}" type="button" class="btn-add-env"
+                        onclick="addNewDbEntry('DEV'); this.style.display='none';">+ DEV</button>
+                    <button th:if="${!#lists.contains(dbEnvs, 'TEST')}" type="button" class="btn-add-env"
+                        onclick="addNewDbEntry('TEST'); this.style.display='none';">+ TEST</button>
+                    <button th:if="${!#lists.contains(dbEnvs, 'QA')}" type="button" class="btn-add-env"
+                        onclick="addNewDbEntry('QA'); this.style.display='none';">+ QA</button>
+                    <button th:if="${!#lists.contains(dbEnvs, 'PROD')}" type="button" class="btn-add-env"
+                        onclick="addNewDbEntry('PROD'); this.style.display='none';">+ PROD</button>
                 </div>
             </div>
 
@@ -2161,7 +2186,10 @@
             if (refBox) {
                 refBox.insertAdjacentHTML('afterend', html);
             } else {
-                document.getElementById('tab-server-details').insertAdjacentHTML('beforeend', html);
+                const tab = document.getElementById('tab-server-details');
+                const footer = tab.querySelector(':scope > .env-add-footer');
+                if (footer) footer.insertAdjacentHTML('beforebegin', html);
+                else tab.insertAdjacentHTML('beforeend', html);
             }
             markDirty();
         }
@@ -2220,7 +2248,10 @@
             if (refBoxCloud) {
                 refBoxCloud.insertAdjacentHTML('afterend', html);
             } else {
-                document.getElementById('tab-cloud-details').insertAdjacentHTML('beforeend', html);
+                const tab = document.getElementById('tab-cloud-details');
+                const footer = tab.querySelector(':scope > .env-add-footer');
+                if (footer) footer.insertAdjacentHTML('beforebegin', html);
+                else tab.insertAdjacentHTML('beforeend', html);
             }
             markDirty();
         }
@@ -2291,7 +2322,10 @@
             if (refBoxDb) {
                 refBoxDb.insertAdjacentHTML('afterend', html);
             } else {
-                document.getElementById('tab-db-details').insertAdjacentHTML('beforeend', html);
+                const tab = document.getElementById('tab-db-details');
+                const footer = tab.querySelector(':scope > .env-add-footer');
+                if (footer) footer.insertAdjacentHTML('beforebegin', html);
+                else tab.insertAdjacentHTML('beforeend', html);
             }
             markDirty();
         }
@@ -2435,7 +2469,24 @@
             var c = document.getElementById('profileCaret');
             if (d && !(t && t.contains(e.target))) { d.classList.remove('open'); if (c) c.classList.remove('open'); }
         });
+
+        (function autoSizeTextareas() {
+            function fit(ta) {
+                ta.style.height = 'auto';
+                ta.style.height = ta.scrollHeight + 'px';
+            }
+            function fitAll() {
+                document.querySelectorAll('textarea.form-control').forEach(fit);
+            }
+            document.addEventListener('input', function (e) {
+                if (e.target.matches('textarea.form-control')) fit(e.target);
+            });
+            document.addEventListener('shown.bs.collapse', fitAll);
+            window.addEventListener('load', fitAll);
+            fitAll();
+        })();
     </script>
+
 </body>
 
 </html>

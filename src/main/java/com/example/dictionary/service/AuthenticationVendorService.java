@@ -22,7 +22,7 @@ public class AuthenticationVendorService {
     }
 
     public AuthenticationVendor save(AuthenticationVendor entity) {
-        // Clean up empty and placeholder values
+
         cleanupEntity(entity);
         return repository.save(entity);
     }
@@ -31,10 +31,6 @@ public class AuthenticationVendorService {
         repository.deleteById(id);
     }
 
-    /**
-     * Convert empty strings and placeholder values to null
-     * This ensures dropdowns that weren't selected don't store "Select" text
-     */
     private void cleanupEntity(AuthenticationVendor entity) {
         if (entity.getAuthenticationType() != null && (entity.getAuthenticationType().trim().isEmpty() || entity.getAuthenticationType().trim().equals("Select"))) {
             entity.setAuthenticationType(null);

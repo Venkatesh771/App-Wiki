@@ -199,6 +199,122 @@
             transform: scale(1) translateY(0);
         }
 
+        .admin-menu { position: relative; }
+
+        .admin-menu:hover .admin-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .admin-menu:hover .admin-menu-caret {
+            transform: rotate(180deg);
+        }
+
+        .user-menu:hover .profile-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .user-menu:hover .user-menu-caret {
+            transform: rotate(180deg);
+        }
+
+        /* Invisible hover bridge on the <li> — fills the gap so the dropdown doesn't close mid-traversal.
+           Placed on .admin-menu / .user-menu so it isn't clipped by the dropdown's overflow: hidden. */
+        .admin-menu::after,
+        .user-menu::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 240px;
+            height: 14px;
+        }
+
+        .admin-menu-trigger {
+            color: #fff !important;
+            font-size: 0.88rem;
+            padding: 0.2rem 0.75rem !important;
+            cursor: pointer;
+            display: inline-flex !important;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none !important;
+            transition: opacity 0.15s ease;
+        }
+
+        .admin-menu-trigger:hover {
+            opacity: 0.85;
+            color: #fff !important;
+        }
+
+        .admin-menu-caret {
+            font-size: 0.62rem;
+            opacity: 0.85;
+            transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        .admin-menu-caret.open { transform: rotate(180deg); }
+
+        .admin-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+            min-width: 190px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.92) translateY(-6px);
+            transform-origin: top right;
+            transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+            z-index: 1050;
+        }
+
+        .admin-dropdown.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+        }
+
+        .admin-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 1rem;
+            color: #333;
+            text-decoration: none !important;
+            font-size: 0.86rem;
+            font-weight: 500;
+            font-family: "Open Sans", sans-serif;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .admin-dropdown-item i {
+            width: 16px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .admin-dropdown-item:hover {
+            background: #f5f5f7;
+            color: #008080;
+        }
+
+        .admin-dropdown-item:hover i { color: #008080; }
+
+        .admin-dropdown-item.active {
+            background: rgba(0, 128, 128, 0.08);
+            color: #008080;
+        }
+
+        .admin-dropdown-item.active i { color: #008080; }
+
         .profile-dropdown-header {
             display: flex;
             align-items: center;
@@ -1223,6 +1339,36 @@
             color: #bbb;
             font-size: 0.85rem;
         }
+
+        .filter-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3.5rem 1.5rem;
+            margin-top: 1rem;
+            color: #6c757d;
+        }
+
+        .filter-empty-state .filter-empty-icon {
+            font-size: 2.6rem;
+            color: #008080;
+            opacity: 0.55;
+            margin-bottom: 1rem;
+        }
+
+        .filter-empty-state .filter-empty-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.35rem;
+        }
+
+        .filter-empty-state .filter-empty-sub {
+            font-size: 0.85rem;
+            color: #9aa0a6;
+        }
     </style>
 </head>
 
@@ -1243,9 +1389,26 @@
             <div class="collapse navbar-collapse" id="homeNavbar">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center user-menu-wrapper">
 
-                    <li class="nav-item"
+                    <li class="nav-item admin-menu"
                         th:if="${session.user != null && (session.user.role == 'Super Admin' || session.user.role == 'Admin')}">
-                        <a class="nav-link text-white" href="/admindashboard">Users</a>
+                        <a class="nav-link admin-menu-trigger" href="#" id="adminTrigger" onclick="toggleAdminMenu(event)">
+                            <span>Admin</span>
+                            <i class="fa-solid fa-chevron-down admin-menu-caret" id="adminCaret"></i>
+                        </a>
+                        <div class="admin-dropdown" id="adminDropdown">
+                            <a href="/admindashboard" class="admin-dropdown-item">
+                                <i class="fa-solid fa-user-group"></i><span>Users</span>
+                            </a>
+                            <a href="/admin-apps" class="admin-dropdown-item">
+                                <i class="fa-solid fa-cube"></i><span>Apps</span>
+                            </a>
+                            <a href="/admin-groups" class="admin-dropdown-item">
+                                <i class="fa-solid fa-layer-group"></i><span>Groups</span>
+                            </a>
+                            <a href="/admin-logs" class="admin-dropdown-item">
+                                <i class="fa-solid fa-clipboard-list"></i><span>Logs</span>
+                            </a>
+                        </div>
                     </li>
                     <li class="nav-item user-menu" style="position:relative;">
                         <a class="nav-link user-menu-trigger" href="#" id="profileTrigger"
@@ -1325,6 +1488,12 @@
     </div>
 
     <div class="container" id="appCardsContainer">
+
+        <div class="filter-empty-state" id="filterEmptyState" style="display:none;">
+            <i class="fa-solid fa-filter filter-empty-icon"></i>
+            <div class="filter-empty-text">Please select your groups from filters!</div>
+            <div class="filter-empty-sub">Use the Filter button above to choose one or more assignment groups.</div>
+        </div>
 
         <div class="p-4 position-relative table-card dynamic-app-card" th:each="app : ${applications}"
             th:attr="data-group=${app.assignmentGroup ?: ''},data-beatid=${app.beatId ?: ''},data-appname=${app.applicationName ?: ''},data-squad=${app.squad ?: ''},data-owner=${app.systemOwner ?: ''},data-bizowner=${app.businessOwner ?: ''}">
@@ -1544,7 +1713,7 @@
                 <div class="section-title-header">Technical Details</div>
                 <div class="row basic-identity-table mx-0 mt-2 mb-0 py-3">
                     <div class="col-md-6 mb-2">
-                        <div class="fw-semibold text-secondary small">App URLs - Dev/Test</div>
+                        <div class="fw-semibold text-secondary small">App URLs</div>
                         <div class="text-dark" th:text="${td != null ? (td.appUrlsDevTest ?: '-') : '-'}">-</div>
                     </div>
                     <div class="col-md-6 mb-2">
@@ -1857,7 +2026,7 @@
     <span id="userMeta" th:attr="data-uid=${session.user != null ? session.user.cwid : 'guest'}"
         style="display:none;"></span>
 
-    <script>
+    <script th:inline="javascript">
 
         function toggleProfileMenu(event) {
             event.preventDefault();
@@ -1869,6 +2038,17 @@
             caret.classList.toggle('open', !isOpen);
         }
 
+        function toggleAdminMenu(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const dd = document.getElementById('adminDropdown');
+            const caret = document.getElementById('adminCaret');
+            if (!dd) return;
+            const isOpen = dd.classList.contains('open');
+            dd.classList.toggle('open', !isOpen);
+            if (caret) caret.classList.toggle('open', !isOpen);
+        }
+
         document.addEventListener('click', function (e) {
             const trigger = document.getElementById('profileTrigger');
             const dropdown = document.getElementById('profileDropdown');
@@ -1877,17 +2057,55 @@
                 dropdown.classList.remove('open');
                 caret?.classList.remove('open');
             }
+            const adminTrigger = document.getElementById('adminTrigger');
+            const adminDropdown = document.getElementById('adminDropdown');
+            const adminCaret = document.getElementById('adminCaret');
+            if (adminDropdown && !adminDropdown.contains(e.target)
+                    && e.target !== adminTrigger && !adminTrigger?.contains(e.target)) {
+                adminDropdown.classList.remove('open');
+                adminCaret?.classList.remove('open');
+            }
         });
 
         const _uid = document.getElementById('userMeta')?.getAttribute('data-uid') || 'guest';
         const FILTER_STORAGE_KEY = 'appwiki_filter_groups_' + _uid;
 
+        // Server-persisted selection (per-user). Falls back to localStorage if server data is empty.
+        const SERVER_FILTER_JSON = /*[[${userFilterGroups}]]*/ '[]';
+        function parseGroups(raw) {
+            try {
+                const arr = JSON.parse(raw || '[]');
+                return Array.isArray(arr) ? arr : [];
+            } catch (e) { return []; }
+        }
+        const serverGroups = parseGroups(SERVER_FILTER_JSON);
+        const localGroups = parseGroups(localStorage.getItem(FILTER_STORAGE_KEY));
+        const initialGroups = serverGroups.length > 0 ? serverGroups : localGroups;
+
+        // Canonical list of selectable assignment groups (L2 names from the Groups catalog).
+        const availableGroups = /*[[${assignmentGroups}]]*/ [];
+
         let pendingGroups = new Set();
-        let activeGroups = new Set(JSON.parse(localStorage.getItem(FILTER_STORAGE_KEY) || '[]'));
+        let activeGroups = new Set(initialGroups);
         let groupSearchQuery = '';
 
+        function saveFilterGroupsToServer() {
+            const arr = [...activeGroups];
+            fetch('/api/user/filter-groups', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(arr)
+            }).catch(function () { /* fail silently — localStorage still holds the value */ });
+        }
+
         function getGroupCounts() {
+            // Seed counts with every group from the catalog so empty groups still appear.
             const counts = {};
+            availableGroups.forEach(function (g) {
+                if (g) counts[g] = 0;
+            });
+            // Add any in-use group from current cards (covers legacy values not yet in the catalog).
             document.querySelectorAll('.dynamic-app-card').forEach(function (card) {
                 const g = (card.getAttribute('data-group') || '').trim();
                 if (g) counts[g] = (counts[g] || 0) + 1;
@@ -1960,6 +2178,7 @@
             activeGroups = new Set(pendingGroups);
 
             localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify([...activeGroups]));
+            saveFilterGroupsToServer();
             applyFilter();
             updateFilterBtn();
             closeFilterModal();
@@ -1969,6 +2188,7 @@
             pendingGroups.clear();
             activeGroups.clear();
             localStorage.removeItem(FILTER_STORAGE_KEY);
+            saveFilterGroupsToServer();
             applyFilter();
             updateFilterBtn();
             closeFilterModal();
@@ -1983,14 +2203,19 @@
         }
 
         function applyFilter() {
+            const noFilter = activeGroups.size === 0;
             document.querySelectorAll('.dynamic-app-card').forEach(function (card) {
-                if (activeGroups.size === 0) {
-                    card.style.display = '';
+                if (noFilter) {
+                    card.style.display = 'none';
                 } else {
                     const g = (card.getAttribute('data-group') || '').trim();
                     card.style.display = activeGroups.has(g) ? '' : 'none';
                 }
             });
+            const emptyState = document.getElementById('filterEmptyState');
+            if (emptyState) {
+                emptyState.style.display = noFilter ? 'flex' : 'none';
+            }
         }
 
         function updateFilterBtn() {
@@ -2012,11 +2237,27 @@
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            if (activeGroups.size > 0) {
-                applyFilter();
-                updateFilterBtn();
+        function pruneStaleGroups() {
+            // Drop entries from activeGroups that no longer exist in the current dataset
+            // (e.g., the group was renamed on every app that previously used it).
+            const currentGroups = new Set(Object.keys(getGroupCounts()));
+            let changed = false;
+            [...activeGroups].forEach(function (g) {
+                if (!currentGroups.has(g)) {
+                    activeGroups.delete(g);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify([...activeGroups]));
+                saveFilterGroupsToServer();
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            pruneStaleGroups();
+            applyFilter();
+            updateFilterBtn();
         });
 
         function applyCardSearch(q) {

@@ -884,16 +884,12 @@
                                         data-field="businessOwner"></div>
                             </div>
                             <div class="form-group-custom"><label class="field-label">Assignment Group</label>
-                                <div class="field-input has-dropdown">
+                                <div class="field-input">
                                     <select class="form-select" data-field="assignmentGroup">
                                         <option value="">Select</option>
                                         <option th:each="ag : ${assignmentGroups}" th:value="${ag}" th:text="${ag}">
                                         </option>
                                     </select>
-                                    <button type="button" class="btn-add-option" title="Add new option"
-                                        onclick="window.DynamicDropdown.openInput(this)">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,11 @@
 package com.example.dictionary.controller;
 
 import com.example.dictionary.entity.BasicIdentity;
+import com.example.dictionary.model.User;
+import com.example.dictionary.service.ActivityLogService;
+import com.example.dictionary.service.AuthenticationService;
 import com.example.dictionary.service.BasicIdentityService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +20,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 public class BasicIdentityController {
     @Autowired
     private BasicIdentityService service;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private ActivityLogService activityLogService;
 
     @GetMapping("/check")
     public ResponseEntity<Map<String, Boolean>> checkDuplicate(
@@ -47,7 +57,7 @@ public class BasicIdentityController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody BasicIdentity entity) {
+    public ResponseEntity<?> create(@RequestBody BasicIdentity entity, HttpSession session) {
         if (entity.getBeatId() != null && !entity.getBeatId().isBlank()) {
             if (service.existsByBeatId(entity.getBeatId())) {
                 return ResponseEntity.status(409)
@@ -61,7 +71,13 @@ public class BasicIdentityController {
             }
         }
         try {
-            return ResponseEntity.ok(service.save(entity));
+            BasicIdentity saved = service.save(entity);
+            User actor = (User) session.getAttribute("user");
+            if (actor != null) {
+                activityLogService.recordAppAdd(actor.getCwid(), actor.getUsername(), actor.getRole(),
+                        saved.getBeatId(), saved.getApplicationName());
+            }
+            return ResponseEntity.ok(saved);
         } catch (DataIntegrityViolationException ex) {
             String msg = "A duplicate Beat ID or Application Name was detected. Please use unique values.";
             if (ex.getMessage() != null && ex.getMessage().contains("beat_id")) {
@@ -74,7 +90,7 @@ public class BasicIdentityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody BasicIdentity entity) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody BasicIdentity entity, HttpSession session) {
         Optional<BasicIdentity> existing = service.getById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -93,6 +109,10 @@ public class BasicIdentityController {
         }
         try {
             BasicIdentity e = existing.get();
+
+            BasicIdentity beforeSnap = snapshot(e);
+            String oldGroup = e.getAssignmentGroup();
+            String newGroup = entity.getAssignmentGroup();
             e.setBeatId(entity.getBeatId());
             e.setApplicationName(entity.getApplicationName());
             e.setGxp(entity.getGxp());
@@ -103,8 +123,25 @@ public class BasicIdentityController {
             e.setServiceVariant(entity.getServiceVariant());
             e.setTypeCategory(entity.getTypeCategory());
             e.setSystemOwner(entity.getSystemOwner());
-            e.setAssignmentGroup(entity.getAssignmentGroup());
-            return ResponseEntity.ok(service.save(e));
+            e.setAssignmentGroup(newGroup);
+            BasicIdentity saved = service.save(e);
+            String[] diff = diffApp(beforeSnap, saved);
+            User actor = (User) session.getAttribute("user");
+            if (actor != null && !diff[0].isEmpty()) {
+                activityLogService.recordAppEdit(actor.getCwid(), actor.getUsername(),
+                        saved.getBeatId(), saved.getApplicationName(),
+                        "Application", diff[0], diff[1]);
+            }
+
+            if (oldGroup != null && !oldGroup.isBlank()
+                    && newGroup != null && !newGroup.isBlank()
+                    && !oldGroup.equals(newGroup)) {
+                List<String> remaining = service.getDistinctAssignmentGroups();
+                if (remaining == null || !remaining.contains(oldGroup)) {
+                    authenticationService.renameGroupInAllFilters(oldGroup, newGroup);
+                }
+            }
+            return ResponseEntity.ok(saved);
         } catch (DataIntegrityViolationException ex) {
             return ResponseEntity.status(409)
                 .body(Map.of("error", "Application Already Exists! Beat ID or Application Name is already used by another application."));
@@ -112,18 +149,103 @@ public class BasicIdentityController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (service.getById(id).isEmpty()) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
+        Optional<BasicIdentity> existing = service.getById(id);
+        if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        BasicIdentity app = existing.get();
         service.delete(id);
+        User actor = (User) session.getAttribute("user");
+        if (actor != null) {
+            activityLogService.recordAppDelete(actor.getCwid(), actor.getUsername(),
+                    app.getBeatId(), app.getApplicationName(), "Application", summarizeApp(app));
+        }
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
-        return service.deactivate(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deactivate(@PathVariable Long id, HttpSession session) {
+        Optional<BasicIdentity> existing = service.getById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        BasicIdentity app = existing.get();
+        boolean ok = service.deactivate(id);
+        if (ok) {
+            User actor = (User) session.getAttribute("user");
+            if (actor != null) {
+                activityLogService.recordAppDelete(actor.getCwid(), actor.getUsername(),
+                        app.getBeatId(), app.getApplicationName(), "Application", summarizeApp(app));
+            }
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    private static String summarizeApp(BasicIdentity a) {
+        if (a == null) return "";
+        StringBuilder sb = new StringBuilder();
+        appendField(sb, "Beat ID", a.getBeatId());
+        appendField(sb, "Name", a.getApplicationName());
+        appendField(sb, "Squad", a.getSquad());
+        appendField(sb, "Assignment Group", a.getAssignmentGroup());
+        appendField(sb, "System Owner", a.getSystemOwner());
+        appendField(sb, "Business Owner", a.getBusinessOwner());
+        appendField(sb, "Sub Domain", a.getSubDomain());
+        appendField(sb, "Region", a.getAppRegion());
+        appendField(sb, "Service Variant", a.getServiceVariant());
+        appendField(sb, "Type", a.getTypeCategory());
+        appendField(sb, "GxP", a.getGxp());
+        return sb.toString();
+    }
+
+    private static void appendField(StringBuilder sb, String label, String value) {
+        if (value == null || value.isBlank()) return;
+        if (sb.length() > 0) sb.append("; ");
+        sb.append(label).append(": ").append(value);
+    }
+
+    private static BasicIdentity snapshot(BasicIdentity src) {
+        BasicIdentity s = new BasicIdentity();
+        s.setBeatId(src.getBeatId());
+        s.setApplicationName(src.getApplicationName());
+        s.setGxp(src.getGxp());
+        s.setSquad(src.getSquad());
+        s.setBusinessOwner(src.getBusinessOwner());
+        s.setSubDomain(src.getSubDomain());
+        s.setAppRegion(src.getAppRegion());
+        s.setServiceVariant(src.getServiceVariant());
+        s.setTypeCategory(src.getTypeCategory());
+        s.setSystemOwner(src.getSystemOwner());
+        s.setAssignmentGroup(src.getAssignmentGroup());
+        return s;
+    }
+
+    private static String[] diffApp(BasicIdentity before, BasicIdentity after) {
+        StringBuilder oldSb = new StringBuilder();
+        StringBuilder newSb = new StringBuilder();
+        addDiff(oldSb, newSb, "Beat ID", before.getBeatId(), after.getBeatId());
+        addDiff(oldSb, newSb, "Name", before.getApplicationName(), after.getApplicationName());
+        addDiff(oldSb, newSb, "Squad", before.getSquad(), after.getSquad());
+        addDiff(oldSb, newSb, "Assignment Group", before.getAssignmentGroup(), after.getAssignmentGroup());
+        addDiff(oldSb, newSb, "System Owner", before.getSystemOwner(), after.getSystemOwner());
+        addDiff(oldSb, newSb, "Business Owner", before.getBusinessOwner(), after.getBusinessOwner());
+        addDiff(oldSb, newSb, "Sub Domain", before.getSubDomain(), after.getSubDomain());
+        addDiff(oldSb, newSb, "Region", before.getAppRegion(), after.getAppRegion());
+        addDiff(oldSb, newSb, "Service Variant", before.getServiceVariant(), after.getServiceVariant());
+        addDiff(oldSb, newSb, "Type", before.getTypeCategory(), after.getTypeCategory());
+        addDiff(oldSb, newSb, "GxP", before.getGxp(), after.getGxp());
+        return new String[] { oldSb.toString(), newSb.toString() };
+    }
+
+    private static void addDiff(StringBuilder oldSb, StringBuilder newSb, String label, String oldV, String newV) {
+        String a = oldV == null ? "" : oldV;
+        String b = newV == null ? "" : newV;
+        if (a.equals(b)) return;
+        if (oldSb.length() > 0) oldSb.append("; ");
+        if (newSb.length() > 0) newSb.append("; ");
+        oldSb.append(label).append(": ").append(a.isEmpty() ? "—" : a);
+        newSb.append(label).append(": ").append(b.isEmpty() ? "—" : b);
     }
 }

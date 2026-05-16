@@ -12,7 +12,7 @@ public class CloudDetail {
     @JsonBackReference
     private BasicIdentity basicIdentity;
 
-    private String environment; // NON_PROD or PROD
+    private String environment;
     private String accountId;
     private String hostType;
     @Column(length = 2000)

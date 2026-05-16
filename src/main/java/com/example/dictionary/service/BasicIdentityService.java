@@ -70,7 +70,7 @@ public class BasicIdentityService {
     }
 
     public BasicIdentity save(BasicIdentity entity) {
-        // Clean up empty and placeholder values
+
         cleanupEntity(entity);
         return repository.save(entity);
     }
@@ -87,10 +87,22 @@ public class BasicIdentityService {
         return repository.findDistinctAssignmentGroups();
     }
 
-    /**
-     * Convert empty strings and placeholder values to null
-     * This ensures dropdowns that weren't selected don't store "Select" text
-     */
+    @Transactional
+    public int renameAssignmentGroup(String oldName, String newName) {
+        if (oldName == null || oldName.isBlank() || newName == null || newName.isBlank()) return 0;
+        if (oldName.equals(newName)) return 0;
+        int count = 0;
+        List<BasicIdentity> matches = repository.findAll();
+        for (BasicIdentity b : matches) {
+            if (oldName.equals(b.getAssignmentGroup())) {
+                b.setAssignmentGroup(newName);
+                repository.save(b);
+                count++;
+            }
+        }
+        return count;
+    }
+
     private void cleanupEntity(BasicIdentity entity) {
         if (entity.getBeatId() != null && (entity.getBeatId().trim().isEmpty() || entity.getBeatId().trim().equals("Select"))) {
             entity.setBeatId(null);

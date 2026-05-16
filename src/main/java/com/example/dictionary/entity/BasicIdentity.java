@@ -31,7 +31,6 @@ public class BasicIdentity {
 
     private Boolean active = true;
 
-    // Relationships to detail entities
     @OneToMany(mappedBy = "basicIdentity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<ApplicationServerDetail> applicationServerDetails;
@@ -60,7 +59,6 @@ public class BasicIdentity {
     @JsonManagedReference
     private List<ResourceContacts> resourceContacts;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -163,7 +161,6 @@ public class BasicIdentity {
         this.active = active;
     }
 
-    // Getters and Setters for relationships
     public List<ApplicationServerDetail> getApplicationServerDetails() {
         return applicationServerDetails;
     }

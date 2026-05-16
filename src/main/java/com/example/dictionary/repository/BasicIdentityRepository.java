@@ -22,4 +22,7 @@ public interface BasicIdentityRepository extends JpaRepository<BasicIdentity, Lo
 
     @Query("SELECT DISTINCT b.assignmentGroup FROM BasicIdentity b WHERE b.assignmentGroup IS NOT NULL AND b.assignmentGroup <> '' ORDER BY b.assignmentGroup")
     List<String> findDistinctAssignmentGroups();
+
+    @Query("SELECT COUNT(b) FROM BasicIdentity b WHERE b.assignmentGroup = :group AND (b.active IS NULL OR b.active = true)")
+    long countByAssignmentGroup(@Param("group") String group);
 }

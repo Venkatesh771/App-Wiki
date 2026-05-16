@@ -73,14 +73,12 @@ public class ApplicationServerDetailService {
     @Transactional
     public List<ApplicationServerDetail> processBulkGridData(Map<String, Object> gridData, Long basicIdentityId, String beatId) {
         List<ApplicationServerDetail> savedRecords = new ArrayList<>();
-        
-        // Fetch BasicIdentity if provided
+
         BasicIdentity basicIdentity = null;
         if (basicIdentityId != null) {
             basicIdentity = basicIdentityRepository.findById(basicIdentityId).orElse(null);
         }
-        
-        // Fallback: Find by beatId if basicIdentityId is null
+
         if (basicIdentity == null && beatId != null && !beatId.isEmpty()) {
             basicIdentity = basicIdentityRepository.findByBeatId(beatId).orElse(null);
             if (basicIdentity != null) {
@@ -93,16 +91,15 @@ public class ApplicationServerDetailService {
         log.debug("GridData: {}", gridData);
         log.debug("BasicIdentityId: {}", basicIdentityId);
         log.debug("BeatId: {}", beatId);
-        
+
         try {
-            // Process each section (dev-section, test-section, qa-section, prod-section)
+
             for (Map.Entry<String, Object> entry : gridData.entrySet()) {
                 String sectionId = entry.getKey();
                 Object sectionData = entry.getValue();
-                
+
                 log.debug("Processing section: {} with data: {}", sectionId, sectionData);
-                
-                // Determine environment from section ID
+
                 String environment = null;
                 if (sectionId.equals("dev-section")) {
                     environment = "DEV";
@@ -113,7 +110,7 @@ public class ApplicationServerDetailService {
                 } else if (sectionId.equals("prod-section")) {
                     environment = "PROD";
                 }
-                  // If sectionData is a list of rows
+
                 if (sectionData instanceof List) {
                     List<?> rows = (List<?>) sectionData;
                     log.debug("Found {} rows in {}", rows.size(), sectionId);
@@ -123,9 +120,7 @@ public class ApplicationServerDetailService {
                             ApplicationServerDetail detail = new ApplicationServerDetail();
                             detail.setEnvironment(environment);
                             detail.setBasicIdentity(basicIdentity);
-                            
-                            // Map NAMED fields from frontend to entity fields
-                            // Frontend sends: serverName, serverOsVersion, deployedServer, domain, cluster, serviceName, ipAddress
+
                             detail.setDeployedServer(getNamedValue(rowData, "deployedServer"));
                             detail.setServerName(getNamedValue(rowData, "serverName"));
                             detail.setServerOsVersion(getNamedValue(rowData, "serverOsVersion"));
@@ -133,10 +128,9 @@ public class ApplicationServerDetailService {
                             detail.setCluster(getNamedValue(rowData, "cluster"));
                             detail.setServiceName(getNamedValue(rowData, "serviceName"));
                             detail.setIpAddress(getNamedValue(rowData, "ipAddress"));
-                            
+
                             log.debug("Detail: env={}, serverName={}", detail.getEnvironment(), detail.getServerName());
-                            
-                            // Only save if at least one field has data
+
                             if (hasData(detail)) {
                                 ApplicationServerDetail saved = repository.save(detail);
                                 log.debug("Saved ApplicationServerDetail ID: {}", saved.getId());
@@ -156,7 +150,7 @@ public class ApplicationServerDetailService {
         Object value = rowData.get(fieldName);
         if (value != null) {
             String strValue = value.toString().trim();
-            // Filter out placeholder/empty values
+
             if (strValue.isEmpty() || strValue.equals("Select") || strValue.equals("--") || strValue.equals("N/A")) {
                 return null;
             }
@@ -166,12 +160,12 @@ public class ApplicationServerDetailService {
     }
 
     private boolean hasData(ApplicationServerDetail detail) {
-        return detail.getDeployedServer() != null || 
-               detail.getServerName() != null || 
-               detail.getServerOsVersion() != null || 
-               detail.getDomain() != null || 
-               detail.getCluster() != null || 
-               detail.getServiceName() != null || 
+        return detail.getDeployedServer() != null ||
+               detail.getServerName() != null ||
+               detail.getServerOsVersion() != null ||
+               detail.getDomain() != null ||
+               detail.getCluster() != null ||
+               detail.getServiceName() != null ||
                detail.getIpAddress() != null;
     }
 }

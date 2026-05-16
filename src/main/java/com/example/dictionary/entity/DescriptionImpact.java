@@ -22,7 +22,6 @@ public class DescriptionImpact {
     private String financialImpact;
     private String userAccessReview;
 
-    // Getters and setters
     public Long getId() {
         return id;
     }

@@ -12,7 +12,7 @@ public class ApplicationServerDetail {
     @JsonBackReference
     private BasicIdentity basicIdentity;
 
-    private String environment; // DEV, TEST, QA, PROD
+    private String environment;
     private String serverName;
     private String serverOsVersion;
     private String deployedServer;

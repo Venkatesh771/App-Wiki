@@ -20,7 +20,7 @@ public class TechnicalDetailsService {
     public Optional<TechnicalDetails> findById(Long id) {
         return repository.findById(id);
     }    public TechnicalDetails save(TechnicalDetails entity) {
-        // Clean up empty and placeholder values
+
         cleanupEntity(entity);
         return repository.save(entity);
     }
@@ -29,10 +29,6 @@ public class TechnicalDetailsService {
         repository.deleteById(id);
     }
 
-    /**
-     * Convert empty strings and placeholder values to null
-     * This ensures dropdowns that weren't selected don't store "Select" text
-     */
     private void cleanupEntity(TechnicalDetails entity) {
         if (entity.getAppUrlsDevTest() != null && (entity.getAppUrlsDevTest().trim().isEmpty() || entity.getAppUrlsDevTest().trim().equals("Select"))) {
             entity.setAppUrlsDevTest(null);

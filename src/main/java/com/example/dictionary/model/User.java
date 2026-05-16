@@ -26,9 +26,11 @@ public class User {
     private boolean active;
 
     @Column(nullable = false)
-    private String authType; // "LOCAL" or "LDAP"
+    private String authType;
 
-    // No-argument constructor for JSON deserialization
+    @Column(name = "filter_groups", columnDefinition = "CLOB", nullable = true)
+    private String filterGroups;
+
     public User() {
     }
 
@@ -39,8 +41,8 @@ public class User {
         this.password = password;
         this.role = role;
         this.active = active;
-        this.authType = "LOCAL"; // Default authentication type for existing users
-    }// Getters and Setters
+        this.authType = "LOCAL";
+    }
 
     public Long getId() {
         return id;
@@ -104,5 +106,13 @@ public class User {
 
     public void setAuthType(String authType) {
         this.authType = authType;
+    }
+
+    public String getFilterGroups() {
+        return filterGroups;
+    }
+
+    public void setFilterGroups(String filterGroups) {
+        this.filterGroups = filterGroups;
     }
 }
